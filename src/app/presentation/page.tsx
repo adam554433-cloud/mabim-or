@@ -290,7 +290,7 @@ export default function HowItWorksPage() {
       </div>
 
       {/* Slide */}
-      <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-6 py-2">
+      <div className="flex-1 min-h-0 px-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={cur}
@@ -298,20 +298,29 @@ export default function HowItWorksPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -24 }}
             transition={{ duration: 0.4 }}
-            className="max-w-md w-full text-center"
+            className="h-full max-w-md mx-auto w-full flex flex-col justify-between text-center py-2"
           >
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-4 py-1.5 rounded-full mb-6 border border-yellow-400/20">
-              {slide.badge}
+            {/* Top — badge */}
+            <div>
+              <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-4 py-1.5 rounded-full border border-yellow-400/20">
+                {slide.badge}
+              </div>
             </div>
 
-            {slide.visual}
+            {/* Middle — visual */}
+            <div className="flex items-center justify-center py-2">
+              {slide.visual}
+            </div>
 
-            <h2 className="text-xl sm:text-4xl font-extrabold mt-6 mb-3 leading-tight">
-              {slide.title}
-            </h2>
-            <p className="text-gray-300 text-sm sm:text-lg leading-relaxed max-w-sm mx-auto">
-              {slide.body}
-            </p>
+            {/* Bottom — text */}
+            <div>
+              <h2 className="text-2xl sm:text-4xl font-extrabold mb-3 leading-tight">
+                {slide.title}
+              </h2>
+              <p className="text-gray-300 text-sm sm:text-lg leading-relaxed max-w-sm mx-auto">
+                {slide.body}
+              </p>
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>
