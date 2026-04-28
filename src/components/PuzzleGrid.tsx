@@ -66,7 +66,7 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
   const animRef    = useRef<Map<number, number>>(new Map());
   const rafRef     = useRef<number>(0);
   const isMobRef   = useRef(false);
-  const demoRingRef  = useRef<{ idx: number; pulse: number } | null>(null);
+  const demoRingRef  = useRef<{ idx: number; rings: number[] } | null>(null);
   const demoReadyRef = useRef(false); // wave done?
   const demoRanRef   = useRef(false); // demo already played?
 
@@ -123,18 +123,18 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
 
       let alpha = animRef.current.get(idx) ?? 1;
       if (alpha < 1) {
-        alpha = Math.min(1, alpha + 0.05);
+        alpha = Math.min(1, alpha + 0.03);
         animRef.current.set(idx, alpha);
         stillAnimating = true;
       }
 
-      if (!mob) {
-        ctx.shadowColor = `rgba(251,191,36,${alpha * 0.9})`;
-        ctx.shadowBlur  = Math.min(14, 5 + (zoomRef.current - 1) * 2) * alpha;
-      }
+      ctx.shadowColor = `rgba(251,191,36,${alpha * (mob ? 0.5 : 0.9)})`;
+      ctx.shadowBlur  = mob
+        ? 5 * alpha
+        : Math.min(14, 5 + (zoomRef.current - 1) * 2) * alpha;
       ctx.fillStyle = `rgba(251,191,${Math.round(36 * alpha)},${alpha})`;
       ctx.fillRect(x, y, DOT, DOT);
-      if (!mob) ctx.shadowBlur = 0;
+      ctx.shadowBlur = 0;
 
       // Name labels at high zoom
       if (zoomRef.current >= 5 && submissionMap.has(idx)) {
@@ -146,28 +146,37 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
       }
     }
 
-    // Demo pulsing ring
+    // Demo pulsing rings — multiple concentric ripples
     if (demoRingRef.current) {
-      const { idx, pulse } = demoRingRef.current;
+      const { idx, rings } = demoRingRef.current;
       const col = idx % COLS;
       const row = Math.floor(idx / COLS);
       const cx  = col * CELL + DOT / 2;
       const cy  = row * CELL + DOT / 2;
-      const r   = 6 + pulse * 10;
-      const alpha = (1 - pulse) * 0.8;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(251,191,36,${alpha})`;
-      ctx.lineWidth   = 1.5;
-      ctx.stroke();
-      // Bright center dot
-      ctx.shadowColor = "rgba(251,191,36,0.9)";
-      ctx.shadowBlur  = 12;
+
+      for (const p of rings) {
+        const r     = 4 + p * 22;
+        const alpha = (1 - p) * 0.7;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(251,191,36,${alpha})`;
+        ctx.lineWidth   = 1.2 + (1 - p) * 1;
+        ctx.stroke();
+      }
+      // Bright glowing center dot
+      ctx.shadowColor = "rgba(251,191,36,1)";
+      ctx.shadowBlur  = 14;
       ctx.fillStyle   = "#fbbf24";
       ctx.fillRect(col * CELL, row * CELL, DOT, DOT);
       ctx.shadowBlur  = 0;
 
-      demoRingRef.current.pulse = (pulse + 0.025) % 1;
+      // Advance each ring, spawn new one every 0.35 cycle
+      demoRingRef.current.rings = rings
+        .map(p => p + 0.012)
+        .filter(p => p < 1);
+      if (rings.length === 0 || rings[rings.length - 1] > 0.35)
+        demoRingRef.current.rings.push(0);
+
       stillAnimating = true;
     }
 
@@ -200,7 +209,7 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
         return;
       }
       const dot = DEMO_DOTS[step];
-      demoRingRef.current = { idx: dot.idx, pulse: 0 };
+      demoRingRef.current = { idx: dot.idx, rings: [0] };
       rafRef.current = requestAnimationFrame(draw);
 
       const pos = idxToLocal(dot.idx);
@@ -210,8 +219,8 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
       setTimeout(() => {
         setDemoPopup(null);
         demoRingRef.current = null;
-        setTimeout(showNext, 700);
-      }, 3600);
+        setTimeout(showNext, 1200);
+      }, 5000);
     }
 
     showNext();
@@ -227,7 +236,7 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
 
     const sorted = [...allLit].sort((a, b) => dist(a) - dist(b));
     const maxDist = dist(sorted[sorted.length - 1] ?? 0);
-    const WAVE_MS = 1600;
+    const WAVE_MS = isMobRef.current ? 2800 : 1600;
     const started = Date.now();
 
     function animateWave() {
