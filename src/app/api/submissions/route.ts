@@ -1,40 +1,66 @@
 import { NextRequest, NextResponse } from "next/server";
-import { MOCK_SUBMISSIONS, INITIAL_LIT_COUNT } from "@/lib/mockData";
-import { Submission } from "@/types";
+import { createClient } from "@supabase/supabase-js";
 
-// In-memory store for demo (replace with Supabase in production)
-const submissions: Submission[] = [...MOCK_SUBMISSIONS];
-let nextIndex = INITIAL_LIT_COUNT;
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export async function GET() {
-  return NextResponse.json({ submissions: submissions.slice().reverse() });
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("*, challenges(title)")
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  if (error) return NextResponse.json({ submissions: [] });
+
+  const submissions = (data ?? []).map((s: Record<string, unknown>) => ({
+    ...s,
+    challenge_title: (s.challenges as { title?: string } | null)?.title ?? "",
+  }));
+
+  return NextResponse.json({ submissions });
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { name, challenge_id } = body;
+    const { name, challenge_id, user_id } = await req.json();
 
     if (!name || typeof name !== "string" || name.trim().length < 2) {
       return NextResponse.json({ error: "שם לא תקין" }, { status: 400 });
     }
 
-    const puzzleIndex = nextIndex++;
+    // Get next puzzle index from sequence
+    const { data: seqData } = await supabase
+      .rpc("nextval", { seq: "puzzle_index_seq" })
+      .single();
 
-    const submission: Submission = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      challenge_id,
-      challenge_title: "קנה לשכן קניות היום",
-      video_url: null,
-      puzzle_index: puzzleIndex,
-      created_at: new Date().toISOString(),
-    };
+    // Fallback: count existing submissions + 1248
+    let puzzleIndex: number = seqData as number;
+    if (!puzzleIndex) {
+      const { count } = await supabase
+        .from("submissions")
+        .select("*", { count: "exact", head: true });
+      puzzleIndex = (count ?? 0) + 1248;
+    }
 
-    submissions.push(submission);
+    const { data, error } = await supabase
+      .from("submissions")
+      .insert({
+        name: name.trim(),
+        challenge_id: challenge_id || null,
+        user_id: user_id || null,
+        puzzle_index: puzzleIndex,
+      })
+      .select()
+      .single();
 
-    return NextResponse.json({ puzzle_index: puzzleIndex, submission }, { status: 201 });
-  } catch {
+    if (error) throw error;
+
+    return NextResponse.json({ puzzle_index: puzzleIndex, submission: data }, { status: 201 });
+  } catch (e) {
+    console.error(e);
     return NextResponse.json({ error: "שגיאה בשרת" }, { status: 500 });
   }
 }

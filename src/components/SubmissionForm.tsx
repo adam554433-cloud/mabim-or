@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { Challenge } from "@/types";
 
 interface SubmissionFormProps {
@@ -17,7 +18,10 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [status, setStatus]       = useState<Status>("idle");
   const [submittedName, setSubmittedName] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [submittedIdx, setSubmittedIdx]   = useState(0);
+  const [submittedNum, setSubmittedNum]   = useState(0);
+  const fileRef  = useRef<HTMLInputElement>(null);
+  const router   = useRouter();
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -32,6 +36,8 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setSubmittedName(name.trim());
+      setSubmittedIdx(data.puzzle_index);
+      setSubmittedNum(data.puzzle_index + 1);
       setStatus("success");
       onSubmit(name.trim(), challenge.id, data.puzzle_index);
       setName("");
@@ -68,10 +74,17 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
             >
               <div className="text-6xl mb-4 candle-flicker">✨</div>
               <h3 className="text-xl font-bold text-yellow-400 mb-2">האור שלך נדלק!</h3>
-              <p className="text-gray-400">תודה {submittedName}, אורך מוסיף לפאזל של עם ישראל.</p>
+              <p className="text-gray-400 text-sm">תודה {submittedName}, אורך #{submittedNum.toLocaleString("he-IL")} מוסיף לפאזל.</p>
+              <button
+                onClick={() => router.push(`/my-light?name=${encodeURIComponent(submittedName)}&idx=${submittedIdx}&num=${submittedNum}`)}
+                className="mt-5 w-full font-bold py-3.5 rounded-full text-base transition-all hover:scale-105"
+                style={{ background: "rgba(251,191,36,1)", color: "#000", boxShadow: "0 0 24px rgba(251,191,36,0.4)" }}
+              >
+                ראה את האור שלי ←
+              </button>
               <button
                 onClick={() => setStatus("idle")}
-                className="mt-5 text-yellow-400 underline text-sm"
+                className="mt-3 text-amber-400/50 hover:text-yellow-400 transition-colors text-sm"
               >
                 הוסף עוד אחד
               </button>
