@@ -8,7 +8,7 @@ import Link from "next/link";
 
 function WelcomeVisual() {
   return (
-    <div className="flex items-center justify-center h-28 sm:h-44 gap-4 overflow-visible">
+    <div className="flex items-center justify-center w-full gap-4">
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.span
           key={i}
@@ -39,8 +39,8 @@ function ChallengeVisual() {
   }, [challenges.length]);
 
   return (
-    <div className="flex items-center justify-center h-28 sm:h-44">
-      <div className="bg-[#1c1c33] border border-yellow-400/25 rounded-2xl px-5 py-3 w-full max-w-xs text-center">
+    <div className="flex items-center justify-center w-full">
+      <div className="bg-[#1c1c33] border border-yellow-400/25 rounded-2xl px-5 py-4 w-full max-w-xs text-center">
         <div className="text-xs text-yellow-400/60 font-semibold mb-2">✨ אתגר השבוע</div>
         <AnimatePresence mode="wait">
           <motion.div
@@ -74,7 +74,7 @@ function FilmVisual() {
   }, [steps.length]);
 
   return (
-    <div className="flex items-center justify-center h-28 sm:h-44 gap-3 sm:gap-6">
+    <div className="flex items-center justify-center w-full gap-3 sm:gap-6">
       {steps.map((s, i) => (
         <div key={i} className="flex flex-col items-center gap-2">
           <motion.div
@@ -110,7 +110,7 @@ function LightVisual() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-2 h-28 sm:h-44 justify-center">
+    <div className="flex flex-col items-center gap-3 w-full justify-center">
       <div className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${SIZE}, 10px)` }}>
         {Array.from({ length: SIZE * SIZE }).map((_, i) => (
           <motion.div
@@ -145,7 +145,7 @@ function CommunityVisual() {
   }, [people.length]);
 
   return (
-    <div className="flex flex-col gap-2 h-28 sm:h-44 justify-center max-w-xs mx-auto w-full overflow-hidden">
+    <div className="flex flex-col gap-2 justify-center max-w-xs mx-auto w-full">
       <AnimatePresence>
         {people.slice(0, show).map((p, i) => (
           <motion.div
@@ -181,7 +181,7 @@ function JoinVisual() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center h-28 sm:h-44">
+    <div className="flex items-center justify-center w-full">
       <div className="text-center">
         <motion.div
           animate={{ scale: [1, 1.04, 1] }}
@@ -290,7 +290,7 @@ export default function HowItWorksPage() {
       </div>
 
       {/* Slide */}
-      <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-6 py-2 overflow-y-auto">
+      <div className="flex-1 min-h-0 flex flex-col px-6 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={cur}
@@ -298,20 +298,29 @@ export default function HowItWorksPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -24 }}
             transition={{ duration: 0.4 }}
-            className="max-w-md w-full text-center"
+            className="max-w-md w-full mx-auto flex flex-col h-full py-3"
           >
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-4 py-1.5 rounded-full mb-3 border border-yellow-400/20">
-              {slide.badge}
+            {/* Badge — top */}
+            <div className="flex justify-center">
+              <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-4 py-1.5 rounded-full border border-yellow-400/20">
+                {slide.badge}
+              </div>
             </div>
 
-            {slide.visual}
+            {/* Visual — middle, grows to fill */}
+            <div className="flex-1 flex items-center justify-center min-h-0 py-4">
+              {slide.visual}
+            </div>
 
-            <h2 className="text-xl sm:text-4xl font-extrabold mt-3 mb-2 leading-tight">
-              {slide.title}
-            </h2>
-            <p className="text-gray-300 text-sm sm:text-lg leading-relaxed max-w-sm mx-auto">
-              {slide.body}
-            </p>
+            {/* Text — bottom */}
+            <div className="text-center pb-2">
+              <h2 className="text-xl sm:text-4xl font-extrabold leading-tight mb-2">
+                {slide.title}
+              </h2>
+              <p className="text-gray-300 text-sm sm:text-lg leading-relaxed max-w-sm mx-auto">
+                {slide.body}
+              </p>
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>
