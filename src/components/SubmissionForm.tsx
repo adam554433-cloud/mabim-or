@@ -135,16 +135,19 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
 
               <div>
                 <label className="block text-sm text-gray-400 mb-1.5">תאריך ביצוע</label>
-                <input
-                  type="date"
-                  value={performedAt}
-                  onChange={e => setPerformedAt(e.target.value)}
-                  max={new Date().toISOString().split("T")[0]}
-                  className="w-full rounded-xl px-4 py-3 text-white focus:outline-none transition-all text-sm"
-                  style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.15)", colorScheme: "dark", maxWidth: "100%", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = "rgba(251,191,36,0.5)")}
-                  onBlur={e => (e.target.style.borderColor = "rgba(251,191,36,0.15)")}
-                />
+                <div
+                  className="w-full rounded-xl overflow-hidden"
+                  style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.15)" }}
+                >
+                  <input
+                    type="date"
+                    value={performedAt}
+                    onChange={e => setPerformedAt(e.target.value)}
+                    max={new Date().toISOString().split("T")[0]}
+                    className="w-full bg-transparent px-4 py-3 text-white focus:outline-none text-sm block"
+                    style={{ colorScheme: "dark", minWidth: 0 }}
+                  />
+                </div>
               </div>
 
               <div>
