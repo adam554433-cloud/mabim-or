@@ -8,7 +8,7 @@ import Link from "next/link";
 
 function WelcomeVisual() {
   return (
-    <div className="flex items-center justify-center h-44 gap-4">
+    <div className="flex items-center justify-center h-28 sm:h-44 gap-4">
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.span
           key={i}
@@ -39,8 +39,8 @@ function ChallengeVisual() {
   }, [challenges.length]);
 
   return (
-    <div className="flex items-center justify-center h-44">
-      <div className="bg-[#1c1c33] border border-yellow-400/25 rounded-2xl px-7 py-5 w-full max-w-xs text-center">
+    <div className="flex items-center justify-center h-28 sm:h-44">
+      <div className="bg-[#1c1c33] border border-yellow-400/25 rounded-2xl px-7 py-4 w-full max-w-xs text-center">
         <div className="text-xs text-yellow-400/60 font-semibold mb-3">✨ אתגר השבוע</div>
         <AnimatePresence mode="wait">
           <motion.div
@@ -74,7 +74,7 @@ function FilmVisual() {
   }, [steps.length]);
 
   return (
-    <div className="flex items-center justify-center h-44 gap-3 sm:gap-6">
+    <div className="flex items-center justify-center h-28 sm:h-44 gap-3 sm:gap-6">
       {steps.map((s, i) => (
         <div key={i} className="flex flex-col items-center gap-2">
           <motion.div
@@ -110,7 +110,7 @@ function LightVisual() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-3 h-44 justify-center">
+    <div className="flex flex-col items-center gap-3 h-28 sm:h-44 justify-center">
       <div className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${SIZE}, 10px)` }}>
         {Array.from({ length: SIZE * SIZE }).map((_, i) => (
           <motion.div
@@ -145,7 +145,7 @@ function CommunityVisual() {
   }, [people.length]);
 
   return (
-    <div className="flex flex-col gap-2 h-44 justify-center max-w-xs mx-auto w-full">
+    <div className="flex flex-col gap-2 h-28 sm:h-44 justify-center max-w-xs mx-auto w-full overflow-hidden">
       <AnimatePresence>
         {people.slice(0, show).map((p, i) => (
           <motion.div
@@ -181,12 +181,12 @@ function JoinVisual() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center h-44">
+    <div className="flex items-center justify-center h-28 sm:h-44">
       <div className="text-center">
         <motion.div
           animate={{ scale: [1, 1.04, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="text-7xl font-extrabold text-yellow-400"
+          className="text-6xl sm:text-7xl font-extrabold text-yellow-400"
           style={{ textShadow: "0 0 40px rgba(251,191,36,.6)" }}
         >
           {count.toLocaleString("he-IL")}
@@ -265,12 +265,13 @@ export default function HowItWorksPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#0a0a14] flex flex-col select-none"
+      className="bg-[#0a0a14] flex flex-col select-none overflow-hidden"
+      style={{ height: "100dvh" }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
       {/* Nav */}
-      <div className="flex items-center justify-between px-5 py-4">
+      <div className="flex items-center justify-between px-5 py-3 flex-shrink-0">
         <Link href="/" className="text-gray-500 hover:text-white text-sm transition-colors">
           → חזרה
         </Link>
@@ -289,7 +290,7 @@ export default function HowItWorksPage() {
       </div>
 
       {/* Slide */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-4">
+      <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-6 py-2">
         <AnimatePresence mode="wait">
           <motion.div
             key={cur}
@@ -305,10 +306,10 @@ export default function HowItWorksPage() {
 
             {slide.visual}
 
-            <h2 className="text-2xl sm:text-4xl font-extrabold mt-5 mb-3 leading-tight">
+            <h2 className="text-xl sm:text-4xl font-extrabold mt-3 mb-2 leading-tight">
               {slide.title}
             </h2>
-            <p className="text-gray-300 text-base sm:text-lg leading-relaxed max-w-sm mx-auto">
+            <p className="text-gray-300 text-sm sm:text-lg leading-relaxed max-w-sm mx-auto">
               {slide.body}
             </p>
           </motion.div>
@@ -316,7 +317,7 @@ export default function HowItWorksPage() {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-center gap-4 pb-8 px-6">
+      <div className="flex items-center justify-center gap-4 pb-6 px-6 flex-shrink-0">
         <button
           onClick={() => setCur((c) => Math.max(c - 1, 0))}
           disabled={cur === 0}
@@ -342,7 +343,7 @@ export default function HowItWorksPage() {
         )}
       </div>
 
-      <div className="text-center pb-4 text-gray-700 text-xs">החלק שמאלה / ימינה לניווט</div>
+      <div className="text-center pb-3 text-gray-700 text-xs flex-shrink-0">החלק שמאלה / ימינה לניווט</div>
     </div>
   );
 }
