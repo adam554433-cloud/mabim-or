@@ -15,6 +15,7 @@ type Status = "idle" | "loading" | "success" | "error";
 
 export default function SubmissionForm({ challenge, onSubmit, formRef }: SubmissionFormProps) {
   const [name, setName]           = useState("");
+  const [performedAt, setPerformedAt] = useState(() => new Date().toISOString().split("T")[0]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [status, setStatus]       = useState<Status>("idle");
   const [submittedName, setSubmittedName] = useState("");
@@ -31,7 +32,7 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
       const res  = await fetch("/api/submissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), challenge_id: challenge.id }),
+        body: JSON.stringify({ name: name.trim(), challenge_id: challenge.id, performed_at: performedAt }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -117,6 +118,20 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
                 <div className="w-full bg-white/5 border border-yellow-400/20 rounded-xl px-4 py-3 text-yellow-400/80 text-sm">
                   {challenge.title}
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-400 mb-1.5">תאריך ביצוע</label>
+                <input
+                  type="date"
+                  value={performedAt}
+                  onChange={e => setPerformedAt(e.target.value)}
+                  max={new Date().toISOString().split("T")[0]}
+                  className="w-full rounded-xl px-4 py-3 text-white focus:outline-none transition-all text-base"
+                  style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.15)", colorScheme: "dark" }}
+                  onFocus={e => (e.target.style.borderColor = "rgba(251,191,36,0.5)")}
+                  onBlur={e => (e.target.style.borderColor = "rgba(251,191,36,0.15)")}
+                />
               </div>
 
               <div>
