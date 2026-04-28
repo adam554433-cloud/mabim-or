@@ -250,6 +250,16 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
         litRef.current = allLit;
         draw();
         demoReadyRef.current = true;
+        // If canvas already visible (e.g. navigated from another page), run demo now
+        const canvas = canvasRef.current;
+        if (canvas && !demoRanRef.current) {
+          const rect = canvas.getBoundingClientRect();
+          const visible = rect.top < window.innerHeight && rect.bottom > 0;
+          if (visible) {
+            demoRanRef.current = true;
+            setTimeout(runDemo, 600);
+          }
+        }
       }
     }
 
