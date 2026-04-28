@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-assistant: "Assistant", sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-assistant: var(--font-assistant);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-assistant), "Assistant", Arial, sans-serif;
+  background: #0a0700;
+  color: #ffffff;
+  overflow-x: hidden;
 }
+
+.font-assistant {
+  font-family: var(--font-assistant), "Assistant", Arial, sans-serif;
+}
+
+/* ── Star twinkle ── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2;  transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.5); }
+}
+
+/* ── Candle flicker ── */
+@keyframes flicker {
+  0%,100% { filter: brightness(1)    drop-shadow(0 0 10px rgba(251,191,36,.9)); }
+  15%     { filter: brightness(1.2)  drop-shadow(0 0 20px rgba(251,191,36,1));  }
+  30%     { filter: brightness(.88)  drop-shadow(0 0 6px  rgba(251,191,36,.6)); }
+  50%     { filter: brightness(1.15) drop-shadow(0 0 16px rgba(251,191,36,1));  }
+  70%     { filter: brightness(.92)  drop-shadow(0 0 8px  rgba(251,191,36,.7)); }
+  85%     { filter: brightness(1.1)  drop-shadow(0 0 14px rgba(251,191,36,.9)); }
+}
+.candle-flicker {
+  animation: flicker 2.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* ── Pulse dot (new submission) ── */
+@keyframes ping-gold {
+  75%, 100% { transform: scale(2.5); opacity: 0; }
+}
+.ping-gold { animation: ping-gold 1s cubic-bezier(0,0,.2,1) infinite; }
+
+/* ── Ambient aurora glow at top ── */
+@keyframes aurora {
+  0%, 100% { opacity: 0.06; transform: scale(1); }
+  50%      { opacity: 0.12; transform: scale(1.05); }
+}
+.aurora-glow {
+  animation: aurora 6s ease-in-out infinite;
+}
+
+/* ── Horizontal feed scroll (mobile) ── */
+.feed-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.feed-scroll::-webkit-scrollbar { display: none; }
+
+/* ── Scrollbar (desktop) ── */
+::-webkit-scrollbar            { width: 5px; }
+::-webkit-scrollbar-track      { background: #0a0700; }
+::-webkit-scrollbar-thumb      { background: #3a2800; border-radius: 3px; }
