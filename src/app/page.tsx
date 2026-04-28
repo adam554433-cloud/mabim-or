@@ -96,20 +96,22 @@ export default function HomePage() {
               <span>האור שלי</span>
             </Link>
           ) : (
-            <Link
-              href="/login"
-              className="text-amber-400/70 hover:text-yellow-400 transition-colors text-sm font-medium"
-            >
-              כניסה
-            </Link>
+            <>
+              <Link
+                href="/login"
+                className="text-amber-400/70 hover:text-yellow-400 transition-colors text-sm font-medium hidden sm:block"
+              >
+                כניסה
+              </Link>
+              <Link
+                href="/login"
+                className="bg-yellow-400 active:bg-yellow-500 text-black px-4 py-1.5 rounded-full font-bold transition-all hover:scale-105"
+                style={{ boxShadow: "0 0 14px rgba(251,191,36,0.3)" }}
+              >
+                הצטרף
+              </Link>
+            </>
           )}
-          <Link
-            href="/login"
-            className="bg-yellow-400 active:bg-yellow-500 text-black px-4 py-1.5 rounded-full font-bold transition-all hover:scale-105"
-            style={{ boxShadow: "0 0 14px rgba(251,191,36,0.3)" }}
-          >
-            הצטרף
-          </Link>
         </div>
       </nav>
 
