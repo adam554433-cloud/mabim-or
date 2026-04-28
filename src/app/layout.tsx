@@ -11,6 +11,11 @@ const assistant = Assistant({
 export const metadata: Metadata = {
   title: "מביאים אור",
   description: "50,000 מעשים של אור — ביחד אנחנו מאירים את העולם",
+  icons: {
+    icon: [
+      { url: "/icons/community.png", type: "image/png" },
+    ],
+  },
   openGraph: {
     title: "מביאים אור",
     description: "הצטרף לאתגר השבוע והדלק את האור שלך | מביאים אור",
