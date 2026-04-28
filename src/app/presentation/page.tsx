@@ -39,9 +39,9 @@ function ChallengeVisual() {
   }, [challenges.length]);
 
   return (
-    <div className="flex items-center justify-center h-28 sm:h-44">
-      <div className="bg-[#1c1c33] border border-yellow-400/25 rounded-2xl px-7 py-4 w-full max-w-xs text-center">
-        <div className="text-xs text-yellow-400/60 font-semibold mb-3">✨ אתגר השבוע</div>
+    <div className="flex items-center justify-center h-28 sm:h-44 overflow-hidden">
+      <div className="bg-[#1c1c33] border border-yellow-400/25 rounded-2xl px-5 py-3 w-full max-w-xs text-center">
+        <div className="text-xs text-yellow-400/60 font-semibold mb-2">✨ אתגר השבוע</div>
         <AnimatePresence mode="wait">
           <motion.div
             key={i}
@@ -50,11 +50,11 @@ function ChallengeVisual() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.35 }}
           >
-            <div className="text-4xl mb-2">{challenges[i].icon}</div>
-            <div className="text-white font-bold text-lg leading-snug">{challenges[i].text}</div>
+            <div className="text-2xl sm:text-4xl mb-1">{challenges[i].icon}</div>
+            <div className="text-white font-bold text-sm sm:text-lg leading-snug">{challenges[i].text}</div>
           </motion.div>
         </AnimatePresence>
-        <div className="mt-3 text-gray-500 text-xs">⏰ 4 ימים נותרו</div>
+        <div className="mt-2 text-gray-500 text-xs">⏰ 4 ימים נותרו</div>
       </div>
     </div>
   );
@@ -74,7 +74,7 @@ function FilmVisual() {
   }, [steps.length]);
 
   return (
-    <div className="flex items-center justify-center h-28 sm:h-44 gap-3 sm:gap-6">
+    <div className="flex items-center justify-center h-28 sm:h-44 gap-3 sm:gap-6 overflow-hidden">
       {steps.map((s, i) => (
         <div key={i} className="flex flex-col items-center gap-2">
           <motion.div
@@ -110,7 +110,7 @@ function LightVisual() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-3 h-28 sm:h-44 justify-center">
+    <div className="flex flex-col items-center gap-2 h-28 sm:h-44 justify-center overflow-hidden">
       <div className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${SIZE}, 10px)` }}>
         {Array.from({ length: SIZE * SIZE }).map((_, i) => (
           <motion.div
@@ -300,7 +300,7 @@ export default function HowItWorksPage() {
             transition={{ duration: 0.4 }}
             className="max-w-md w-full text-center"
           >
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-4 py-1.5 rounded-full mb-5 border border-yellow-400/20">
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-4 py-1.5 rounded-full mb-3 border border-yellow-400/20">
               {slide.badge}
             </div>
 
