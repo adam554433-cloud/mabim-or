@@ -481,8 +481,7 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
             >
               {/* What they did */}
               <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="text-yellow-400 text-[10px] font-bold uppercase tracking-wide">ביצע משימה</span>
-                <span className="text-yellow-400/40 text-[10px]">✓</span>
+                <span className="text-yellow-400 text-[10px] font-bold tracking-wide">הדליק אור 🕯️</span>
               </div>
               <div
                 className="text-white font-semibold leading-snug mb-2"
