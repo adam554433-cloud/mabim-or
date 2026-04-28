@@ -86,7 +86,7 @@ export default function HomePage() {
             איך זה עובד?
           </Link>
           <Link
-            href={user ? `/my-light?name=${encodeURIComponent(displayName)}` : "/login?redirect=/my-light"}
+            href={user ? `/my-light?name=${encodeURIComponent(displayName)}` : "/my-light"}
             className="flex items-center gap-1.5 bg-yellow-400/10 border border-yellow-400/25 text-yellow-400 px-3 py-1.5 rounded-full font-medium transition-all hover:bg-yellow-400/20"
           >
             {user ? (
