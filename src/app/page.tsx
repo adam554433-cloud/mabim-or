@@ -81,7 +81,7 @@ export default function HomePage() {
         <span className="text-yellow-400 font-extrabold text-base sm:text-lg">
           🕯️ מביאים אור
         </span>
-        <div className="flex items-center gap-2 sm:gap-3 text-sm">
+        <div className="flex items-center gap-2 text-sm">
           <Link href="/presentation" className="text-gray-400 hover:text-yellow-400 transition-colors px-1 hidden sm:block">
             איך זה עובד?
           </Link>
@@ -93,24 +93,23 @@ export default function HomePage() {
               <span className="w-5 h-5 rounded-full bg-yellow-400 flex items-center justify-center text-black font-bold text-[10px]">
                 {displayName[0]?.toUpperCase()}
               </span>
-              <span className="hidden sm:inline">{displayName}</span>
-              <span className="sm:hidden">האור שלי</span>
+              <span>האור שלי</span>
             </Link>
           ) : (
-            <button
-              onClick={() => setShowAuth(true)}
-              className="text-gray-400 hover:text-yellow-400 transition-colors text-sm"
+            <Link
+              href="/login"
+              className="text-amber-400/70 hover:text-yellow-400 transition-colors text-sm font-medium"
             >
               כניסה
-            </button>
+            </Link>
           )}
-          <button
-            onClick={scrollToForm}
+          <Link
+            href="/login"
             className="bg-yellow-400 active:bg-yellow-500 text-black px-4 py-1.5 rounded-full font-bold transition-all hover:scale-105"
             style={{ boxShadow: "0 0 14px rgba(251,191,36,0.3)" }}
           >
             הצטרף
-          </button>
+          </Link>
         </div>
       </nav>
 
