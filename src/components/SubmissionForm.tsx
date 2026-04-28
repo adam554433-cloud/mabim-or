@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Challenge } from "@/types";
+import { ALL_CHALLENGES } from "@/lib/mockData";
 
 interface SubmissionFormProps {
   challenge: Challenge;
@@ -14,10 +15,11 @@ interface SubmissionFormProps {
 type Status = "idle" | "loading" | "success" | "error";
 
 export default function SubmissionForm({ challenge, onSubmit, formRef }: SubmissionFormProps) {
-  const [name, setName]           = useState("");
+  const [name, setName]               = useState("");
+  const [selectedChallenge, setSelectedChallenge] = useState<Challenge>(challenge);
   const [performedAt, setPerformedAt] = useState(() => new Date().toISOString().split("T")[0]);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [status, setStatus]       = useState<Status>("idle");
+  const [videoFile, setVideoFile]     = useState<File | null>(null);
+  const [status, setStatus]           = useState<Status>("idle");
   const [submittedName, setSubmittedName] = useState("");
   const [submittedIdx, setSubmittedIdx]   = useState(0);
   const [submittedNum, setSubmittedNum]   = useState(0);
@@ -32,7 +34,7 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
       const res  = await fetch("/api/submissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), challenge_id: challenge.id, performed_at: performedAt }),
+        body: JSON.stringify({ name: name.trim(), challenge_id: selectedChallenge.id, performed_at: performedAt }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -115,9 +117,20 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
 
               <div>
                 <label className="block text-sm text-gray-400 mb-1.5">האתגר</label>
-                <div className="w-full bg-white/5 border border-yellow-400/20 rounded-xl px-4 py-3 text-yellow-400/80 text-sm">
-                  {challenge.title}
-                </div>
+                <select
+                  value={selectedChallenge.id}
+                  onChange={e => setSelectedChallenge(ALL_CHALLENGES.find(c => c.id === e.target.value) ?? challenge)}
+                  className="w-full rounded-xl px-4 py-3 text-yellow-400/90 focus:outline-none transition-all text-sm appearance-none"
+                  style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.2)", colorScheme: "dark" }}
+                  onFocus={e => (e.target.style.borderColor = "rgba(251,191,36,0.5)")}
+                  onBlur={e => (e.target.style.borderColor = "rgba(251,191,36,0.2)")}
+                >
+                  {ALL_CHALLENGES.map(c => (
+                    <option key={c.id} value={c.id} style={{ background: "#1a0f00", color: "#fbbf24" }}>
+                      {c.title}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -127,8 +140,8 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
                   value={performedAt}
                   onChange={e => setPerformedAt(e.target.value)}
                   max={new Date().toISOString().split("T")[0]}
-                  className="w-full rounded-xl px-4 py-3 text-white focus:outline-none transition-all text-base"
-                  style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.15)", colorScheme: "dark" }}
+                  className="w-full rounded-xl px-4 py-3 text-white focus:outline-none transition-all text-sm"
+                  style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.15)", colorScheme: "dark", maxWidth: "100%", boxSizing: "border-box" }}
                   onFocus={e => (e.target.style.borderColor = "rgba(251,191,36,0.5)")}
                   onBlur={e => (e.target.style.borderColor = "rgba(251,191,36,0.15)")}
                 />
