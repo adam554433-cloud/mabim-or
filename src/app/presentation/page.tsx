@@ -8,7 +8,7 @@ import Link from "next/link";
 
 function WelcomeVisual() {
   return (
-    <div className="flex items-center justify-center h-28 sm:h-44 gap-4">
+    <div className="flex items-center justify-center h-28 sm:h-44 gap-4 overflow-visible">
       {[0, 1, 2, 3, 4].map((i) => (
         <motion.span
           key={i}
@@ -39,7 +39,7 @@ function ChallengeVisual() {
   }, [challenges.length]);
 
   return (
-    <div className="flex items-center justify-center h-28 sm:h-44 overflow-hidden">
+    <div className="flex items-center justify-center h-28 sm:h-44">
       <div className="bg-[#1c1c33] border border-yellow-400/25 rounded-2xl px-5 py-3 w-full max-w-xs text-center">
         <div className="text-xs text-yellow-400/60 font-semibold mb-2">✨ אתגר השבוע</div>
         <AnimatePresence mode="wait">
@@ -74,7 +74,7 @@ function FilmVisual() {
   }, [steps.length]);
 
   return (
-    <div className="flex items-center justify-center h-28 sm:h-44 gap-3 sm:gap-6 overflow-hidden">
+    <div className="flex items-center justify-center h-28 sm:h-44 gap-3 sm:gap-6">
       {steps.map((s, i) => (
         <div key={i} className="flex flex-col items-center gap-2">
           <motion.div
@@ -110,7 +110,7 @@ function LightVisual() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-2 h-28 sm:h-44 justify-center overflow-hidden">
+    <div className="flex flex-col items-center gap-2 h-28 sm:h-44 justify-center">
       <div className="grid gap-[3px]" style={{ gridTemplateColumns: `repeat(${SIZE}, 10px)` }}>
         {Array.from({ length: SIZE * SIZE }).map((_, i) => (
           <motion.div
@@ -290,7 +290,7 @@ export default function HowItWorksPage() {
       </div>
 
       {/* Slide */}
-      <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-6 py-2">
+      <div className="flex-1 min-h-0 flex flex-col items-center justify-center px-6 py-2 overflow-y-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={cur}
