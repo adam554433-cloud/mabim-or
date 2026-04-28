@@ -16,6 +16,11 @@ function timeAgo(dateStr: string): string {
   return `לפני ${Math.floor(diff / 86400)} ימים`;
 }
 
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("he-IL", { day: "numeric", month: "short", year: "2-digit" });
+}
+
 const GRADIENTS = [
   "from-yellow-500/20 to-orange-500/10",
   "from-amber-500/20 to-yellow-600/10",
@@ -75,7 +80,10 @@ function SubmissionCard({ s, i }: { s: Submission; i: number }) {
               <p className="font-semibold text-white text-sm truncate">{s.name}</p>
               <p className="text-gray-500 text-xs truncate">{s.challenge_title}</p>
             </div>
-            <span className="text-gray-600 text-xs flex-shrink-0">{timeAgo(s.created_at)}</span>
+            <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+              <span className="text-gray-600 text-xs">{timeAgo(s.created_at)}</span>
+              <span className="text-gray-700 text-[10px]">{formatDate(s.created_at)}</span>
+            </div>
           </div>
 
           <button className="mt-3 w-full text-center text-xs text-yellow-400/60 hover:text-yellow-400 active:text-yellow-300 py-2 border border-yellow-400/10 hover:border-yellow-400/25 rounded-xl transition-all">

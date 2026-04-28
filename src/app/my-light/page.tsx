@@ -4,6 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState, Suspense } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 // ── Mini Puzzle Canvas ───────────────────────────────────────────────
 const COLS = 250;
@@ -114,20 +116,31 @@ const BADGES = [
 // ── Main Page ────────────────────────────────────────────────────────
 function MyLightContent() {
   const params = useSearchParams();
-  const name   = params.get("name") ?? "חבר";
   const idxStr = params.get("idx");
   const lightNum = params.get("num");
 
-  const myIndex  = idxStr ? parseInt(idxStr) : 25125;
-  const myNum    = lightNum ? parseInt(lightNum) : 1248;
-
+  const [user, setUser] = useState<User | null | undefined>(undefined);
   const [copied, setCopied] = useState(false);
   const [showReactions, setShowReactions] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setShowReactions(true), 600);
     return () => clearTimeout(t);
   }, []);
+
+  const isGuest = user === null;
+  const displayName = user?.user_metadata?.display_name ?? params.get("name");
+  const name = isGuest ? "האור שלך" : (displayName ?? "חבר");
+  const myIndex  = idxStr ? parseInt(idxStr) : 25125;
+  const myNum    = lightNum ? parseInt(lightNum) : 1248;
 
   function share() {
     const url = window.location.href;
@@ -139,7 +152,7 @@ function MyLightContent() {
 
   return (
     <main
-      className="min-h-screen pb-16"
+      className={`min-h-screen ${isGuest ? "pb-36" : "pb-16"}`}
       style={{ background: "radial-gradient(ellipse 140% 55% at 50% -5%, #1e1000 0%, #0a0700 55%)" }}
     >
       {/* Nav */}
@@ -257,34 +270,71 @@ function MyLightContent() {
           </div>
         </div>
 
-        {/* ── Share ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.7 }}
-          className="flex flex-col gap-3 pt-2"
-        >
-          <button
-            onClick={share}
-            className="w-full font-bold py-4 rounded-full text-base transition-all hover:scale-105"
-            style={{
-              background: copied ? "rgba(251,191,36,0.2)" : "rgba(251,191,36,1)",
-              color: copied ? "#fbbf24" : "#000",
-              border: copied ? "1px solid rgba(251,191,36,0.4)" : "none",
-              boxShadow: copied ? "none" : "0 0 24px rgba(251,191,36,0.4)",
-            }}
+        {/* ── Share (logged in only) ── */}
+        {!isGuest && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+            className="flex flex-col gap-3 pt-2"
           >
-            {copied ? "הלינק הועתק ✓" : "שתף את האור שלי 🕯️"}
-          </button>
-          <Link
-            href="/"
-            className="w-full text-center text-amber-400/50 hover:text-yellow-400 transition-colors text-sm py-2"
-          >
-            → חזרה לדף הבית
-          </Link>
-        </motion.div>
+            <button
+              onClick={share}
+              className="w-full font-bold py-4 rounded-full text-base transition-all hover:scale-105"
+              style={{
+                background: copied ? "rgba(251,191,36,0.2)" : "rgba(251,191,36,1)",
+                color: copied ? "#fbbf24" : "#000",
+                border: copied ? "1px solid rgba(251,191,36,0.4)" : "none",
+                boxShadow: copied ? "none" : "0 0 24px rgba(251,191,36,0.4)",
+              }}
+            >
+              {copied ? "הלינק הועתק ✓" : "שתף את האור שלי 🕯️"}
+            </button>
+            <Link
+              href="/"
+              className="w-full text-center text-amber-400/50 hover:text-yellow-400 transition-colors text-sm py-2"
+            >
+              → חזרה לדף הבית
+            </Link>
+          </motion.div>
+        )}
 
       </div>
+
+      {/* ── Guest sticky CTA ── */}
+      {isGuest && (
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-4"
+          style={{ background: "linear-gradient(to top, #0a0700 60%, transparent)" }}
+        >
+          <div
+            className="max-w-md mx-auto rounded-2xl p-5 text-center"
+            style={{ background: "linear-gradient(135deg,#1e1200,#0d0800)", border: "1px solid rgba(251,191,36,0.35)", boxShadow: "0 0 40px rgba(251,191,36,0.18)" }}
+          >
+            <p className="text-white font-bold text-base mb-1">רוצה לראות את האור <span className="text-yellow-400">האמיתי</span> שלך?</p>
+            <p className="text-amber-200/50 text-xs mb-4">הצטרף לקהילה, השלם אתגר — וקבל נקודה משלך בפאזל</p>
+            <div className="flex gap-3">
+              <Link
+                href="/login"
+                className="flex-1 font-bold py-3 rounded-full text-base text-center transition-all hover:scale-105"
+                style={{ background: "#fbbf24", color: "#000", boxShadow: "0 0 20px rgba(251,191,36,0.4)" }}
+              >
+                הדלק את האור שלי 🕯️
+              </Link>
+              <Link
+                href="/"
+                className="px-4 py-3 rounded-full text-amber-400/60 hover:text-yellow-400 transition-colors text-sm font-medium border border-yellow-400/15"
+              >
+                חזרה
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
     </main>
   );
 }
