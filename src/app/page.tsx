@@ -82,6 +82,12 @@ export default function HomePage() {
           🕯️ מביאים אור
         </span>
         <div className="flex items-center gap-2 text-sm">
+          <Link
+            href="/portal"
+            className="text-yellow-400/90 hover:text-yellow-300 transition-colors px-2 py-1 rounded-full border border-yellow-400/30 hover:border-yellow-400/60 text-xs sm:text-sm font-semibold"
+          >
+            ✨ קוד 26
+          </Link>
           <Link href="/presentation" className="text-gray-400 hover:text-yellow-400 transition-colors px-1 hidden sm:block">
             איך זה עובד?
           </Link>
