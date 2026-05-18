@@ -2,12 +2,14 @@
 
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import HeroSection from "@/components/HeroSection";
 import WeeklyChallenge from "@/components/WeeklyChallenge";
 import SubmissionForm from "@/components/SubmissionForm";
 import CommunityFeed from "@/components/CommunityFeed";
-import AuthModal from "@/components/AuthModal";
+import SiteNav from "@/components/SiteNav";
+import WelcomeModal from "@/components/WelcomeModal";
+import MilestoneBar from "@/components/MilestoneBar";
 import { CURRENT_CHALLENGE, MOCK_SUBMISSIONS, INITIAL_LIT_COUNT } from "@/lib/mockData";
 import { Submission } from "@/types";
 import { supabase } from "@/lib/supabase";
@@ -23,17 +25,35 @@ const PuzzleGrid = dynamic(() => import("@/components/PuzzleGrid"), {
   ),
 });
 
+function StepBadge({ n, label }: { n: number; label: string }) {
+  return (
+    <div className="flex items-center gap-2 justify-center mb-3">
+      <span
+        className="inline-flex items-center justify-center w-7 h-7 rounded-full font-bold text-sm"
+        style={{
+          background: "rgba(251,191,36,0.15)",
+          color: "#fbbf24",
+          border: "1px solid rgba(251,191,36,0.4)",
+        }}
+      >
+        {n}
+      </span>
+      <span className="text-amber-400/70 text-xs tracking-[0.25em] font-semibold">
+        {label}
+      </span>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const [litCount, setLitCount]   = useState(INITIAL_LIT_COUNT);
   const [newLitIdx, setNewLitIdx] = useState<number | null>(null);
   const [subs, setSubs]           = useState<Submission[]>([...MOCK_SUBMISSIONS].reverse());
-  const [user, setUser]           = useState<User | null>(null);
-  const [showAuth, setShowAuth]   = useState(false);
+  const [user, setUser]           = useState<User | null | undefined>(undefined);
   const formRef = useRef<HTMLElement | null>(null);
 
-  // Listen to auth state
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
     });
@@ -72,57 +92,124 @@ export default function HomePage() {
   }, [newLitIdx]);
 
   const displayName = user?.user_metadata?.display_name ?? user?.email?.split("@")[0] ?? "";
+  const isGuest = user === null;
+  const isLoggedIn = !!user;
 
-  return (
-    <main className="min-h-screen">
+  // ─── Guest view: only the central light body + sticky inspiration CTA ───
+  if (isGuest) {
+    return (
+      <main className="min-h-screen pb-32">
+        <SiteNav />
+        <HeroSection litCount={litCount} />
 
-      {/* ── Sticky nav ── */}
-      <nav className="sticky top-0 z-40 flex items-center justify-between px-5 py-3.5 backdrop-blur-md border-b border-yellow-400/10" style={{ background: "rgba(10,7,0,0.85)" }}>
-        <span className="text-yellow-400 font-extrabold text-base sm:text-lg">
-          🕯️ מביאים אור
-        </span>
-        <div className="flex items-center gap-2 text-sm">
-          <Link
-            href="/portal"
-            className="text-yellow-400/90 hover:text-yellow-300 transition-colors px-2 py-1 rounded-full border border-yellow-400/30 hover:border-yellow-400/60 text-xs sm:text-sm font-semibold"
+        <section id="puzzle" className="pb-6">
+          <div className="text-center mb-3 px-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-300">
+              גוף האור המרכזי
+            </h2>
+            <p className="text-gray-600 text-xs sm:text-sm mt-1">
+              {litCount.toLocaleString("he-IL")} אורות כבר דולקים
+            </p>
+          </div>
+          <div className="border-y border-yellow-400/10 py-3 relative" style={{ background: "linear-gradient(180deg,#080500,#050300)" }}>
+            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%,rgba(251,191,36,0.04) 0%,transparent 70%)" }} />
+            <div className="sm:max-h-[420px] sm:overflow-hidden">
+              <PuzzleGrid newLitIndex={null} litCount={litCount} />
+            </div>
+          </div>
+          <div className="mt-6 px-4">
+            <MilestoneBar litCount={litCount} />
+          </div>
+        </section>
+
+        {/* Inspiration banner */}
+        <div className="max-w-xl mx-auto px-5 mt-10 text-center">
+          <div className="text-4xl mb-3 candle-flicker">🕯️</div>
+          <h3 className="text-2xl font-bold text-yellow-400 mb-3">
+            רוצה להאיר נקודה משלך?
+          </h3>
+          <p className="text-yellow-100/70 leading-relaxed">
+            כדי להשתתף באתגר השבועי, לראות אחרים, ולהדליק נקודה משלך בפאזל —
+            צריך להירשם תחילה. רישום קצר, חינם.
+          </p>
+        </div>
+
+        {/* Sticky CTA */}
+        <motion.div
+          initial={{ y: 60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="fixed bottom-0 left-0 right-0 z-30 px-4 pb-5 pt-6"
+          style={{ background: "linear-gradient(to top, #0a0700 70%, transparent)" }}
+        >
+          <div
+            className="max-w-md mx-auto rounded-2xl p-4 flex items-center gap-3"
+            style={{
+              background: "linear-gradient(135deg,#1e1200,#0d0800)",
+              border: "1px solid rgba(251,191,36,0.4)",
+              boxShadow: "0 0 40px rgba(251,191,36,0.18)",
+            }}
           >
-            ✨ קוד 26
-          </Link>
-          <Link href="/presentation" className="text-gray-400 hover:text-yellow-400 transition-colors px-1 hidden sm:block">
-            איך זה עובד?
-          </Link>
-          <Link
-            href={user ? `/my-light?name=${encodeURIComponent(displayName)}` : "/my-light"}
-            className="flex items-center gap-1.5 bg-yellow-400/10 border border-yellow-400/25 text-yellow-400 px-3 py-1.5 rounded-full font-medium transition-all hover:bg-yellow-400/20"
-          >
-            {user ? (
-              <span className="w-5 h-5 rounded-full bg-yellow-400 flex items-center justify-center text-black font-bold text-[10px]">
-                {displayName[0]?.toUpperCase()}
-              </span>
-            ) : (
-              <span className="text-base leading-none">🕯️</span>
-            )}
-            <span>האור שלי</span>
-          </Link>
-          {!user && (
+            <div className="text-3xl">🕯️</div>
+            <div className="flex-1 text-right">
+              <p className="text-yellow-100 font-bold text-sm">
+                הצטרף וקבל נקודה משלך
+              </p>
+              <p className="text-amber-400/60 text-xs">
+                בחינם — שייכות אמיתית לקהילה
+              </p>
+            </div>
             <Link
               href="/login"
-              className="bg-yellow-400 active:bg-yellow-500 text-black px-4 py-1.5 rounded-full font-bold transition-all hover:scale-105"
-              style={{ boxShadow: "0 0 14px rgba(251,191,36,0.3)" }}
+              className="bg-yellow-400 text-black font-bold px-4 py-2 rounded-full text-sm whitespace-nowrap"
             >
               הצטרף
             </Link>
-          )}
-        </div>
-      </nav>
+          </div>
+        </motion.div>
+      </main>
+    );
+  }
 
-      {/* ── Hero ── */}
+  // ─── Loading state ───
+  if (user === undefined) {
+    return (
+      <main className="min-h-screen">
+        <SiteNav />
+        <div className="text-center text-amber-400/40 pt-32">טוען...</div>
+      </main>
+    );
+  }
+
+  // ─── Logged-in view: step-by-step structure ───
+  return (
+    <main className="min-h-screen">
+      <SiteNav />
+
+      {/* First-time welcome */}
+      {isLoggedIn && <WelcomeModal name={displayName} />}
+
       <HeroSection litCount={litCount} />
 
-      {/* ── Puzzle ── */}
-      <section id="puzzle" className="pb-6">
+      {/* Step 1 — Challenge */}
+      <section className="pt-6">
+        <StepBadge n={1} label="האתגר השבועי" />
+        <WeeklyChallenge challenge={CURRENT_CHALLENGE} onScrollToForm={scrollToForm} />
+      </section>
+
+      {/* Step 2 — Submit */}
+      <section className="pt-6">
+        <StepBadge n={2} label="מימוש האתגר בפועל" />
+        <SubmissionForm challenge={CURRENT_CHALLENGE} onSubmit={handleSubmit} formRef={formRef} />
+      </section>
+
+      {/* Step 3 — Light up the puzzle */}
+      <section id="puzzle" className="pt-8">
+        <StepBadge n={3} label="גוף האור המרכזי" />
         <div className="text-center mb-3 px-4">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-300">הפאזל של עם ישראל</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-300">
+            הפאזל של עם ישראל
+          </h2>
           <p className="text-gray-600 text-xs sm:text-sm mt-1">
             {litCount.toLocaleString("he-IL")} אורות דולקים
             <span className="hidden sm:inline"> — העבר עם העכבר לראות מי הדליק</span>
@@ -135,34 +222,49 @@ export default function HomePage() {
             <PuzzleGrid newLitIndex={newLitIdx} litCount={litCount} />
           </div>
         </div>
+        <div className="mt-6 px-4">
+          <MilestoneBar litCount={litCount} />
+        </div>
       </section>
 
-      {/* ── Challenge ── */}
-      <WeeklyChallenge challenge={CURRENT_CHALLENGE} onScrollToForm={scrollToForm} />
+      {/* Step 4 — Next step (insight, gratitude, history) */}
+      <section className="py-12 px-4">
+        <StepBadge n={4} label="לשלב הבא" />
+        <div className="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            { href: "/insight", emoji: "✨", title: "תובנה יומית", desc: "התובנה של היום" },
+            { href: "/gratitude", emoji: "🌅", title: "הודיה", desc: "על מה אתה אסיר תודה?" },
+            { href: "/profile", emoji: "💛", title: "מה עשיתי עד כה", desc: "ההיסטוריה שלי" },
+          ].map((c) => (
+            <Link
+              key={c.href}
+              href={c.href}
+              className="group rounded-2xl p-5 text-right border border-yellow-400/15 hover:border-yellow-400/40 transition-all hover:scale-[1.02]"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(40,25,0,0.6) 0%, rgba(10,7,0,0.4) 100%)",
+              }}
+            >
+              <div className="text-3xl mb-2">{c.emoji}</div>
+              <h3 className="text-yellow-400 font-bold text-base mb-1">{c.title}</h3>
+              <p className="text-amber-400/60 text-xs leading-relaxed">{c.desc}</p>
+              <div className="mt-3 text-yellow-400/60 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                כניסה ←
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-      {/* ── Form ── */}
-      <SubmissionForm challenge={CURRENT_CHALLENGE} onSubmit={handleSubmit} formRef={formRef} />
-
-      {/* ── Community ── */}
+      {/* Community feed */}
       <CommunityFeed submissions={subs} />
 
-      {/* ── Footer ── */}
       <footer className="text-center py-10 text-gray-600 text-sm border-t border-yellow-400/10 px-4">
         <p>מביאים אור — ביחד אנחנו מאירים את העולם 🕯️</p>
-        <Link href="/presentation" className="text-yellow-400/40 hover:text-yellow-400 transition-colors mt-2 inline-block">
-          איך זה עובד?
+        <Link href="/about" className="text-yellow-400/40 hover:text-yellow-400 transition-colors mt-2 inline-block">
+          אודות הפרויקט
         </Link>
       </footer>
-
-      {/* ── Auth Modal ── */}
-      <AnimatePresence>
-        {showAuth && (
-          <AuthModal
-            onClose={() => setShowAuth(false)}
-            onSuccess={() => setShowAuth(false)}
-          />
-        )}
-      </AnimatePresence>
     </main>
   );
 }
