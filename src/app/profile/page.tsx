@@ -7,6 +7,8 @@ import SiteNav from "@/components/SiteNav";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import { MOCK_SUBMISSIONS, CURRENT_CHALLENGE } from "@/lib/mockData";
+import PulseDot from "@/components/fx/PulseDot";
+import ProgressConstellation, { ConstellationStep } from "@/components/fx/ProgressConstellation";
 
 const HISTORY_KEY = "mabim-or:my-history";
 
@@ -100,23 +102,53 @@ export default function ProfilePage() {
   const myHistory = MOCK_SUBMISSIONS.filter((s) => s.name === displayName);
   const totalLights = myHistory.length;
 
+  const journey: ConstellationStep[] = [
+    { label: "הצטרפת לקהילה", sub: user.email ?? "", done: true },
+    {
+      label: "האור הראשון שלך",
+      sub: totalLights > 0 ? "הדלקת את הנר הראשון" : "ממתין למעשה הראשון",
+      done: totalLights > 0,
+      active: totalLights === 0,
+    },
+    {
+      label: "שבוע ברצף",
+      sub: "5 ימים נוספים והנה — תג ראשון",
+      done: false,
+      active: totalLights > 0,
+    },
+    {
+      label: "חבר/ה מאיר/ה",
+      sub: "10 אורות סך הכל",
+      done: false,
+    },
+    {
+      label: "מאיר/ת קהילה",
+      sub: "מעורב גם בהודיה ובתגובות",
+      done: false,
+    },
+  ];
+
   return (
     <main className="min-h-screen">
       <SiteNav />
       <div className="max-w-2xl mx-auto px-5 py-10">
         <div className="text-center mb-8">
-          {/* Avatar */}
-          <div className="relative inline-block mb-4">
+          {/* Avatar with pulse rings */}
+          <div className="relative inline-flex items-center justify-center mb-4" style={{ width: 130, height: 130 }}>
+            {/* Pulse rings behind */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <PulseDot size={104} rings={2} speed={2.8} color="#fbbf24" />
+            </div>
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={avatarUrl}
                 alt={displayName}
-                className="w-24 h-24 rounded-full object-cover border-2 border-yellow-400/60 shadow-[0_0_30px_rgba(251,191,36,0.3)]"
+                className="relative w-24 h-24 rounded-full object-cover border-2 border-yellow-400/60 shadow-[0_0_30px_rgba(251,191,36,0.3)]"
               />
             ) : (
               <div
-                className="w-24 h-24 rounded-full border-2 border-yellow-400/60 flex items-center justify-center text-5xl"
+                className="relative w-24 h-24 rounded-full border-2 border-yellow-400/60 flex items-center justify-center text-5xl"
                 style={{
                   background: "rgba(251,191,36,0.08)",
                   boxShadow: "0 0 30px rgba(251,191,36,0.2)",
@@ -127,7 +159,7 @@ export default function ProfilePage() {
             )}
             <button
               onClick={onPickFile}
-              className="absolute -bottom-1 -left-1 w-9 h-9 rounded-full bg-yellow-400 text-black flex items-center justify-center font-bold hover:scale-110 transition-all"
+              className="absolute bottom-2 left-2 w-9 h-9 rounded-full bg-yellow-400 text-black flex items-center justify-center font-bold hover:scale-110 transition-all z-10"
               title="העלה תמונה"
             >
               📷
@@ -174,6 +206,17 @@ export default function ProfilePage() {
             <div className="text-3xl font-extrabold text-yellow-400">1</div>
             <div className="text-amber-400/60 text-xs mt-1">תגים</div>
           </div>
+        </div>
+
+        {/* Journey constellation */}
+        <div
+          className="rounded-2xl p-5 mb-8 border border-yellow-400/15"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(40,25,0,0.5) 0%, rgba(10,7,0,0.4) 100%)",
+          }}
+        >
+          <ProgressConstellation steps={journey} title="המסע שלך" />
         </div>
 
         {/* History */}

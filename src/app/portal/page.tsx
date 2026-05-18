@@ -7,6 +7,7 @@ import { Avatar, AVATARS, PRINCIPLES } from "@/lib/principles";
 import AvatarSelect from "@/components/portal/AvatarSelect";
 import SpiralMandala from "@/components/portal/SpiralMandala";
 import PrincipleModal from "@/components/portal/PrincipleModal";
+import SparkField from "@/components/fx/SparkField";
 
 export default function PortalPage() {
   const [avatar, setAvatar] = useState<Avatar | null>(null);
@@ -67,6 +68,17 @@ export default function PortalPage() {
             "radial-gradient(ellipse 90% 50% at 50% 30%, rgba(251,191,36,0.07), transparent 60%), radial-gradient(circle at 80% 80%, rgba(168,85,247,0.06), transparent 50%), radial-gradient(circle at 15% 70%, rgba(14,165,233,0.05), transparent 50%)",
         }}
       />
+
+      {/* Constellation field */}
+      <div className="fixed inset-0 -z-10">
+        <SparkField
+          density={0.06}
+          maxDistance={130}
+          speed={0.15}
+          fade={false}
+          className="absolute inset-0 w-full h-full opacity-50"
+        />
+      </div>
 
       <AnimatePresence mode="wait">
         {!avatar ? (

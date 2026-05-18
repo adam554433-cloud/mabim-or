@@ -10,6 +10,7 @@ import CommunityFeed from "@/components/CommunityFeed";
 import SiteNav from "@/components/SiteNav";
 import WelcomeModal from "@/components/WelcomeModal";
 import MilestoneBar from "@/components/MilestoneBar";
+import FlySpark from "@/components/fx/FlySpark";
 import { CURRENT_CHALLENGE, MOCK_SUBMISSIONS, INITIAL_LIT_COUNT } from "@/lib/mockData";
 import { Submission } from "@/types";
 import { supabase } from "@/lib/supabase";
@@ -218,8 +219,13 @@ export default function HomePage() {
         </div>
         <div className="border-y border-yellow-400/10 py-3 relative" style={{ background: "linear-gradient(180deg,#080500,#050300)" }}>
           <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%,rgba(251,191,36,0.04) 0%,transparent 70%)" }} />
-          <div className="sm:max-h-[420px] sm:overflow-hidden">
+          <div className="sm:max-h-[420px] sm:overflow-hidden relative">
             <PuzzleGrid newLitIndex={newLitIdx} litCount={litCount} />
+            <FlySpark
+              trigger={newLitIdx}
+              targetXPct={newLitIdx !== null ? ((newLitIdx % 250) / 250) * 100 : 50}
+              targetYPct={newLitIdx !== null ? (Math.floor(newLitIdx / 250) / 200) * 100 : 50}
+            />
           </div>
         </div>
         <div className="mt-6 px-4">
