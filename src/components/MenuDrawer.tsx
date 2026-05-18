@@ -47,6 +47,7 @@ export default function MenuDrawer({ open, onClose, user }: Props) {
             style={{ background: "rgba(5,3,0,0.7)" }}
           />
           <motion.aside
+            dir="rtl"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -134,9 +135,9 @@ export default function MenuDrawer({ open, onClose, user }: Props) {
                     >
                       <span className="text-2xl flex-shrink-0">{item.emoji}</span>
                       <div className="flex-1 min-w-0 text-right">
-                        <div className="text-yellow-100 font-semibold text-sm flex items-center justify-end gap-2">
+                        <div className="text-yellow-100 font-semibold text-sm flex items-center gap-2">
+                          <span>{item.label}</span>
                           {locked && <span className="text-amber-400/40 text-xs">🔒</span>}
-                          {item.label}
                         </div>
                         <div className="text-gray-500 text-xs truncate">
                           {item.description}
