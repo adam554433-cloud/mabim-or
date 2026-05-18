@@ -69,13 +69,14 @@ export default function PortalPage() {
         }}
       />
 
-      {/* Constellation field */}
-      <div className="fixed inset-0 -z-10">
+      {/* Constellation field — hidden on small screens to keep perf snappy */}
+      <div className="fixed inset-0 -z-10 hidden sm:block">
         <SparkField
           density={0.06}
           maxDistance={130}
           speed={0.15}
           fade={false}
+          attractMouse
           className="absolute inset-0 w-full h-full opacity-50"
         />
       </div>

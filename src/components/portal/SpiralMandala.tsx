@@ -125,9 +125,9 @@ export default function SpiralMandala({ onSelect }: Props) {
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill={p.color}
-                fontSize="14"
-                fontWeight="700"
-                opacity="0.85"
+                fontSize="22"
+                fontWeight="800"
+                opacity="0.95"
                 style={{ pointerEvents: "none" }}
               >
                 {p.id}
@@ -139,12 +139,12 @@ export default function SpiralMandala({ onSelect }: Props) {
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#fef3c7"
-                fontSize="13"
-                fontWeight="600"
+                fontSize="18"
+                fontWeight="700"
                 transform={`rotate(${labelRotate} ${labelPos.x} ${labelPos.y})`}
                 style={{ pointerEvents: "none" }}
               >
-                {p.title.length > 18 ? p.title.slice(0, 17) + "…" : p.title}
+                {p.title.length > 14 ? p.title.slice(0, 13) + "…" : p.title}
               </text>
             </motion.g>
           );
@@ -192,32 +192,32 @@ export default function SpiralMandala({ onSelect }: Props) {
         />
         <text
           x={CENTER}
-          y={CENTER - 12}
+          y={CENTER - 18}
           textAnchor="middle"
           fill="#fbbf24"
-          fontSize="14"
-          fontWeight="700"
-          letterSpacing="2"
+          fontSize="20"
+          fontWeight="800"
+          letterSpacing="3"
         >
           קוד 26
         </text>
         <text
           x={CENTER}
-          y={CENTER + 10}
+          y={CENTER + 12}
           textAnchor="middle"
           fill="#fef3c7"
-          fontSize="18"
+          fontSize="26"
           fontWeight="800"
         >
           הכל אחד
         </text>
         <text
           x={CENTER}
-          y={CENTER + 30}
+          y={CENTER + 38}
           textAnchor="middle"
-          fill="rgba(254,243,199,0.6)"
-          fontSize="10"
-          letterSpacing="3"
+          fill="rgba(254,243,199,0.7)"
+          fontSize="14"
+          letterSpacing="4"
         >
           ה׳ אחד
         </text>

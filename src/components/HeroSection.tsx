@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { useMemo, useState, useEffect } from "react";
 import SparkField from "./fx/SparkField";
-import AssemblingText from "./fx/AssemblingText";
 
 interface HeroSectionProps {
   litCount: number;
@@ -25,20 +24,17 @@ function makeStars(n: number) {
 export default function HeroSection({ litCount }: HeroSectionProps) {
   const percentage = ((litCount / 50000) * 100).toFixed(1);
   const stars = useMemo(() => makeStars(90), []);
-  const [titleSize, setTitleSize] = useState(56);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    function pick() {
-      const w = window.innerWidth;
-      setTitleSize(w < 480 ? 48 : w < 768 ? 64 : 96);
-    }
-    pick();
-    window.addEventListener("resize", pick);
-    return () => window.removeEventListener("resize", pick);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   return (
-    <section className="relative text-center px-5 py-12 md:py-20 overflow-hidden">
+    <section className="relative text-center px-5 py-10 md:py-20 overflow-hidden">
 
       {/* ── Ambient warm blobs ── */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
@@ -47,14 +43,15 @@ export default function HeroSection({ litCount }: HeroSectionProps) {
         <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-amber-400/6 rounded-full blur-3xl" />
       </div>
 
-      {/* ── Constellation field ── */}
+      {/* ── Constellation field — lighter on mobile ── */}
       <div className="absolute inset-0">
         <SparkField
-          density={0.08}
-          maxDistance={120}
+          density={isMobile ? 0.04 : 0.08}
+          maxDistance={isMobile ? 90 : 120}
           speed={0.18}
           fade={false}
-          className="absolute inset-0 w-full h-full opacity-70"
+          attractMouse={!isMobile}
+          className="absolute inset-0 w-full h-full opacity-60"
         />
       </div>
 
@@ -86,23 +83,19 @@ export default function HeroSection({ litCount }: HeroSectionProps) {
         🕯️
       </motion.div>
 
-      {/* ── Title — assembled from sparks ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="relative mb-3"
+      {/* ── Title ── */}
+      <motion.h1
+        initial={{ opacity: 0, y: 14, letterSpacing: "0.4em" }}
+        animate={{ opacity: 1, y: 0, letterSpacing: "0em" }}
+        transition={{ duration: 1.2, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        className="relative text-5xl sm:text-6xl md:text-7xl font-extrabold mb-3 leading-tight tracking-tight text-yellow-400"
+        style={{
+          textShadow:
+            "0 0 24px rgba(251,191,36,0.6), 0 0 60px rgba(251,191,36,0.3)",
+        }}
       >
-        <AssemblingText
-          text="מביאים אור"
-          fontSize={titleSize}
-          fontWeight={800}
-          color="#fbbf24"
-          duration={1500}
-          density={3}
-        />
-        <h1 className="sr-only">מביאים אור</h1>
-      </motion.div>
+        מביאים אור
+      </motion.h1>
 
       {/* ── Subtitle ── */}
       <motion.p

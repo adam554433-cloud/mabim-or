@@ -52,8 +52,11 @@ export default function SparkField({
 
     function resize() {
       if (!canvas) return;
-      const parent = canvas.parentElement!;
+      const parent = canvas.parentElement;
+      if (!parent) return;
       const rect = parent.getBoundingClientRect();
+      // Bail if parent has no size yet (e.g. hidden by media query)
+      if (rect.width < 10 || rect.height < 10) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       sizeRef.current = { w: rect.width, h: rect.height, dpr };
       canvas.width = Math.floor(rect.width * dpr);
@@ -62,9 +65,14 @@ export default function SparkField({
       canvas.style.height = rect.height + "px";
       if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const count = Math.max(
-        12,
-        Math.round(((rect.width * rect.height) / 10000) * density)
+      // Cap sparks on mobile to keep frame rate high
+      const cap = window.innerWidth < 768 ? 40 : 140;
+      const count = Math.min(
+        cap,
+        Math.max(
+          10,
+          Math.round(((rect.width * rect.height) / 10000) * density)
+        )
       );
       sparksRef.current = Array.from({ length: count }, () => ({
         x: Math.random() * rect.width,
