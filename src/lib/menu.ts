@@ -14,5 +14,5 @@ export const MENU: MenuItem[] = [
   { href: "/#puzzle", label: "גוף האור המרכזי", emoji: "🌌", description: "הפאזל של 50,000 אורות" },
   { href: "/profile", label: "השם שלי", emoji: "💛", description: "הפרופיל האישי שלך", requiresAuth: true },
   { href: "/portal", label: "קוד 26", emoji: "🌀", description: "13 העקרונות — פורטל החניכה" },
-  { href: "/about", label: "אודות", emoji: "📜", description: "מה זה ׳ניצוצות׳" },
+  { href: "/about", label: "אודות", emoji: "📜", description: "מה זה ׳מביאים אור׳" },
 ];

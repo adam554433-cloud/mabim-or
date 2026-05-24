@@ -76,7 +76,7 @@ function LoginContent() {
       style={{ background: "radial-gradient(ellipse 140% 55% at 50% -5%, #1e1000 0%, #0a0700 55%)" }}
     >
       <Link href="/" className="text-yellow-400 font-extrabold text-xl mb-10 candle-flicker">
-        ✨ ניצוצות
+        ✨ מביאים אור
       </Link>
 
       <motion.div

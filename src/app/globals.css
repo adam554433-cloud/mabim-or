@@ -1,49 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --font-heebo: "Heebo", sans-serif;
-  --font-assistant: "Heebo", sans-serif;
-
-  /* Brand palette — Cod26 / ניצוצות style guide */
-  --brand-ink:        #2A2A2A;
-  --brand-black:      #000000;
-  --brand-cream:      #FCFAEA;
-  --brand-white:      #FFFFFF;
-
-  --brand-yellow:     #FFD345;
-  --brand-yellow-dk:  #CAA928;
-  --brand-yellow-lt:  #FDE494;
-
-  --brand-blue:       #5898FF;
-  --brand-blue-dk:    #285678;
-  --brand-blue-ink:   #253DFF;
-  --brand-blue-lt:    #B4CDF5;
-
-  --brand-purple:     #8A26ED;
-  --brand-lime:       #D3F613;
+  --font-assistant: "Assistant", sans-serif;
 }
 
 @theme inline {
-  --font-heebo: var(--font-heebo);
-  --font-assistant: var(--font-heebo);
-
-  /* Map Tailwind tokens we already use across the app to the brand palette,
-     so existing classes (text-yellow-400, bg-yellow-400, etc.) take on the
-     correct brand shades automatically. */
-  --color-yellow-50:  #FCFAEA;
-  --color-yellow-100: #FDE494;
-  --color-yellow-200: #FDE494;
-  --color-yellow-300: #FFD345;
-  --color-yellow-400: #FFD345;
-  --color-yellow-500: #CAA928;
-  --color-yellow-600: #CAA928;
-
-  --color-amber-100:  #FDE494;
-  --color-amber-200:  #FDE494;
-  --color-amber-300:  #FFD345;
-  --color-amber-400:  #CAA928;
-  --color-amber-500:  #CAA928;
-  --color-amber-600:  #CAA928;
+  --font-assistant: var(--font-assistant);
 }
 
 * {
@@ -51,25 +13,15 @@
 }
 
 body {
-  font-family: var(--font-heebo), "Heebo", Arial, sans-serif;
-  background: #2A2A2A;
-  color: #FCFAEA;
+  font-family: var(--font-assistant), "Assistant", Arial, sans-serif;
+  background: #0a0700;
+  color: #ffffff;
   overflow-x: hidden;
 }
 
-.font-assistant,
-.font-heebo {
-  font-family: var(--font-heebo), "Heebo", Arial, sans-serif;
+.font-assistant {
+  font-family: var(--font-assistant), "Assistant", Arial, sans-serif;
 }
-
-/* Type scale per Cod26 style guide */
-.title-a    { font-size: clamp(40px, 8vw, 62px); font-weight: 300; line-height: 1.05; }
-.title-b    { font-size: clamp(36px, 7vw, 52px); font-weight: 300; line-height: 1.1; }
-.title-c    { font-size: clamp(32px, 6vw, 48px); font-weight: 500; line-height: 1.15; }
-.sub-b      { font-size: clamp(24px, 4.5vw, 36px); font-weight: 500; line-height: 1.2; }
-.sub-c      { font-size: clamp(18px, 3.5vw, 24px); font-weight: 500; line-height: 1.3; }
-.tag        { font-size: 18px; font-weight: 700; line-height: 1.3; }
-.body-text  { font-size: 14px; font-weight: 400; line-height: 1.55; }
 
 /* ── Star twinkle ── */
 @keyframes twinkle {
