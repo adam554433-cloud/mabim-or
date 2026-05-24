@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useMemo, useState, useEffect } from "react";
 import SparkField from "./fx/SparkField";
+import Sparkle from "./fx/Sparkle";
 
 interface HeroSectionProps {
   litCount: number;
@@ -73,14 +74,14 @@ export default function HeroSection({ litCount }: HeroSectionProps) {
         ))}
       </div>
 
-      {/* ── Candle emoji ── */}
+      {/* ── Sparkle ── */}
       <motion.div
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9 }}
-        className="text-6xl mb-5 candle-flicker"
+        initial={{ opacity: 0, scale: 0.6 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+        className="relative mb-3 inline-flex items-center justify-center"
       >
-        🕯️
+        <Sparkle size={isMobile ? 72 : 96} />
       </motion.div>
 
       {/* ── Title ── */}
