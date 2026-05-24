@@ -7,7 +7,7 @@ export type MenuItem = {
 };
 
 export const MENU: MenuItem[] = [
-  { href: "/", label: "אתגר שבועי", emoji: "🕯️", description: "המשימה השבועית של הקהילה" },
+  { href: "/", label: "אתגר שבועי", emoji: "✨", description: "המשימה השבועית של הקהילה" },
   { href: "/gratitude", label: "הודיה", emoji: "🌅", description: "רשום על מה אתה אסיר תודה היום", requiresAuth: true },
   { href: "/insight", label: "תובנה יומית", emoji: "✨", description: "תובנה אחת ליום, מהקהילה ולקהילה" },
   { href: "/community", label: "רואים אחד את השני", emoji: "👥", description: "הזרם של מה שאחרים שלחו", requiresAuth: true },

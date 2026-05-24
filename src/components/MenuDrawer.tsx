@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { MENU } from "@/lib/menu";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import SparkleIcon from "./fx/SparkleIcon";
 
 type Props = {
   open: boolean;
@@ -61,8 +62,9 @@ export default function MenuDrawer({ open, onClose, user }: Props) {
             }}
           >
             <div className="px-5 py-5 flex items-center justify-between border-b border-yellow-400/10">
-              <span className="text-yellow-400 font-extrabold text-base">
-                🕯️ מביאים אור
+              <span className="text-yellow-400 font-extrabold text-base flex items-center gap-1.5">
+                <SparkleIcon size={18} />
+                מביאים אור
               </span>
               <button
                 onClick={onClose}
@@ -108,7 +110,8 @@ export default function MenuDrawer({ open, onClose, user }: Props) {
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-yellow-400 text-black font-bold hover:scale-[1.02] transition-all"
                   style={{ boxShadow: "0 0 24px rgba(251,191,36,0.35)" }}
                 >
-                  🕯️ הצטרף להאיר
+                  <SparkleIcon size={18} glow={false} />
+                  הצטרף להאיר
                 </Link>
               )}
             </div>

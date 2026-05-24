@@ -55,7 +55,7 @@ export default function WelcomeModal({ name }: Props) {
               boxShadow: "0 0 80px rgba(251,191,36,0.2)",
             }}
           >
-            <div className="text-6xl mb-4 candle-flicker">🕯️</div>
+            <div className="text-6xl mb-4 candle-flicker">✨</div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-yellow-400 mb-3">
               שלום לך{name ? ` ${name}` : ""}
             </h2>
@@ -67,7 +67,7 @@ export default function WelcomeModal({ name }: Props) {
             <div className="text-right space-y-2.5 mb-7">
               {[
                 { e: "📜", t: "אתגר שבועי — משימה אחת לכל הקהילה" },
-                { e: "🕯️", t: "האור שלך נדלק בפאזל המרכזי" },
+                { e: "✨", t: "האור שלך נדלק בפאזל המרכזי" },
                 { e: "🌅", t: "הודיה ותובנה יומית — לרוממות הנפש" },
                 { e: "👥", t: "רואים אחד את השני — קהילה אמיתית" },
               ].map((row) => (

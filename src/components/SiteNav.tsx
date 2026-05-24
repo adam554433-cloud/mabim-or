@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import MenuDrawer from "./MenuDrawer";
+import SparkleIcon from "./fx/SparkleIcon";
 
 export default function SiteNav() {
   const [user, setUser] = useState<User | null>(null);
@@ -32,9 +33,10 @@ export default function SiteNav() {
       >
         <Link
           href="/"
-          className="text-yellow-400 font-extrabold text-base sm:text-lg"
+          className="text-yellow-400 font-extrabold text-base sm:text-lg flex items-center gap-1.5"
         >
-          🕯️ מביאים אור
+          <SparkleIcon size={18} />
+          מביאים אור
         </Link>
 
         <div className="flex items-center gap-2 text-sm">

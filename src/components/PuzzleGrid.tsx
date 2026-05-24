@@ -500,7 +500,7 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
             >
               {/* What they did */}
               <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="text-yellow-400 text-[10px] font-bold tracking-wide">הדליק אור 🕯️</span>
+                <span className="text-yellow-400 text-[10px] font-bold tracking-wide">הדליק אור ✨</span>
               </div>
               <div
                 className="text-white font-semibold leading-snug mb-2"
@@ -514,7 +514,7 @@ export default function PuzzleGrid({ newLitIndex, litCount }: PuzzleGridProps) {
                   {demoPopup.name[0]}
                 </div>
                 <span className="text-amber-200/80 text-[11px] font-medium">{demoPopup.name}</span>
-                <span className="text-yellow-400/50 text-[10px] mr-auto">הדליק אור 🕯️</span>
+                <span className="text-yellow-400/50 text-[10px] mr-auto">הדליק אור ✨</span>
               </div>
             </div>
             {/* Arrow */}

@@ -108,7 +108,7 @@ export default function CommunityPage() {
                 }}
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
-                <div className="text-2xl mb-1">🕯️</div>
+                <div className="text-2xl mb-1">✨</div>
                 <div className="text-yellow-100 font-bold text-xs truncate w-full text-center">
                   {s.name}
                 </div>
@@ -165,7 +165,7 @@ export default function CommunityPage() {
                     ✕
                   </button>
                   <div className="text-center mb-5">
-                    <div className="text-4xl mb-2">🕯️</div>
+                    <div className="text-4xl mb-2">✨</div>
                     <h3 className="text-yellow-400 font-bold text-lg">
                       {sub.name}
                     </h3>

@@ -18,7 +18,7 @@ function WelcomeVisual() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.15 }}
         >
-          🕯️
+          ✨
         </motion.span>
       ))}
     </div>
@@ -232,7 +232,7 @@ const SLIDES = [
     visual: <CommunityVisual />,
   },
   {
-    badge: "בוא להצטרף 🕯️",
+    badge: "בוא להצטרף ✨",
     title: "הצטרף עכשיו",
     body: "הצטרף לאלפי אנשים שכבר מאירים. האתגר השבוע מחכה לך.",
     visual: <JoinVisual />,

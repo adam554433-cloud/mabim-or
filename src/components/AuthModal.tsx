@@ -76,7 +76,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         <button onClick={onClose} className="absolute top-4 left-4 text-gray-600 hover:text-gray-300 text-xl leading-none">×</button>
 
         <div className="text-center mb-6">
-          <div className="text-4xl mb-3 candle-flicker">🕯️</div>
+          <div className="text-4xl mb-3 candle-flicker">✨</div>
           <h2 className="text-xl font-bold text-white">
             {step === "email" && "כניסה / הרשמה"}
             {step === "otp"   && "הזן קוד"}

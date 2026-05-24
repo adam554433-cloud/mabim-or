@@ -103,7 +103,7 @@ function MiniPuzzle({ myIndex }: { myIndex: number }) {
 // ── Reactions ────────────────────────────────────────────────────────
 const REACTIONS = [
   { from: "מרים כהן",   avatar: "מ", color: "bg-orange-400", text: "כל הכבוד! זה מרגש מאוד 💛",     delay: 0.1 },
-  { from: "יוסי לוי",   avatar: "י", color: "bg-yellow-400", text: "אתה מאיר את העולם, תודה! 🕯️",  delay: 0.3 },
+  { from: "יוסי לוי",   avatar: "י", color: "bg-yellow-400", text: "אתה מאיר את העולם, תודה! ✨",  delay: 0.3 },
   { from: "רחל שמש",    avatar: "ר", color: "bg-amber-500",  text: "השכן שלך בטח שמח מאוד ❤️",     delay: 0.5 },
 ];
 
@@ -160,7 +160,7 @@ function MyLightContent() {
         <Link href="/" className="text-gray-500 hover:text-yellow-400 transition-colors text-sm">
           → חזרה לדף הבית
         </Link>
-        <span className="text-yellow-400 font-bold text-sm">🕯️ מביאים אור</span>
+        <span className="text-yellow-400 font-bold text-sm">✨ מביאים אור</span>
       </nav>
 
       <div className="max-w-md mx-auto px-5 pt-10 space-y-6">
@@ -172,7 +172,7 @@ function MyLightContent() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <div className="text-5xl mb-3 candle-flicker">🕯️</div>
+          <div className="text-5xl mb-3 candle-flicker">✨</div>
           <h1 className="text-3xl sm:text-4xl font-extrabold mb-1" style={{ textShadow: "0 0 40px rgba(251,191,36,.5)" }}>
             האור של {name}
           </h1>
@@ -288,7 +288,7 @@ function MyLightContent() {
                 boxShadow: copied ? "none" : "0 0 24px rgba(251,191,36,0.4)",
               }}
             >
-              {copied ? "הלינק הועתק ✓" : "שתף את האור שלי 🕯️"}
+              {copied ? "הלינק הועתק ✓" : "שתף את האור שלי ✨"}
             </button>
             <Link
               href="/"
@@ -322,7 +322,7 @@ function MyLightContent() {
                 className="flex-1 font-bold py-3 rounded-full text-base text-center transition-all hover:scale-105"
                 style={{ background: "#fbbf24", color: "#000", boxShadow: "0 0 20px rgba(251,191,36,0.4)" }}
               >
-                הדלק את האור שלי 🕯️
+                הדלק את האור שלי ✨
               </Link>
               <Link
                 href="/"

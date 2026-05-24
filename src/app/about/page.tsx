@@ -4,7 +4,7 @@ import SiteNav from "@/components/SiteNav";
 
 const SECTIONS = [
   {
-    icon: "🕯️",
+    icon: "✨",
     title: "המהות",
     body: "מביאים אור הוא מסע משותף של עם ישראל. אנחנו מאמינים שכל מעשה טוב — קטן ככל שיהיה — מאיר את העולם. ביחד, נדליק 50,000 אורות.",
   },
@@ -41,7 +41,7 @@ export default function AboutPage() {
       <SiteNav />
       <div className="max-w-2xl mx-auto px-5 py-10 sm:py-14">
         <div className="text-center mb-10">
-          <div className="text-5xl mb-3 candle-flicker">🕯️</div>
+          <div className="text-5xl mb-3 candle-flicker">✨</div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-yellow-400 mb-2">
             אודות
           </h1>

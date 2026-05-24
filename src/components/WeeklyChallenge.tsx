@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Challenge } from "@/types";
+import SparkleIcon from "./fx/SparkleIcon";
 
 interface WeeklyChallengeProps {
   challenge: Challenge;
@@ -43,7 +44,7 @@ export default function WeeklyChallenge({ challenge, onScrollToForm }: WeeklyCha
 
         <div className="relative z-10">
           <div className="inline-flex items-center gap-1.5 bg-yellow-400/10 text-yellow-400 text-xs font-bold px-4 py-1.5 rounded-full mb-5 border border-yellow-400/20">
-            <span className="candle-flicker text-sm">🕯️</span>
+            <SparkleIcon size={14} />
             אתגר השבוע
           </div>
 

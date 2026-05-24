@@ -76,7 +76,7 @@ function LoginContent() {
       style={{ background: "radial-gradient(ellipse 140% 55% at 50% -5%, #1e1000 0%, #0a0700 55%)" }}
     >
       <Link href="/" className="text-yellow-400 font-extrabold text-xl mb-10 candle-flicker">
-        🕯️ מביאים אור
+        ✨ מביאים אור
       </Link>
 
       <motion.div
@@ -92,7 +92,7 @@ function LoginContent() {
       >
         <div className="text-center mb-7">
           <div className="text-5xl mb-3">
-            {step === "email" && "🕯️"}
+            {step === "email" && "✨"}
             {step === "otp"   && "🔢"}
             {step === "name"  && "👋"}
           </div>

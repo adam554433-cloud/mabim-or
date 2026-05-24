@@ -246,7 +246,7 @@ export default function ProfilePage() {
                 animate={{ opacity: 1, x: 0 }}
                 className="flex items-center gap-3 rounded-xl p-3 border border-yellow-400/10 bg-yellow-400/5"
               >
-                <div className="text-xl">🕯️</div>
+                <div className="text-xl">✨</div>
                 <div className="flex-1 text-right">
                   <div className="text-yellow-100 text-sm font-semibold">
                     {s.challenge_title}

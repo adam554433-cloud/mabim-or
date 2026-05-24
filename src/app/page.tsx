@@ -125,7 +125,7 @@ export default function HomePage() {
 
         {/* Inspiration banner */}
         <div className="max-w-xl mx-auto px-5 mt-10 text-center">
-          <div className="text-4xl mb-3 candle-flicker">🕯️</div>
+          <div className="text-4xl mb-3 candle-flicker">✨</div>
           <h3 className="text-2xl font-bold text-yellow-400 mb-3">
             רוצה להאיר נקודה משלך?
           </h3>
@@ -151,7 +151,7 @@ export default function HomePage() {
               boxShadow: "0 0 40px rgba(251,191,36,0.18)",
             }}
           >
-            <div className="text-3xl">🕯️</div>
+            <div className="text-3xl">✨</div>
             <div className="flex-1 text-right">
               <p className="text-yellow-100 font-bold text-sm">
                 הצטרף וקבל נקודה משלך
@@ -266,7 +266,7 @@ export default function HomePage() {
       <CommunityFeed submissions={subs} />
 
       <footer className="text-center py-10 text-gray-600 text-sm border-t border-yellow-400/10 px-4">
-        <p>מביאים אור — ביחד אנחנו מאירים את העולם 🕯️</p>
+        <p>מביאים אור — ביחד אנחנו מאירים את העולם ✨</p>
         <Link href="/about" className="text-yellow-400/40 hover:text-yellow-400 transition-colors mt-2 inline-block">
           אודות הפרויקט
         </Link>

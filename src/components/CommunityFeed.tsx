@@ -54,7 +54,7 @@ function SubmissionCard({ s, i }: { s: Submission; i: number }) {
                 <Image src="/icons/heart.png" alt="" fill className="object-cover" quality={60} />
               </div>
               <span className="relative text-5xl candle-flicker z-10" style={{ animationDelay: `${i * 0.4}s` }}>
-                🕯️
+                ✨
               </span>
               <span className="relative text-white/50 text-xs mt-2 z-10">אור נדלק</span>
             </>
