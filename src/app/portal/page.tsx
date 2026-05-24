@@ -36,7 +36,7 @@ export default function PortalPage() {
         style={{ background: "rgba(10,7,0,0.85)" }}
       >
         <Link href="/" className="text-yellow-400 font-extrabold text-base sm:text-lg">
-          ✨ מביאים אור
+          ✨ ניצוצות
         </Link>
         <div className="flex items-center gap-3 text-sm">
           {avatar && (

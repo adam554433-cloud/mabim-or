@@ -64,7 +64,7 @@ export default function MenuDrawer({ open, onClose, user }: Props) {
             <div className="px-5 py-5 flex items-center justify-between border-b border-yellow-400/10">
               <span className="text-yellow-400 font-extrabold text-base flex items-center gap-1.5">
                 <SparkleIcon size={18} />
-                מביאים אור
+                ניצוצות
               </span>
               <button
                 onClick={onClose}

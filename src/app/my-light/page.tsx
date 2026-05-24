@@ -160,7 +160,7 @@ function MyLightContent() {
         <Link href="/" className="text-gray-500 hover:text-yellow-400 transition-colors text-sm">
           → חזרה לדף הבית
         </Link>
-        <span className="text-yellow-400 font-bold text-sm">✨ מביאים אור</span>
+        <span className="text-yellow-400 font-bold text-sm">✨ ניצוצות</span>
       </nav>
 
       <div className="max-w-md mx-auto px-5 pt-10 space-y-6">

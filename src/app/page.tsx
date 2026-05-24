@@ -266,7 +266,7 @@ export default function HomePage() {
       <CommunityFeed submissions={subs} />
 
       <footer className="text-center py-10 text-gray-600 text-sm border-t border-yellow-400/10 px-4">
-        <p>מביאים אור — ביחד אנחנו מאירים את העולם ✨</p>
+        <p>ניצוצות — ביחד אנחנו מאירים את העולם ✨</p>
         <Link href="/about" className="text-yellow-400/40 hover:text-yellow-400 transition-colors mt-2 inline-block">
           אודות הפרויקט
         </Link>

@@ -89,21 +89,31 @@ export default function HeroSection({ litCount }: HeroSectionProps) {
         initial={{ opacity: 0, y: 14, letterSpacing: "0.4em" }}
         animate={{ opacity: 1, y: 0, letterSpacing: "0em" }}
         transition={{ duration: 1.2, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="relative text-5xl sm:text-6xl md:text-7xl font-extrabold mb-3 leading-tight tracking-tight text-yellow-400"
+        className="title-a relative mb-1 text-[#FFD345]"
         style={{
           textShadow:
-            "0 0 24px rgba(251,191,36,0.6), 0 0 60px rgba(251,191,36,0.3)",
+            "0 0 24px rgba(255,211,69,0.55), 0 0 60px rgba(255,211,69,0.3)",
         }}
       >
-        מביאים אור
+        ניצוצות
       </motion.h1>
+
+      {/* ── Tagline ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.45 }}
+        className="sub-c text-[#FDE494]/90 mb-5 tracking-[0.18em]"
+      >
+        אור בפעולה
+      </motion.div>
 
       {/* ── Subtitle ── */}
       <motion.p
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.3 }}
-        className="text-base sm:text-lg md:text-xl text-gray-200 mb-8 max-w-sm sm:max-w-xl mx-auto leading-relaxed"
+        transition={{ duration: 0.8, delay: 0.55 }}
+        className="text-base sm:text-lg text-[#FCFAEA]/80 mb-8 max-w-sm sm:max-w-xl mx-auto leading-relaxed"
       >
         ביחד, אנחנו מאירים את העולם.
         <br className="hidden sm:block" />

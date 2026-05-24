@@ -60,7 +60,7 @@ export default function WelcomeModal({ name }: Props) {
               שלום לך{name ? ` ${name}` : ""}
             </h2>
             <p className="text-yellow-100/85 text-base leading-relaxed mb-6">
-              ברוך הבא ל<span className="text-yellow-400 font-bold">מביאים אור</span>.
+              ברוך הבא ל<span className="text-yellow-400 font-bold">ניצוצות</span>.
               <br />
               כאן אנחנו עושים מעשה קטן אחד בשבוע — וכל אור משלים נקודה אחת מתוך 50,000 בפאזל של עם ישראל.
             </p>

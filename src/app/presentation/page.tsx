@@ -203,7 +203,7 @@ function JoinVisual() {
 const SLIDES = [
   {
     badge: "ברוך הבא 👋",
-    title: "מה זה מביאים אור?",
+    title: "מה זה ניצוצות?",
     body: "תנועה של אנשים שעושים מעשים טובים ומתחברים ביחד. כל מעשה — אור נוסף.",
     visual: <WelcomeVisual />,
   },

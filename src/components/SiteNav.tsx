@@ -36,7 +36,7 @@ export default function SiteNav() {
           className="text-yellow-400 font-extrabold text-base sm:text-lg flex items-center gap-1.5"
         >
           <SparkleIcon size={18} />
-          מביאים אור
+          ניצוצות
         </Link>
 
         <div className="flex items-center gap-2 text-sm">
