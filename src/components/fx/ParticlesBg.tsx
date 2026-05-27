@@ -13,7 +13,7 @@ const CDN_SRC = "https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js";
 
 const CONFIG = {
   particles: {
-    number: { value: 70, density: { enable: true, value_area: 900 } },
+    number: { value: 63, density: { enable: true, value_area: 900 } },
     color: { value: "#dfe7f7" },
     shape: {
       type: "circle",

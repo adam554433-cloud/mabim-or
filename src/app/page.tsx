@@ -27,20 +27,10 @@ const PuzzleGrid = dynamic(() => import("@/components/PuzzleGrid"), {
   ),
 });
 
-function StepBadge({ n, label }: { n: number; label: string }) {
+function StepBadge({ label }: { n?: number; label: string }) {
   return (
-    <div className="flex items-center gap-2 justify-center mb-3">
-      <span
-        className="inline-flex items-center justify-center w-7 h-7 rounded-full font-bold text-sm"
-        style={{
-          background: "rgba(251,191,36,0.15)",
-          color: "#fbbf24",
-          border: "1px solid rgba(251,191,36,0.4)",
-        }}
-      >
-        {n}
-      </span>
-      <span className="text-amber-400/70 text-xs tracking-[0.25em] font-semibold">
+    <div className="flex items-center justify-center mb-3">
+      <span className="text-amber-400/80 text-base sm:text-lg tracking-[0.22em] font-semibold">
         {label}
       </span>
     </div>
