@@ -149,14 +149,13 @@ export default function AssemblingText({
 
         const breath = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(p.twinkle));
         const r = (1 - t) * 1.6 + 1.1;
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 6 * breath;
         ctx.fillStyle = color;
+        ctx.globalAlpha = 0.7 + 0.3 * breath;
         ctx.beginPath();
         ctx.arc(p.x, p.y, r * breath, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
 
       if (!allSettled) {
         rafRef.current = requestAnimationFrame(tick);
@@ -167,6 +166,7 @@ export default function AssemblingText({
     }
 
     let visible = true;
+    let settledFrame = 0;
     function twinkleLoop() {
       if (!canvas || !ctx) return;
       if (!visible) {
@@ -175,19 +175,26 @@ export default function AssemblingText({
       }
       const { w, h } = sizeRef.current;
       ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = color;
+      settledFrame++;
+      const phase = settledFrame * 0.04;
       const ps = particlesRef.current;
+      // Settled look: all dots full brightness, constant radius. Only ~6% of
+      // dots flicker at a time — picked by a slow phase, so the shape of the
+      // word stays rock-steady and you just see occasional sparkles.
       for (let i = 0; i < ps.length; i++) {
         const p = ps[i];
-        p.twinkle += 0.04;
-        const breath = 0.7 + 0.3 * (0.5 + 0.5 * Math.sin(p.twinkle + i * 0.1));
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 4 * breath;
-        ctx.fillStyle = color;
+        // deterministic per-particle offset so each twinkles on its own clock
+        const personal = (i * 12.9898) % 6.2831853;
+        const s = Math.sin(phase + personal);
+        // only the top crests of the sine flicker; rest stays at base alpha
+        const flicker = s > 0.85 ? (s - 0.85) / 0.15 : 0;
+        ctx.globalAlpha = 0.85 + 0.15 * flicker;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.2 * breath, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, 1.1, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
       rafRef.current = requestAnimationFrame(twinkleLoop);
     }
 
@@ -234,6 +241,11 @@ export default function AssemblingText({
       ref={canvasRef}
       className={`block mx-auto ${className}`}
       aria-label={text}
+      style={{
+        // Tight halo around each dot — soft enough to feel warm, narrow
+        // enough that individual sparks stay distinguishable.
+        filter: `drop-shadow(0 0 2px ${color}) drop-shadow(0 0 5px ${color})`,
+      }}
     />
   );
 }

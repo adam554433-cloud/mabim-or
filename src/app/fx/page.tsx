@@ -335,10 +335,10 @@ export default function FxShowcase() {
           <div key={assembleKey}>
             <AssemblingText
               text="ניצוצות"
-              fontSize={96}
+              fontSize={88}
               fontWeight={800}
               color="#fbbf24"
-              density={2}
+              density={3}
               duration={1800}
             />
           </div>
