@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import CoreOrb from "./fx/CoreOrb";
+import Sparkle from "./fx/Sparkle";
 import ParticlesBg from "./fx/ParticlesBg";
 
 const STORAGE_KEY = "nitzotzot:welcomed";
@@ -67,8 +67,8 @@ export default function WelcomeModal({ name, gender }: Props) {
               boxShadow: "0 0 80px rgba(251,191,36,0.2)",
             }}
           >
-            <div className="flex items-center justify-center -mt-4 -mb-2">
-              <CoreOrb intensity={0.55} size={70} />
+            <div className="flex items-center justify-center -mt-2 mb-2">
+              <Sparkle size={72} />
             </div>
             <h2
               className="mb-3 text-yellow-400 font-extrabold"

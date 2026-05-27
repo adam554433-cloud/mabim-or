@@ -111,7 +111,7 @@ export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSe
             "0 0 24px rgba(251,191,36,0.6), 0 0 60px rgba(251,191,36,0.3)",
         }}
       >
-        ניצוצות
+        הפאזל
       </motion.h1>
 
       {/* ── Brand tagline ── */}
@@ -122,7 +122,7 @@ export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSe
         className="text-sm sm:text-base md:text-lg font-medium tracking-[0.25em] mb-5"
         style={{ color: "#FDE494", opacity: 0.85 }}
       >
-        אור בפעולה
+        ניצוצות בפעולה
       </motion.p>
 
       {/* ── Hero subtitle (kept) ── */}
