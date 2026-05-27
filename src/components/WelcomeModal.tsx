@@ -2,8 +2,10 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import CoreOrb from "./fx/CoreOrb";
+import ParticlesBg from "./fx/ParticlesBg";
 
-const STORAGE_KEY = "mabim-or:welcomed";
+const STORAGE_KEY = "nitzotzot:welcomed";
 
 type Props = {
   name: string;
@@ -36,13 +38,13 @@ export default function WelcomeModal({ name }: Props) {
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
         >
           <motion.div
-            onClick={close}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 backdrop-blur-md"
-            style={{ background: "rgba(5,3,0,0.85)" }}
+            className="absolute inset-0"
+            style={{ background: "#060e1b" }}
           />
+          <ParticlesBg />
           <motion.div
             initial={{ y: 40, opacity: 0, scale: 0.95 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
@@ -55,12 +57,17 @@ export default function WelcomeModal({ name }: Props) {
               boxShadow: "0 0 80px rgba(251,191,36,0.2)",
             }}
           >
-            <div className="text-6xl mb-4 candle-flicker">✨</div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-yellow-400 mb-3">
+            <div className="flex items-center justify-center -mt-4 -mb-2">
+              <CoreOrb intensity={0.55} size={70} />
+            </div>
+            <h2
+              className="mb-3 text-yellow-400 font-extrabold"
+              style={{ fontSize: 36, fontFamily: "Assistant, sans-serif" }}
+            >
               שלום לך{name ? ` ${name}` : ""}
             </h2>
             <p className="text-yellow-100/85 text-base leading-relaxed mb-6">
-              ברוך הבא ל<span className="text-yellow-400 font-bold">מביאים אור</span>.
+              ברוכים הבאים ל<span className="text-yellow-400 font-bold">פאזל ניצוצות</span>.
               <br />
               כאן אנחנו עושים מעשה קטן אחד בשבוע — וכל אור משלים נקודה אחת מתוך 50,000 בפאזל של עם ישראל.
             </p>
