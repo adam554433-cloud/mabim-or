@@ -5,6 +5,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import SparkField from "./fx/SparkField";
 import Sparkle from "./fx/Sparkle";
 import OnePulse from "./fx/OnePulse";
+import ParticlesBg from "./fx/ParticlesBg";
 
 interface HeroSectionProps {
   litCount: number;
@@ -48,6 +49,9 @@ export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSe
 
   return (
     <section className="relative text-center px-5 py-10 md:py-20 overflow-hidden">
+
+      {/* ── Particles network ── */}
+      <ParticlesBg />
 
       {/* ── Ambient warm blobs ── */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
