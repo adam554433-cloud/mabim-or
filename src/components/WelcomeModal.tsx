@@ -79,7 +79,7 @@ export default function WelcomeModal({ name, gender }: Props) {
             <p className="text-yellow-100/85 text-base leading-relaxed mb-6">
               {welcome} ל<span className="text-yellow-400 font-bold">פאזל ניצוצות</span>.
               <br />
-              כאן אנחנו עושים מעשה קטן אחד בשבוע — וכל אור משלים נקודה אחת מתוך 50,000 בפאזל של עם ישראל.
+              כאן, כל מעשה שלך — מדליק עוד אור, ומשלים נקודה אחת נוספת מתוך ה־600,000 בפאזל של עם ישראל.
             </p>
             <div className="text-right space-y-2.5 mb-7">
               {[
