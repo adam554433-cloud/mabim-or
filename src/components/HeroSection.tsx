@@ -150,8 +150,8 @@ export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSe
           backdropFilter: "blur(12px)",
         }}
       >
-        {/* Count + label inline */}
-        <div className="flex items-baseline justify-center gap-3 flex-row-reverse">
+        {/* Count centered, label below */}
+        <div className="flex flex-col items-center gap-1">
           <span className="relative inline-block">
             <motion.span
               key={litCount}
@@ -167,7 +167,7 @@ export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSe
               <OnePulse trigger={pulseAt} size={32} rings={3} duration={1.6} />
             </span>
           </span>
-          <span className="text-lg sm:text-xl font-medium text-amber-100/90 leading-none pb-1">
+          <span className="text-base sm:text-lg font-medium text-amber-100/90 leading-none mt-1">
             אורות דולקים
           </span>
         </div>
