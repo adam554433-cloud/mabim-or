@@ -71,7 +71,7 @@ export default function NitzotzotLogo({
   return (
     <span
       className={`inline-flex flex-col items-center justify-center gap-1 ${className}`}
-      aria-label="ניצוצות — אור בפעולה"
+      aria-label="הפאזל — ניצוצות בפעולה"
     >
       <span className="inline-flex items-center gap-2">
         {mark}
@@ -84,7 +84,7 @@ export default function NitzotzotLogo({
             textShadow: "0 0 18px rgba(255,211,69,0.45)",
           }}
         >
-          ניצוצות
+          הפאזל
         </span>
       </span>
       {showTagline && (
@@ -97,7 +97,7 @@ export default function NitzotzotLogo({
             letterSpacing: "0.08em",
           }}
         >
-          אור בפעולה
+          ניצוצות בפעולה
         </span>
       )}
     </span>
