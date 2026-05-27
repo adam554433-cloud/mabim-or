@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import WelcomeModal from "@/components/WelcomeModal";
 
+type Gender = "male" | "female" | "";
+
 export default function WelcomePreviewPage() {
   const [name, setName] = useState("אדם");
+  const [gender, setGender] = useState<Gender>("male");
   const [key, setKey] = useState(0);
   const [mounted, setMounted] = useState(false);
 
@@ -36,6 +39,18 @@ export default function WelcomePreviewPage() {
             className="px-3 py-1.5 rounded-lg bg-black/60 border border-yellow-400/30 text-yellow-100 text-sm"
           />
         </label>
+        <label className="flex flex-col gap-1 text-xs text-yellow-100/80">
+          מין
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value as Gender)}
+            className="px-3 py-1.5 rounded-lg bg-black/60 border border-yellow-400/30 text-yellow-100 text-sm"
+          >
+            <option value="male">זכר</option>
+            <option value="female">נקבה</option>
+            <option value="">לא צוין</option>
+          </select>
+        </label>
         <button
           onClick={replay}
           className="px-3 py-1.5 rounded-lg bg-yellow-400 text-black text-sm font-bold"
@@ -47,7 +62,7 @@ export default function WelcomePreviewPage() {
         </p>
       </div>
 
-      {mounted && <WelcomeModal key={key} name={name} />}
+      {mounted && <WelcomeModal key={`${key}-${gender}`} name={name} gender={gender} />}
     </div>
   );
 }

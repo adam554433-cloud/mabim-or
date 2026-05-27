@@ -227,7 +227,12 @@ export default function HomePage() {
       <SiteNav />
 
       {/* First-time welcome */}
-      {isLoggedIn && <WelcomeModal name={displayName} />}
+      {isLoggedIn && (
+        <WelcomeModal
+          name={displayName}
+          gender={user?.user_metadata?.gender as "male" | "female" | undefined}
+        />
+      )}
 
       <HeroSection litCount={litCount} />
 

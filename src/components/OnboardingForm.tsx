@@ -80,6 +80,7 @@ export default function OnboardingForm({ onComplete, initialFullName = "" }: Pro
       data: {
         display_name: fullName.trim(),
         full_name: fullName.trim(),
+        gender,
         onboarded: true,
       },
     });

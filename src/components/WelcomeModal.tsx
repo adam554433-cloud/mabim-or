@@ -7,11 +7,21 @@ import ParticlesBg from "./fx/ParticlesBg";
 
 const STORAGE_KEY = "nitzotzot:welcomed";
 
+type Gender = "male" | "female" | "";
+
 type Props = {
   name: string;
+  gender?: Gender;
 };
 
-export default function WelcomeModal({ name }: Props) {
+function greetingFor(gender: Gender | undefined) {
+  if (gender === "female") return { welcome: "ברוכה הבאה", cta: "קחי אותי להתחיל" };
+  if (gender === "male") return { welcome: "ברוך הבא", cta: "קח אותי להתחיל" };
+  return { welcome: "ברוכים הבאים", cta: "קח אותי להתחיל" };
+}
+
+export default function WelcomeModal({ name, gender }: Props) {
+  const { welcome, cta } = greetingFor(gender);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -67,7 +77,7 @@ export default function WelcomeModal({ name }: Props) {
               שלום לך{name ? ` ${name}` : ""}
             </h2>
             <p className="text-yellow-100/85 text-base leading-relaxed mb-6">
-              ברוכים הבאים ל<span className="text-yellow-400 font-bold">פאזל ניצוצות</span>.
+              {welcome} ל<span className="text-yellow-400 font-bold">פאזל ניצוצות</span>.
               <br />
               כאן אנחנו עושים מעשה קטן אחד בשבוע — וכל אור משלים נקודה אחת מתוך 50,000 בפאזל של עם ישראל.
             </p>
@@ -92,10 +102,10 @@ export default function WelcomeModal({ name }: Props) {
               className="w-full bg-yellow-400 text-black font-bold py-3.5 rounded-full text-base hover:scale-[1.02] transition-all"
               style={{ boxShadow: "0 0 24px rgba(251,191,36,0.4)" }}
             >
-              קח אותי להתחיל ←
+              {cta} ←
             </button>
             <p className="text-amber-400/40 text-xs mt-3">
-              תוכל לחזור לכאן דרך תפריט ׳אודות׳
+              {gender === "female" ? "תוכלי" : "תוכל"} לחזור לכאן דרך תפריט ׳אודות׳
             </p>
           </motion.div>
         </motion.div>
