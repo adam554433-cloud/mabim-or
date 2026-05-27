@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import SparkField from "./fx/SparkField";
 import Sparkle from "./fx/Sparkle";
+import OnePulse from "./fx/OnePulse";
 
 interface HeroSectionProps {
   litCount: number;
+  ctaHref?: string;
 }
 
 function makeStars(n: number) {
@@ -22,7 +24,7 @@ function makeStars(n: number) {
   }));
 }
 
-export default function HeroSection({ litCount }: HeroSectionProps) {
+export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSectionProps) {
   const percentage = ((litCount / 50000) * 100).toFixed(1);
   const stars = useMemo(() => makeStars(90), []);
   const [isMobile, setIsMobile] = useState(false);
@@ -33,6 +35,16 @@ export default function HeroSection({ litCount }: HeroSectionProps) {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  // Fire OnePulse only when litCount changes after mount (not on initial render)
+  const prevCountRef = useRef(litCount);
+  const [pulseAt, setPulseAt] = useState<number | null>(null);
+  useEffect(() => {
+    if (prevCountRef.current !== litCount) {
+      setPulseAt(Date.now());
+      prevCountRef.current = litCount;
+    }
+  }, [litCount]);
 
   return (
     <section className="relative text-center px-5 py-10 md:py-20 overflow-hidden">
@@ -89,20 +101,31 @@ export default function HeroSection({ litCount }: HeroSectionProps) {
         initial={{ opacity: 0, y: 14, letterSpacing: "0.4em" }}
         animate={{ opacity: 1, y: 0, letterSpacing: "0em" }}
         transition={{ duration: 1.2, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="relative text-5xl sm:text-6xl md:text-7xl font-extrabold mb-3 leading-tight tracking-tight text-yellow-400"
+        className="relative text-5xl sm:text-6xl md:text-7xl font-extrabold mb-1 leading-tight tracking-tight text-yellow-400"
         style={{
           textShadow:
             "0 0 24px rgba(251,191,36,0.6), 0 0 60px rgba(251,191,36,0.3)",
         }}
       >
-        מביאים אור
+        ניצוצות
       </motion.h1>
 
-      {/* ── Subtitle ── */}
+      {/* ── Brand tagline ── */}
+      <motion.p
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.35 }}
+        className="text-sm sm:text-base md:text-lg font-medium tracking-[0.25em] mb-5"
+        style={{ color: "#FDE494", opacity: 0.85 }}
+      >
+        אור בפעולה
+      </motion.p>
+
+      {/* ── Hero subtitle (kept) ── */}
       <motion.p
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.3 }}
+        transition={{ duration: 0.8, delay: 0.45 }}
         className="text-base sm:text-lg md:text-xl text-gray-200 mb-8 max-w-sm sm:max-w-xl mx-auto leading-relaxed"
       >
         ביחד, אנחנו מאירים את העולם.
@@ -114,53 +137,81 @@ export default function HeroSection({ litCount }: HeroSectionProps) {
       <motion.div
         initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-        className="w-full max-w-xs sm:max-w-sm mx-auto rounded-2xl px-6 py-5 mb-8"
+        transition={{ duration: 0.8, delay: 0.5 }}
+        className="w-full max-w-sm sm:max-w-md mx-auto rounded-2xl px-6 py-5 mb-8"
         style={{
           background: "linear-gradient(135deg, rgba(30,18,0,0.9) 0%, rgba(15,10,0,0.85) 100%)",
-          border: "1px solid rgba(251,191,36,0.3)",
-          boxShadow: "0 0 40px rgba(251,191,36,0.12), inset 0 1px 0 rgba(251,191,36,0.1)",
+          border: "1px solid rgba(255,211,69,0.35)",
+          boxShadow: "0 0 40px rgba(255,211,69,0.14), inset 0 1px 0 rgba(255,211,69,0.12)",
           backdropFilter: "blur(12px)",
         }}
       >
-        <motion.span
-          key={litCount}
-          initial={{ scale: 1 }}
-          animate={{ scale: [1, 1.18, 0.96, 1.08, 1] }}
-          transition={{ duration: 0.9, times: [0, 0.18, 0.4, 0.7, 1], ease: "easeOut" }}
-          className="block text-5xl sm:text-6xl font-extrabold text-yellow-400 tabular-nums"
-          style={{ textShadow: "0 0 30px rgba(251,191,36,.8)" }}
-        >
-          {litCount.toLocaleString("he-IL")}
-        </motion.span>
-        <span className="block text-amber-200/70 text-sm mt-1">
-          אורות דולקים מתוך 50,000
-        </span>
-        <div className="w-full h-2 bg-white/8 rounded-full mt-4 overflow-hidden">
-          <motion.div
-            className="h-full rounded-full"
-            style={{
-              background: "linear-gradient(90deg,#f59e0b,#f97316)",
-              filter: "drop-shadow(0 0 6px rgba(251,191,36,0.8))",
-            }}
-            initial={{ width: 0 }}
-            animate={{ width: `${percentage}%` }}
-            transition={{ duration: 1.6, delay: 0.7, ease: "easeOut" }}
-          />
+        {/* Count + label inline */}
+        <div className="flex items-baseline justify-center gap-3 flex-row-reverse">
+          <span className="relative inline-block">
+            <motion.span
+              key={litCount}
+              initial={{ scale: 1 }}
+              animate={{ scale: [1, 1.18, 0.96, 1.08, 1] }}
+              transition={{ duration: 0.9, times: [0, 0.18, 0.4, 0.7, 1], ease: "easeOut" }}
+              className="block text-5xl sm:text-6xl font-extrabold tabular-nums leading-none"
+              style={{ color: "#FFD345", textShadow: "0 0 30px rgba(255,211,69,.85)" }}
+            >
+              {litCount.toLocaleString("he-IL")}
+            </motion.span>
+            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <OnePulse trigger={pulseAt} size={32} rings={3} duration={1.6} />
+            </span>
+          </span>
+          <span className="text-lg sm:text-xl font-medium text-amber-100/90 leading-none pb-1">
+            אורות דולקים
+          </span>
         </div>
-        <span className="block text-yellow-400/60 text-xs mt-1.5">{percentage}% הושלם</span>
+
+        {/* Goal line — smaller, below */}
+        <div className="text-center text-amber-200/55 text-xs sm:text-sm mt-1.5 tracking-wide">
+          היעד הראשון: 50,000
+        </div>
+
+        {/* Progress bar — bolder, more visible */}
+        <div className="relative mt-4">
+          <div
+            className="w-full h-3 rounded-full overflow-hidden"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              boxShadow: "inset 0 1px 3px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,211,69,0.18)",
+            }}
+          >
+            <motion.div
+              className="h-full rounded-full"
+              style={{
+                background: "linear-gradient(90deg,#FDE494 0%,#FFD345 50%,#CAA928 100%)",
+                boxShadow: "0 0 12px rgba(255,211,69,0.9), 0 0 24px rgba(255,211,69,0.45)",
+              }}
+              initial={{ width: 0 }}
+              animate={{ width: `${percentage}%` }}
+              transition={{ duration: 1.6, delay: 0.7, ease: "easeOut" }}
+            />
+          </div>
+          <span
+            className="absolute -top-5 left-0 text-[11px] font-semibold tabular-nums"
+            style={{ color: "#FFD345" }}
+          >
+            {percentage}%
+          </span>
+        </div>
       </motion.div>
 
       {/* ── CTA ── */}
       <motion.a
-        href="#challenge"
+        href={ctaHref}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.6 }}
-        className="inline-block w-full max-w-xs sm:w-auto bg-yellow-400 active:bg-yellow-500 text-black font-bold px-8 py-4 rounded-full text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(251,191,36,.65)] select-none"
+        className="relative z-10 inline-block w-full max-w-xs sm:w-auto bg-yellow-400 active:bg-yellow-500 text-black font-bold px-8 py-4 rounded-full text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(251,191,36,.65)] select-none cursor-pointer"
         style={{ boxShadow: "0 0 24px rgba(251,191,36,0.35)" }}
       >
-        הצטרף לאתגר השבוע ←
+        הצטרפו להאיר ←
       </motion.a>
     </section>
   );

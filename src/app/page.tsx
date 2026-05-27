@@ -11,6 +11,7 @@ import SiteNav from "@/components/SiteNav";
 import WelcomeModal from "@/components/WelcomeModal";
 import MilestoneBar from "@/components/MilestoneBar";
 import FlySpark from "@/components/fx/FlySpark";
+import CoreOrb from "@/components/fx/CoreOrb";
 import { CURRENT_CHALLENGE, MOCK_SUBMISSIONS, INITIAL_LIT_COUNT } from "@/lib/mockData";
 import { Submission } from "@/types";
 import { supabase } from "@/lib/supabase";
@@ -101,9 +102,54 @@ export default function HomePage() {
     return (
       <main className="min-h-screen pb-32">
         <SiteNav />
-        <HeroSection litCount={litCount} />
+        <HeroSection litCount={litCount} ctaHref="/login" />
 
-        <section id="puzzle" className="pb-6">
+        {/* Challenge — visible to guests (read-only) */}
+        <section id="challenge" className="pt-6 scroll-mt-20">
+          <StepBadge n={1} label="האתגר השבועי" />
+          <WeeklyChallenge
+            challenge={CURRENT_CHALLENGE}
+            onScrollToForm={() => {
+              document
+                .getElementById("guest-cta")
+                ?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
+          />
+        </section>
+
+        {/* Guest CTA — stands in for the form */}
+        <section id="guest-cta" className="pt-8 px-5">
+          <StepBadge n={2} label="הצטרפו לאתגר השבוע" />
+          <div className="max-w-xl mx-auto">
+            <div
+              className="rounded-2xl p-6 sm:p-8 text-center"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(40,25,0,0.9), rgba(15,10,0,0.85))",
+                border: "1px solid rgba(251,191,36,0.35)",
+                boxShadow: "0 0 40px rgba(251,191,36,0.10)",
+              }}
+            >
+              <div className="text-4xl mb-3 candle-flicker">✨</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2">
+                כדי להשתתף — צריך להירשם
+              </h3>
+              <p className="text-yellow-100/70 text-sm sm:text-base mb-5 leading-relaxed">
+                רישום קצר וחינם. עוזר לנו לדעת מי הדליק את האור — ונותן לכם
+                נקודה משלכם בפאזל המרכזי.
+              </p>
+              <Link
+                href="/login"
+                className="inline-block bg-yellow-400 active:bg-yellow-500 text-black font-bold px-6 py-3 rounded-full hover:scale-105 transition-all"
+                style={{ boxShadow: "0 0 24px rgba(251,191,36,0.35)" }}
+              >
+                הצטרפו לאתגר השבוע ←
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section id="puzzle" className="pt-10 pb-6">
           <div className="text-center mb-3 px-4">
             <h2 className="text-lg sm:text-xl font-semibold text-gray-300">
               גוף האור המרכזי
@@ -111,6 +157,9 @@ export default function HomePage() {
             <p className="text-gray-600 text-xs sm:text-sm mt-1">
               {litCount.toLocaleString("he-IL")} אורות כבר דולקים
             </p>
+          </div>
+          <div className="flex items-center justify-center -mb-6 sm:-mb-10 relative z-10 pointer-events-none">
+            <CoreOrb intensity={litCount / 50000} size={110} />
           </div>
           <div className="border-y border-yellow-400/10 py-3 relative" style={{ background: "linear-gradient(180deg,#080500,#050300)" }}>
             <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%,rgba(251,191,36,0.04) 0%,transparent 70%)" }} />
@@ -154,7 +203,7 @@ export default function HomePage() {
             <div className="text-3xl">✨</div>
             <div className="flex-1 text-right">
               <p className="text-yellow-100 font-bold text-sm">
-                הצטרף וקבל נקודה משלך
+                הצטרפו וקבלו נקודה משלכם
               </p>
               <p className="text-amber-400/60 text-xs">
                 בחינם — שייכות אמיתית לקהילה
@@ -164,7 +213,7 @@ export default function HomePage() {
               href="/login"
               className="bg-yellow-400 text-black font-bold px-4 py-2 rounded-full text-sm whitespace-nowrap"
             >
-              הצטרף
+              הצטרפו
             </Link>
           </div>
         </motion.div>
@@ -193,7 +242,7 @@ export default function HomePage() {
       <HeroSection litCount={litCount} />
 
       {/* Step 1 — Challenge */}
-      <section className="pt-6">
+      <section id="challenge" className="pt-6 scroll-mt-20">
         <StepBadge n={1} label="האתגר השבועי" />
         <WeeklyChallenge challenge={CURRENT_CHALLENGE} onScrollToForm={scrollToForm} />
       </section>
@@ -216,6 +265,9 @@ export default function HomePage() {
             <span className="hidden sm:inline"> — העבר עם העכבר לראות מי הדליק</span>
             <span className="sm:hidden"> — לחץ על אור לפרטים</span>
           </p>
+        </div>
+        <div className="flex items-center justify-center -mb-6 sm:-mb-10 relative z-10 pointer-events-none">
+          <CoreOrb intensity={litCount / 50000} size={120} pulseTrigger={newLitIdx} />
         </div>
         <div className="border-y border-yellow-400/10 py-3 relative" style={{ background: "linear-gradient(180deg,#080500,#050300)" }}>
           <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%,rgba(251,191,36,0.04) 0%,transparent 70%)" }} />

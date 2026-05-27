@@ -3,22 +3,35 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import SiteNav from "@/components/SiteNav";
+import { useRouter } from "next/navigation";
+import LightPage from "@/components/LightPage";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import { MOCK_SUBMISSIONS, CURRENT_CHALLENGE } from "@/lib/mockData";
 import PulseDot from "@/components/fx/PulseDot";
 import ProgressConstellation, { ConstellationStep } from "@/components/fx/ProgressConstellation";
 
-const HISTORY_KEY = "mabim-or:my-history";
+const INK = "#2A2A2A";
+const INK_SOFT = "#5A5A5A";
+const GOLD = "#FFD345";
+const GOLD_DK = "#CAA928";
+const GOLD_LT = "#FDE494";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
   const [displayName, setDisplayName] = useState("");
   const [saving, setSaving] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  async function signOut() {
+    setSigningOut(true);
+    await supabase.auth.signOut();
+    router.push("/");
+  }
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -68,37 +81,37 @@ export default function ProfilePage() {
 
   if (user === undefined) {
     return (
-      <main className="min-h-screen">
-        <SiteNav />
-        <div className="text-center text-amber-400/40 pt-20">טוען...</div>
-      </main>
+      <LightPage>
+        <div className="text-center pt-20" style={{ color: GOLD_DK }}>
+          טוען...
+        </div>
+      </LightPage>
     );
   }
 
   if (!user) {
     return (
-      <main className="min-h-screen">
-        <SiteNav />
+      <LightPage>
         <div className="max-w-md mx-auto px-5 py-20 text-center">
           <div className="text-5xl mb-3">💛</div>
-          <h1 className="text-2xl font-extrabold text-yellow-400 mb-3">
+          <h1 className="text-2xl font-extrabold mb-3" style={{ color: INK }}>
             הפרופיל האישי שלי
           </h1>
-          <p className="text-yellow-100/70 text-sm mb-6">
+          <p className="text-sm mb-6" style={{ color: INK_SOFT }}>
             כדי לראות את הפרופיל — צריך להיות חבר בקהילה.
           </p>
           <Link
             href="/login"
-            className="inline-block bg-yellow-400 text-black font-bold px-6 py-3 rounded-full"
+            className="inline-block font-bold px-6 py-3 rounded-full"
+            style={{ background: INK, color: GOLD }}
           >
             הצטרף
           </Link>
         </div>
-      </main>
+      </LightPage>
     );
   }
 
-  // History from localStorage + mock data filtered to this user's name
   const myHistory = MOCK_SUBMISSIONS.filter((s) => s.name === displayName);
   const totalLights = myHistory.length;
 
@@ -116,42 +129,46 @@ export default function ProfilePage() {
       done: false,
       active: totalLights > 0,
     },
-    {
-      label: "חבר/ה מאיר/ה",
-      sub: "10 אורות סך הכל",
-      done: false,
-    },
-    {
-      label: "מאיר/ת קהילה",
-      sub: "מעורב גם בהודיה ובתגובות",
-      done: false,
-    },
+    { label: "חבר/ה מאיר/ה", sub: "10 אורות סך הכל", done: false },
+    { label: "מאיר/ת קהילה", sub: "מעורב גם בהודיה ובתגובות", done: false },
   ];
 
+  const card = {
+    background: "#FFFFFF",
+    border: `1px solid ${GOLD_DK}22`,
+    boxShadow: "0 6px 18px rgba(202,169,40,0.07)",
+  };
+
   return (
-    <main className="min-h-screen">
-      <SiteNav />
-      <div className="max-w-2xl mx-auto px-5 py-10">
+    <LightPage>
+      <div className="max-w-2xl mx-auto px-5 py-12">
         <div className="text-center mb-8">
           {/* Avatar with pulse rings */}
-          <div className="relative inline-flex items-center justify-center mb-4" style={{ width: 130, height: 130 }}>
-            {/* Pulse rings behind */}
+          <div
+            className="relative inline-flex items-center justify-center mb-4"
+            style={{ width: 130, height: 130 }}
+          >
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <PulseDot size={104} rings={2} speed={2.8} color="#fbbf24" />
+              <PulseDot size={104} rings={2} speed={2.8} color={GOLD_DK} />
             </div>
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={avatarUrl}
                 alt={displayName}
-                className="relative w-24 h-24 rounded-full object-cover border-2 border-yellow-400/60 shadow-[0_0_30px_rgba(251,191,36,0.3)]"
+                className="relative w-24 h-24 rounded-full object-cover border-2"
+                style={{
+                  borderColor: GOLD_DK,
+                  boxShadow: `0 0 30px ${GOLD}55`,
+                }}
               />
             ) : (
               <div
-                className="relative w-24 h-24 rounded-full border-2 border-yellow-400/60 flex items-center justify-center text-5xl"
+                className="relative w-24 h-24 rounded-full border-2 flex items-center justify-center text-5xl"
                 style={{
-                  background: "rgba(251,191,36,0.08)",
-                  boxShadow: "0 0 30px rgba(251,191,36,0.2)",
+                  borderColor: GOLD_DK,
+                  background: `${GOLD_LT}40`,
+                  boxShadow: `0 0 30px ${GOLD}33`,
                 }}
               >
                 💛
@@ -159,7 +176,8 @@ export default function ProfilePage() {
             )}
             <button
               onClick={onPickFile}
-              className="absolute bottom-2 left-2 w-9 h-9 rounded-full bg-yellow-400 text-black flex items-center justify-center font-bold hover:scale-110 transition-all z-10"
+              className="absolute bottom-2 left-2 w-9 h-9 rounded-full flex items-center justify-center font-bold hover:scale-110 transition-all z-10"
+              style={{ background: INK, color: GOLD }}
               title="העלה תמונה"
             >
               📷
@@ -173,18 +191,28 @@ export default function ProfilePage() {
             />
           </div>
 
-          {/* Name */}
           <input
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="text-center text-2xl sm:text-3xl font-extrabold text-yellow-400 bg-transparent border-b border-yellow-400/20 focus:outline-none focus:border-yellow-400 px-2 py-1 max-w-xs"
+            className="text-center text-2xl sm:text-3xl font-extrabold bg-transparent border-b focus:outline-none px-2 py-1 max-w-xs"
+            style={{
+              color: INK,
+              borderColor: `${GOLD_DK}55`,
+            }}
           />
-          <p className="text-amber-400/60 text-sm mt-2">{user.email}</p>
+          <p className="text-sm mt-2" style={{ color: GOLD_DK }}>
+            {user.email}
+          </p>
 
           <button
             onClick={save}
             disabled={saving}
-            className="mt-4 bg-yellow-400/10 border border-yellow-400/40 text-yellow-400 font-semibold px-5 py-2 rounded-full text-sm hover:bg-yellow-400/20 transition-all disabled:opacity-50"
+            className="mt-4 font-semibold px-5 py-2 rounded-full text-sm transition-all disabled:opacity-50"
+            style={{
+              background: "#FFFFFF",
+              color: INK,
+              border: `1px solid ${GOLD_DK}55`,
+            }}
           >
             {saving ? "שומר..." : savedFlash ? "נשמר ✓" : "שמור שינויים"}
           </button>
@@ -192,47 +220,45 @@ export default function ProfilePage() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-8">
-          <div className="rounded-xl p-4 text-center border border-yellow-400/15 bg-yellow-400/5">
-            <div className="text-3xl font-extrabold text-yellow-400">
-              {totalLights}
+          {[
+            { n: totalLights, l: "אורות שלי" },
+            { n: 7, l: "ימים ברצף" },
+            { n: 1, l: "תגים" },
+          ].map((s) => (
+            <div key={s.l} className="rounded-xl p-4 text-center" style={card}>
+              <div className="text-3xl font-extrabold" style={{ color: GOLD_DK }}>
+                {s.n}
+              </div>
+              <div className="text-xs mt-1" style={{ color: INK_SOFT }}>
+                {s.l}
+              </div>
             </div>
-            <div className="text-amber-400/60 text-xs mt-1">אורות שלי</div>
-          </div>
-          <div className="rounded-xl p-4 text-center border border-yellow-400/15 bg-yellow-400/5">
-            <div className="text-3xl font-extrabold text-yellow-400">7</div>
-            <div className="text-amber-400/60 text-xs mt-1">ימים ברצף</div>
-          </div>
-          <div className="rounded-xl p-4 text-center border border-yellow-400/15 bg-yellow-400/5">
-            <div className="text-3xl font-extrabold text-yellow-400">1</div>
-            <div className="text-amber-400/60 text-xs mt-1">תגים</div>
-          </div>
+          ))}
         </div>
 
-        {/* Journey constellation */}
-        <div
-          className="rounded-2xl p-5 mb-8 border border-yellow-400/15"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(40,25,0,0.5) 0%, rgba(10,7,0,0.4) 100%)",
-          }}
-        >
+        {/* Journey */}
+        <div className="rounded-2xl p-5 mb-8" style={card}>
           <ProgressConstellation steps={journey} title="המסע שלך" />
         </div>
 
         {/* History */}
-        <h2 className="text-amber-400/60 text-xs tracking-[0.25em] font-semibold mb-3">
+        <h2 className="text-xs tracking-[0.25em] font-bold mb-3" style={{ color: GOLD_DK }}>
           מה עשיתי עד כה
         </h2>
         {myHistory.length === 0 ? (
-          <div className="rounded-2xl border border-yellow-400/15 p-6 text-center">
-            <p className="text-yellow-100/70 text-sm mb-3">
+          <div className="rounded-2xl p-6 text-center" style={card}>
+            <p className="text-sm mb-3" style={{ color: INK_SOFT }}>
               עוד לא הדלקת אור באתגר.
               <br />
-              האתגר הנוכחי: <span className="text-yellow-400">{CURRENT_CHALLENGE.title}</span>
+              האתגר הנוכחי:{" "}
+              <span className="font-bold" style={{ color: GOLD_DK }}>
+                {CURRENT_CHALLENGE.title}
+              </span>
             </p>
             <Link
               href="/"
-              className="inline-block bg-yellow-400 text-black font-bold px-5 py-2 rounded-full text-sm"
+              className="inline-block font-bold px-5 py-2 rounded-full text-sm"
+              style={{ background: INK, color: GOLD }}
             >
               להתחיל
             </Link>
@@ -244,14 +270,15 @@ export default function ProfilePage() {
                 key={s.id}
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-3 rounded-xl p-3 border border-yellow-400/10 bg-yellow-400/5"
+                className="flex items-center gap-3 rounded-xl p-3"
+                style={card}
               >
                 <div className="text-xl">✨</div>
                 <div className="flex-1 text-right">
-                  <div className="text-yellow-100 text-sm font-semibold">
+                  <div className="text-sm font-semibold" style={{ color: INK }}>
                     {s.challenge_title}
                   </div>
-                  <div className="text-amber-400/40 text-xs">
+                  <div className="text-xs" style={{ color: GOLD_DK }}>
                     {new Date(s.created_at).toLocaleDateString("he-IL")}
                   </div>
                 </div>
@@ -259,7 +286,23 @@ export default function ProfilePage() {
             ))}
           </div>
         )}
+
+        {/* Sign out */}
+        <div className="mt-12 pt-6 border-t text-center" style={{ borderColor: `${GOLD_DK}22` }}>
+          <button
+            onClick={signOut}
+            disabled={signingOut}
+            className="text-sm font-medium px-5 py-2 rounded-full transition-all hover:opacity-80 disabled:opacity-50"
+            style={{
+              background: "transparent",
+              color: INK_SOFT,
+              border: `1px solid ${GOLD_DK}33`,
+            }}
+          >
+            {signingOut ? "מתנתק..." : "התנתק מהחשבון"}
+          </button>
+        </div>
       </div>
-    </main>
+    </LightPage>
   );
 }

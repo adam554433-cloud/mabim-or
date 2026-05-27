@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import SiteNav from "@/components/SiteNav";
+import LightPage from "@/components/LightPage";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
@@ -36,6 +36,13 @@ const SEED: Entry[] = [
     date: "2026-05-12",
   },
 ];
+
+// Palette
+const INK = "#2A2A2A";
+const INK_SOFT = "#5A5A5A";
+const GOLD = "#FFD345";
+const GOLD_DK = "#CAA928";
+const GOLD_LT = "#FDE494";
 
 export default function GratitudePage() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
@@ -76,26 +83,29 @@ export default function GratitudePage() {
   }
 
   return (
-    <main className="min-h-screen">
-      <SiteNav />
-      <div className="max-w-2xl mx-auto px-5 py-10">
-        <div className="text-center mb-8">
+    <LightPage>
+      <div className="max-w-2xl mx-auto px-5 py-12">
+        <div className="text-center mb-10">
           <div className="text-5xl mb-3">🌅</div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-yellow-400 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-extrabold mb-2" style={{ color: INK }}>
             הודיה
           </h1>
-          <p className="text-yellow-100/70 text-base leading-relaxed">
+          <p className="text-base leading-relaxed" style={{ color: INK_SOFT }}>
             רגע אחד של תודה — משנה את היום.
             <br />
-            מה הקטן והגדול שאתה אסיר תודה עליו היום?
+            מה הקטן והגדול שאת/ה אסיר/ת תודה עליו היום?
           </p>
         </div>
 
         {/* Form */}
         {user === undefined ? null : user ? (
           <div
-            className="rounded-2xl p-5 mb-8 border border-yellow-400/20"
-            style={{ background: "linear-gradient(135deg,#1a1000,#0a0700)" }}
+            className="rounded-2xl p-5 mb-8"
+            style={{
+              background: "#FFFFFF",
+              border: `1px solid ${GOLD_DK}33`,
+              boxShadow: "0 10px 30px rgba(202,169,40,0.08), 0 2px 8px rgba(0,0,0,0.04)",
+            }}
           >
             <textarea
               value={text}
@@ -103,29 +113,47 @@ export default function GratitudePage() {
               maxLength={280}
               rows={3}
               placeholder="היום אני אסיר/ה תודה על..."
-              className="w-full bg-black/30 border border-yellow-400/15 rounded-xl p-3 text-yellow-100 placeholder-amber-400/30 focus:outline-none focus:border-yellow-400/40 resize-none text-right"
+              className="w-full rounded-xl p-3 resize-none text-right focus:outline-none"
+              style={{
+                background: "#FFFCF0",
+                border: `1px solid ${GOLD_DK}22`,
+                color: INK,
+              }}
             />
             <div className="flex items-center justify-between mt-3">
-              <span className="text-amber-400/40 text-xs">
+              <span className="text-xs" style={{ color: GOLD_DK }}>
                 {text.length}/280
               </span>
               <button
                 onClick={submit}
                 disabled={!text.trim()}
-                className="bg-yellow-400 text-black font-bold px-5 py-2 rounded-full text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 transition-all"
+                className="font-bold px-5 py-2 rounded-full text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 transition-all"
+                style={{
+                  background: INK,
+                  color: GOLD,
+                  boxShadow: `0 6px 16px ${INK}25`,
+                }}
               >
                 {submitted ? "נשלח ✓" : "פרסם הודיה"}
               </button>
             </div>
           </div>
         ) : (
-          <div className="text-center mb-8 p-5 rounded-2xl border border-yellow-400/20 bg-yellow-400/5">
-            <p className="text-yellow-100/80 text-sm mb-3">
+          <div
+            className="text-center mb-8 p-5 rounded-2xl"
+            style={{
+              background: "#FFFFFF",
+              border: `1px solid ${GOLD_DK}33`,
+              boxShadow: "0 6px 20px rgba(202,169,40,0.06)",
+            }}
+          >
+            <p className="text-sm mb-3" style={{ color: INK_SOFT }}>
               כדי לפרסם הודיה — צריך להתחבר תחילה.
             </p>
             <Link
               href="/login"
-              className="inline-block bg-yellow-400 text-black font-bold px-5 py-2 rounded-full text-sm"
+              className="inline-block font-bold px-5 py-2 rounded-full text-sm"
+              style={{ background: INK, color: GOLD }}
             >
               התחבר
             </Link>
@@ -133,7 +161,10 @@ export default function GratitudePage() {
         )}
 
         {/* Feed */}
-        <h2 className="text-amber-400/60 text-xs tracking-[0.25em] font-semibold mb-3">
+        <h2
+          className="text-xs tracking-[0.25em] font-bold mb-3"
+          style={{ color: GOLD_DK }}
+        >
           הודיות הקהילה
         </h2>
         <div className="space-y-3">
@@ -144,24 +175,28 @@ export default function GratitudePage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="rounded-2xl p-4 border border-yellow-400/10"
-                style={{ background: "rgba(20,12,0,0.5)" }}
+                className="rounded-2xl p-4"
+                style={{
+                  background: "#FFFFFF",
+                  border: `1px solid ${GOLD_DK}22`,
+                  boxShadow: "0 4px 14px rgba(202,169,40,0.05)",
+                }}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <div
                     className="w-7 h-7 rounded-full flex items-center justify-center text-sm"
-                    style={{ background: "rgba(251,191,36,0.15)" }}
+                    style={{ background: `${GOLD_LT}80` }}
                   >
                     💛
                   </div>
-                  <span className="text-yellow-100 font-semibold text-sm">
+                  <span className="font-semibold text-sm" style={{ color: INK }}>
                     {e.name}
                   </span>
-                  <span className="text-amber-400/30 text-xs mr-auto">
+                  <span className="text-xs mr-auto" style={{ color: GOLD_DK }}>
                     {e.date}
                   </span>
                 </div>
-                <p className="text-yellow-100/85 text-sm leading-relaxed">
+                <p className="text-sm leading-relaxed" style={{ color: INK_SOFT }}>
                   {e.text}
                 </p>
               </motion.div>
@@ -169,6 +204,6 @@ export default function GratitudePage() {
           </AnimatePresence>
         </div>
       </div>
-    </main>
+    </LightPage>
   );
 }

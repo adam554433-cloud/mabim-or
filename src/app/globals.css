@@ -1,11 +1,49 @@
 @import "tailwindcss";
 
 :root {
-  --font-assistant: "Assistant", sans-serif;
+  --font-heebo: "Heebo", sans-serif;
+  --font-assistant: var(--font-heebo);
+
+  /* Brand palette — Cod26 style guide */
+  --brand-ink:        #2A2A2A;
+  --brand-black:      #000000;
+  --brand-cream:      #FCFAEA;
+  --brand-white:      #FFFFFF;
+
+  --brand-yellow:     #FFD345;
+  --brand-yellow-dk:  #CAA928;
+  --brand-yellow-lt:  #FDE494;
+
+  --brand-blue:       #5898FF;
+  --brand-blue-dk:    #285678;
+  --brand-blue-ink:   #253DFF;
+  --brand-blue-lt:    #B4CDF5;
+
+  --brand-purple:     #8A26ED;
+  --brand-lime:       #D3F613;
 }
 
 @theme inline {
-  --font-assistant: var(--font-assistant);
+  --font-heebo: var(--font-heebo);
+  --font-assistant: var(--font-heebo);
+
+  /* Remap Tailwind yellow + amber tokens to the brand palette so
+     all existing classes (text-yellow-400, bg-yellow-400/10, etc.)
+     automatically pick up the correct brand shades. */
+  --color-yellow-50:  #FCFAEA;
+  --color-yellow-100: #FDE494;
+  --color-yellow-200: #FDE494;
+  --color-yellow-300: #FFD345;
+  --color-yellow-400: #FFD345;
+  --color-yellow-500: #CAA928;
+  --color-yellow-600: #CAA928;
+
+  --color-amber-100:  #FDE494;
+  --color-amber-200:  #FDE494;
+  --color-amber-300:  #FFD345;
+  --color-amber-400:  #CAA928;
+  --color-amber-500:  #CAA928;
+  --color-amber-600:  #CAA928;
 }
 
 * {
@@ -13,14 +51,15 @@
 }
 
 body {
-  font-family: var(--font-assistant), "Assistant", Arial, sans-serif;
+  font-family: var(--font-heebo), "Heebo", Arial, sans-serif;
   background: #0a0700;
   color: #ffffff;
   overflow-x: hidden;
 }
 
-.font-assistant {
-  font-family: var(--font-assistant), "Assistant", Arial, sans-serif;
+.font-assistant,
+.font-heebo {
+  font-family: var(--font-heebo), "Heebo", Arial, sans-serif;
 }
 
 /* ── Star twinkle ── */
@@ -83,3 +122,59 @@ body {
 ::-webkit-scrollbar            { width: 5px; }
 ::-webkit-scrollbar-track      { background: #0a0700; }
 ::-webkit-scrollbar-thumb      { background: #3a2800; border-radius: 3px; }
+
+/* ── Accessibility widget classes ── */
+html.a11y-font-lg  { font-size: 18px; }
+html.a11y-font-xl  { font-size: 20px; }
+html.a11y-font-xxl { font-size: 22px; }
+
+html.a11y-high-contrast body {
+  background: #000 !important;
+}
+html.a11y-high-contrast * {
+  color: #FFFF00 !important;
+  border-color: #FFFF00 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+html.a11y-high-contrast a,
+html.a11y-high-contrast button {
+  background: #000 !important;
+  color: #FFFF00 !important;
+  outline: 2px solid #FFFF00 !important;
+}
+
+html.a11y-underline-links a {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+html.a11y-dyslexia,
+html.a11y-dyslexia body {
+  font-family: "Comic Sans MS", "OpenDyslexic", system-ui, sans-serif !important;
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.12em !important;
+  line-height: 1.7 !important;
+}
+
+html.a11y-pause-anim *,
+html.a11y-pause-anim *::before,
+html.a11y-pause-anim *::after {
+  animation-play-state: paused !important;
+}
+
+/* Focus visible — always strong, regardless of a11y settings */
+:focus-visible {
+  outline: 3px solid #FFD345 !important;
+  outline-offset: 2px;
+}

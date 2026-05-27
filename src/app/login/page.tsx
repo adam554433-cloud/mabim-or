@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import OnboardingForm from "@/components/OnboardingForm";
 
-type Step = "email" | "otp" | "name";
+type Step = "email" | "otp" | "onboarding";
 
 function LoginContent() {
   const router = useRouter();
@@ -16,7 +17,6 @@ function LoginContent() {
   const [step,    setStep]    = useState<Step>("email");
   const [email,   setEmail]   = useState("");
   const [otp,     setOtp]     = useState("");
-  const [name,    setName]    = useState("");
   const [loading, setLoading] = useState(false);
   const [gLoading, setGLoading] = useState(false);
   const [error,   setError]   = useState("");
@@ -25,7 +25,9 @@ function LoginContent() {
     setGLoading(true);
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}${redirect}` },
+      options: {
+        redirectTo: `${window.location.origin}/onboarding?next=${encodeURIComponent(redirect)}`,
+      },
     });
   }
 
@@ -51,23 +53,11 @@ function LoginContent() {
     });
     setLoading(false);
     if (error) { setError("קוד לא נכון. נסה שוב."); return; }
-    if (!data.user?.user_metadata?.display_name) {
-      setStep("name");
+    if (!data.user?.user_metadata?.onboarded) {
+      setStep("onboarding");
     } else {
       router.push(redirect);
     }
-  }
-
-  async function saveName() {
-    if (!name.trim()) return;
-    setLoading(true);
-    await supabase.auth.updateUser({ data: { display_name: name.trim() } });
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase.from("profiles").upsert({ id: user.id, display_name: name.trim() });
-    }
-    setLoading(false);
-    router.push(redirect);
   }
 
   return (
@@ -83,7 +73,7 @@ function LoginContent() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-sm rounded-3xl p-8"
+        className={`w-full ${step === "onboarding" ? "max-w-md" : "max-w-sm"} rounded-3xl p-8`}
         style={{
           background: "linear-gradient(135deg,#1e1200,#0d0800)",
           border: "1px solid rgba(251,191,36,0.3)",
@@ -92,19 +82,19 @@ function LoginContent() {
       >
         <div className="text-center mb-7">
           <div className="text-5xl mb-3">
-            {step === "email" && "✨"}
-            {step === "otp"   && "🔢"}
-            {step === "name"  && "👋"}
+            {step === "email"      && "✨"}
+            {step === "otp"        && "🔢"}
+            {step === "onboarding" && "👋"}
           </div>
           <h1 className="text-2xl font-extrabold text-white">
-            {step === "email" && "כניסה / הרשמה"}
-            {step === "otp"   && "הזן קוד"}
-            {step === "name"  && "מה השם שלך?"}
+            {step === "email"      && "כניסה / הרשמה"}
+            {step === "otp"        && "הזן קוד"}
+            {step === "onboarding" && "ספר/י לנו עליך"}
           </h1>
           <p className="text-amber-200/50 text-sm mt-2">
-            {step === "email" && "הצטרף לקהילה שמאירה את העולם"}
-            {step === "otp"   && `שלחנו קוד אל ${email}`}
-            {step === "name"  && "איך לקרוא לך בקהילה?"}
+            {step === "email"      && "הצטרף לקהילה שמאירה את העולם"}
+            {step === "otp"        && `שלחנו קוד אל ${email}`}
+            {step === "onboarding" && "שאלון קצר לפני שמתחילים"}
           </p>
         </div>
 
@@ -193,26 +183,9 @@ function LoginContent() {
             </motion.div>
           )}
 
-          {step === "name" && (
-            <motion.div key="name" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-3">
-              <input
-                type="text"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && saveName()}
-                placeholder="יוסי לוי"
-                autoFocus
-                className="w-full rounded-xl px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none text-base"
-                style={{ background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)" }}
-              />
-              <button
-                onClick={saveName}
-                disabled={loading || !name.trim()}
-                className="w-full font-bold py-4 rounded-full text-lg disabled:opacity-40 transition-all hover:scale-[1.02]"
-                style={{ background: "#fbbf24", color: "#000", boxShadow: "0 0 24px rgba(251,191,36,0.35)" }}
-              >
-                {loading ? "שומר..." : "בוא נתחיל! →"}
-              </button>
+          {step === "onboarding" && (
+            <motion.div key="onboarding" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
+              <OnboardingForm onComplete={() => router.push(redirect)} />
             </motion.div>
           )}
         </AnimatePresence>

@@ -3,19 +3,19 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import OnboardingForm from "./OnboardingForm";
 
 interface AuthModalProps {
   onClose: () => void;
   onSuccess: () => void;
 }
 
-type Step = "email" | "otp" | "name";
+type Step = "email" | "otp" | "onboarding";
 
 export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
   const [step,  setStep]  = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [otp,   setOtp]   = useState("");
-  const [name,  setName]  = useState("");
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState("");
 
@@ -41,25 +41,11 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
     });
     setLoading(false);
     if (error) { setError("קוד לא נכון. נסה שוב."); return; }
-    // New user? ask for display name
-    if (!data.user?.user_metadata?.display_name) {
-      setStep("name");
+    if (!data.user?.user_metadata?.onboarded) {
+      setStep("onboarding");
     } else {
       onSuccess();
     }
-  }
-
-  async function saveName() {
-    if (!name.trim()) return;
-    setLoading(true);
-    await supabase.auth.updateUser({ data: { display_name: name.trim() } });
-    // Upsert profile
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase.from("profiles").upsert({ id: user.id, display_name: name.trim() });
-    }
-    setLoading(false);
-    onSuccess();
   }
 
   return (
@@ -70,7 +56,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         initial={{ opacity: 0, scale: 0.92, y: 16 }}
         animate={{ opacity: 1, scale: 1,    y: 0  }}
         exit={{   opacity: 0, scale: 0.92, y: 16  }}
-        className="relative w-full max-w-sm rounded-3xl p-7 z-10"
+        className={`relative w-full ${step === "onboarding" ? "max-w-md" : "max-w-sm"} rounded-3xl p-7 z-10 max-h-[92vh] overflow-y-auto`}
         style={{ background: "linear-gradient(135deg,#1e1200,#0d0800)", border: "1px solid rgba(251,191,36,0.3)", boxShadow: "0 0 60px rgba(251,191,36,0.15)" }}
       >
         <button onClick={onClose} className="absolute top-4 left-4 text-gray-600 hover:text-gray-300 text-xl leading-none">×</button>
@@ -78,14 +64,14 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         <div className="text-center mb-6">
           <div className="text-4xl mb-3 candle-flicker">✨</div>
           <h2 className="text-xl font-bold text-white">
-            {step === "email" && "כניסה / הרשמה"}
-            {step === "otp"   && "הזן קוד"}
-            {step === "name"  && "מה השם שלך?"}
+            {step === "email"      && "כניסה / הרשמה"}
+            {step === "otp"        && "הזן קוד"}
+            {step === "onboarding" && "ספר/י לנו עליך"}
           </h2>
           <p className="text-amber-200/50 text-sm mt-1">
-            {step === "email" && "נשלח לך קוד חד-פעמי למייל"}
-            {step === "otp"   && `שלחנו קוד 6 ספרות אל ${email}`}
-            {step === "name"  && "איך לקרוא לך בקהילה?"}
+            {step === "email"      && "נשלח לך קוד חד-פעמי למייל"}
+            {step === "otp"        && `שלחנו קוד 6 ספרות אל ${email}`}
+            {step === "onboarding" && "שאלון קצר לפני שמתחילים"}
           </p>
         </div>
 
@@ -142,26 +128,9 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
             </motion.div>
           )}
 
-          {step === "name" && (
-            <motion.div key="name" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
-              <input
-                type="text"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && saveName()}
-                placeholder="יוסי לוי"
-                autoFocus
-                className="w-full rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none text-base"
-                style={{ background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)" }}
-              />
-              <button
-                onClick={saveName}
-                disabled={loading || !name.trim()}
-                className="w-full font-bold py-3.5 rounded-full text-base disabled:opacity-40 transition-all hover:scale-[1.02]"
-                style={{ background: "#fbbf24", color: "#000", boxShadow: "0 0 20px rgba(251,191,36,0.3)" }}
-              >
-                {loading ? "שומר..." : "בוא נתחיל! →"}
-              </button>
+          {step === "onboarding" && (
+            <motion.div key="onboarding" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <OnboardingForm onComplete={onSuccess} />
             </motion.div>
           )}
         </AnimatePresence>

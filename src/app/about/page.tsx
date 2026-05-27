@@ -1,6 +1,10 @@
 "use client";
 
-import SiteNav from "@/components/SiteNav";
+import LightPage from "@/components/LightPage";
+
+const INK = "#2A2A2A";
+const INK_SOFT = "#5A5A5A";
+const GOLD_DK = "#CAA928";
 
 const SECTIONS = [
   {
@@ -37,15 +41,14 @@ const SECTIONS = [
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen">
-      <SiteNav />
-      <div className="max-w-2xl mx-auto px-5 py-10 sm:py-14">
+    <LightPage>
+      <div className="max-w-2xl mx-auto px-5 py-12 sm:py-16">
         <div className="text-center mb-10">
           <div className="text-5xl mb-3 candle-flicker">✨</div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-yellow-400 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-extrabold mb-2" style={{ color: INK }}>
             אודות
           </h1>
-          <p className="text-yellow-100/70 text-base">
+          <p className="text-base" style={{ color: INK_SOFT }}>
             אור לעם ישראל — צופן של מעשה, חיבור ואהבה
           </p>
         </div>
@@ -54,19 +57,20 @@ export default function AboutPage() {
           {SECTIONS.map((s, i) => (
             <div
               key={i}
-              className="rounded-2xl border border-yellow-400/15 p-5"
+              className="rounded-2xl p-5"
               style={{
-                background:
-                  "linear-gradient(135deg, rgba(40,25,0,0.4) 0%, rgba(10,7,0,0.4) 100%)",
+                background: "#FFFFFF",
+                border: `1px solid ${GOLD_DK}22`,
+                boxShadow: "0 4px 14px rgba(202,169,40,0.06)",
               }}
             >
               <div className="flex items-start gap-3">
                 <span className="text-3xl flex-shrink-0">{s.icon}</span>
                 <div className="text-right">
-                  <h3 className="text-yellow-400 font-bold text-lg mb-1">
+                  <h3 className="font-bold text-lg mb-1" style={{ color: INK }}>
                     {s.title}
                   </h3>
-                  <p className="text-yellow-100/75 text-sm leading-relaxed">
+                  <p className="text-sm leading-relaxed" style={{ color: INK_SOFT }}>
                     {s.body}
                   </p>
                 </div>
@@ -75,10 +79,17 @@ export default function AboutPage() {
           ))}
         </div>
 
-        <p className="text-center text-amber-400/40 text-xs mt-10">
-          הפרויקט בפיתוח. השאר/י לנו רעיון? הוסיפו לקהילה.
+        <p
+          className="text-center text-sm sm:text-base mt-10 font-semibold px-4 py-3 rounded-xl max-w-md mx-auto"
+          style={{
+            color: INK,
+            background: `${GOLD_DK}1A`,
+            border: `1px solid ${GOLD_DK}55`,
+          }}
+        >
+          הפרויקט בפיתוח. יש לכם רעיון? הצטרפו לקהילה ושתפו אותנו.
         </p>
       </div>
-    </main>
+    </LightPage>
   );
 }

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Challenge } from "@/types";
 import { ALL_CHALLENGES } from "@/lib/mockData";
+import ShareButtons from "./ShareButtons";
 
 interface SubmissionFormProps {
   challenge: Challenge;
@@ -78,6 +79,9 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
               <div className="text-6xl mb-4 candle-flicker">✨</div>
               <h3 className="text-xl font-bold text-yellow-400 mb-2">האור שלך נדלק!</h3>
               <p className="text-gray-400 text-sm">תודה {submittedName}, אורך #{submittedNum.toLocaleString("he-IL")} מוסיף לפאזל.</p>
+
+              <ShareButtons puzzleNumber={submittedNum} />
+
               <button
                 onClick={() => router.push(`/my-light?name=${encodeURIComponent(submittedName)}&idx=${submittedIdx}&num=${submittedNum}`)}
                 className="mt-5 w-full font-bold py-3.5 rounded-full text-base transition-all hover:scale-105"
@@ -89,7 +93,7 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
                 onClick={() => setStatus("idle")}
                 className="mt-3 text-amber-400/50 hover:text-yellow-400 transition-colors text-sm"
               >
-                הוסף עוד אחד
+                הוסיפו עוד אחד
               </button>
             </motion.div>
           ) : (
@@ -192,7 +196,7 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
                     שולח...
                   </span>
                 ) : (
-                  "הדלק את האור שלך ✨"
+                  "הדליקו את האור שלכם ✨"
                 )}
               </button>
             </motion.form>

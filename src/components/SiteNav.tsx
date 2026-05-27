@@ -5,9 +5,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import MenuDrawer from "./MenuDrawer";
-import SparkleIcon from "./fx/SparkleIcon";
+import NitzotzotLogo from "./fx/NitzotzotLogo";
 
-export default function SiteNav() {
+type Props = {
+  theme?: "dark" | "light";
+};
+
+export default function SiteNav({ theme = "dark" }: Props) {
   const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -25,25 +29,56 @@ export default function SiteNav() {
     user?.user_metadata?.display_name ?? user?.email?.split("@")[0] ?? "";
   const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
 
+  const isLight = theme === "light";
+
+  // Theme tokens
+  const navBg = isLight
+    ? "rgba(252,250,234,0.92)"
+    : "rgba(10,7,0,0.85)";
+  const navBorder = isLight
+    ? "1px solid rgba(202,169,40,0.20)"
+    : "1px solid rgba(251,191,36,0.10)";
+  const brandColor = isLight ? "#2A2A2A" : "#fbbf24";
+  const pillBg = isLight ? "rgba(202,169,40,0.10)" : "rgba(251,191,36,0.10)";
+  const pillBorder = isLight ? "1px solid rgba(202,169,40,0.30)" : "1px solid rgba(251,191,36,0.25)";
+  const pillText = isLight ? "#CAA928" : "#fbbf24";
+  const joinBg = isLight ? "#2A2A2A" : "#fbbf24";
+  const joinText = isLight ? "#FFD345" : "#000000";
+
   return (
     <>
       <nav
-        className="sticky top-0 z-40 flex items-center justify-between px-5 py-3.5 backdrop-blur-md border-b border-yellow-400/10"
-        style={{ background: "rgba(10,7,0,0.85)" }}
+        className="sticky top-0 z-40 flex items-center justify-between px-5 py-3.5 backdrop-blur-md"
+        style={{ background: navBg, borderBottom: navBorder }}
       >
         <Link
           href="/"
-          className="text-yellow-400 font-extrabold text-base sm:text-lg flex items-center gap-1.5"
+          className="font-extrabold text-base sm:text-lg flex items-center gap-2 leading-none"
+          style={{ color: brandColor }}
+          aria-label="ניצוצות — אור בפעולה"
         >
-          <SparkleIcon size={18} />
-          מביאים אור
+          <NitzotzotLogo size="icon" pixelSize={26} />
+          <span className="flex flex-col items-start">
+            <span>ניצוצות</span>
+            <span
+              className="text-[10px] font-medium tracking-wider"
+              style={{ color: isLight ? "#CAA928" : "#FDE494", opacity: 0.85 }}
+            >
+              אור בפעולה
+            </span>
+          </span>
         </Link>
 
         <div className="flex items-center gap-2 text-sm">
           {user ? (
             <Link
               href="/profile"
-              className="flex items-center gap-1.5 bg-yellow-400/10 border border-yellow-400/25 text-yellow-400 px-2.5 py-1.5 rounded-full font-medium transition-all hover:bg-yellow-400/20"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full font-medium transition-all hover:opacity-80"
+              style={{
+                background: pillBg,
+                border: pillBorder,
+                color: pillText,
+              }}
             >
               {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -60,16 +95,27 @@ export default function SiteNav() {
           ) : (
             <Link
               href="/login"
-              className="bg-yellow-400 active:bg-yellow-500 text-black px-3.5 py-1.5 rounded-full font-bold transition-all hover:scale-105 text-sm"
-              style={{ boxShadow: "0 0 14px rgba(251,191,36,0.3)" }}
+              className="px-3.5 py-1.5 rounded-full font-bold transition-all hover:scale-105 text-sm"
+              style={{
+                background: joinBg,
+                color: joinText,
+                boxShadow: isLight
+                  ? "0 4px 12px rgba(42,42,42,0.18)"
+                  : "0 0 14px rgba(251,191,36,0.3)",
+              }}
             >
-              הצטרף
+              הצטרפו
             </Link>
           )}
 
           <button
             onClick={() => setMenuOpen(true)}
-            className="w-9 h-9 rounded-full bg-yellow-400/10 border border-yellow-400/25 text-yellow-400 hover:bg-yellow-400/20 transition-all flex items-center justify-center"
+            className="w-9 h-9 rounded-full transition-all flex items-center justify-center hover:opacity-80"
+            style={{
+              background: pillBg,
+              border: pillBorder,
+              color: pillText,
+            }}
             aria-label="פתח תפריט"
           >
             <svg

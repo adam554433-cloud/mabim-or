@@ -72,7 +72,7 @@ export default function WeeklyChallenge({ challenge, onScrollToForm }: WeeklyCha
             onClick={onScrollToForm}
             className="w-full sm:w-auto bg-yellow-400 active:bg-yellow-500 text-black font-bold px-10 py-4 rounded-full text-lg transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(251,191,36,.5)] select-none"
           >
-            הדלק את האור שלך ✨
+            הדליקו את האור שלכם ✨
           </button>
         </div>
       </motion.div>

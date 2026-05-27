@@ -9,10 +9,28 @@ CREATE TABLE IF NOT EXISTS challenges (
 
 -- ── Profiles (linked to auth.users) ─────────────────────────────────
 CREATE TABLE IF NOT EXISTS profiles (
-  id         uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  display_name text,
-  created_at timestamptz DEFAULT now()
+  id              uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  display_name    text,
+  full_name       text,
+  gender          text CHECK (gender IN ('male','female')),
+  birth_date      date,
+  country         text,
+  city            text,
+  social_consent  boolean DEFAULT false,
+  age_confirmed_at timestamptz,
+  onboarded_at    timestamptz,
+  created_at      timestamptz DEFAULT now()
 );
+
+-- Add new onboarding columns to existing profiles (idempotent)
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS full_name        text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS gender           text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS birth_date       date;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS country          text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS city             text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS social_consent   boolean DEFAULT false;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS age_confirmed_at timestamptz;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS onboarded_at     timestamptz;
 
 -- ── Submissions ──────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS submissions (

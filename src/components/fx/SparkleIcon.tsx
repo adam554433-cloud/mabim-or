@@ -1,3 +1,7 @@
+"use client";
+
+import { useId } from "react";
+
 type Props = {
   size?: number;
   className?: string;
@@ -7,19 +11,15 @@ type Props = {
 
 const PATH = "M0,-40 Q4,-6 40,0 Q4,6 0,40 Q-4,6 -40,0 Q-4,-6 0,-40 Z";
 
-let idCounter = 0;
-function nextId() {
-  idCounter += 1;
-  return idCounter;
-}
-
 export default function SparkleIcon({
   size = 20,
   className = "",
   noAnimate = false,
   glow = true,
 }: Props) {
-  const id = `sparkle-grad-${nextId()}`;
+  // useId is hydration-safe — same id on server and client
+  const reactId = useId();
+  const gradId = `sparkle-grad-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
   return (
     <svg
       viewBox="-50 -50 100 100"
@@ -37,13 +37,13 @@ export default function SparkleIcon({
       aria-hidden
     >
       <defs>
-        <linearGradient id={id} x1="0" y1="-1" x2="0" y2="1">
+        <linearGradient id={gradId} x1="0" y1="-1" x2="0" y2="1">
           <stop offset="0%" stopColor="#fffbeb" />
           <stop offset="55%" stopColor="#fcd34d" />
           <stop offset="100%" stopColor="#f59e0b" />
         </linearGradient>
       </defs>
-      <path d={PATH} fill={`url(#${id})`} />
+      <path d={PATH} fill={`url(#${gradId})`} />
     </svg>
   );
 }
