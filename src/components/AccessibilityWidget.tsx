@@ -125,7 +125,7 @@ export default function AccessibilityWidget() {
         onClick={() => setOpen((o) => !o)}
         aria-label="הגדרות נגישות (Alt+A)"
         aria-expanded={open}
-        className="fixed bottom-20 md:bottom-5 right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+        className="fixed bottom-36 md:bottom-5 right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95"
         style={{
           background: "#FFD345",
           color: "#000",
@@ -151,7 +151,7 @@ export default function AccessibilityWidget() {
             ref={panelRef}
             role="dialog"
             aria-label="הגדרות נגישות"
-            className="fixed bottom-36 md:bottom-20 right-5 z-50 w-[320px] max-w-[calc(100vw-2.5rem)] rounded-2xl p-5"
+            className="fixed bottom-52 md:bottom-20 right-5 z-50 w-[320px] max-w-[calc(100vw-2.5rem)] rounded-2xl p-5"
             style={{
               background: "linear-gradient(135deg,#1e1200,#0d0800)",
               border: "1px solid rgba(255,211,69,0.35)",

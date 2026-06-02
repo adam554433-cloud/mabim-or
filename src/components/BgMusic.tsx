@@ -13,15 +13,28 @@ const STORAGE_KEY = "nitzotzot:music";
 export default function BgMusic() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [available, setAvailable] = useState(false);
 
-  // Browsers block autoplay until a user gesture, so we only *attempt* to
-  // resume if the user had previously turned music on.
+  // Probe the file once on mount; if it 404s, hide the button so users don't
+  // tap a no-op control.
   useEffect(() => {
-    if (localStorage.getItem(STORAGE_KEY) !== "on") return;
-    audioRef.current
-      ?.play()
-      .then(() => setPlaying(true))
+    let cancelled = false;
+    fetch(SRC, { method: "HEAD" })
+      .then((r) => {
+        if (cancelled) return;
+        if (!r.ok) return;
+        setAvailable(true);
+        if (localStorage.getItem(STORAGE_KEY) === "on") {
+          audioRef.current
+            ?.play()
+            .then(() => setPlaying(true))
+            .catch(() => {});
+        }
+      })
       .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   function toggle() {
@@ -41,13 +54,15 @@ export default function BgMusic() {
     }
   }
 
+  if (!available) return null;
+
   return (
     <>
       <audio ref={audioRef} src={SRC} loop preload="none" />
       <button
         onClick={toggle}
         aria-label={playing ? "השתקת מוזיקה" : "הפעלת מוזיקה"}
-        className="fixed z-50 bottom-20 md:bottom-5 left-5 w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 text-yellow-400"
+        className="fixed z-50 bottom-36 md:bottom-5 left-5 w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 text-yellow-400"
         style={{
           background: "linear-gradient(135deg,#1e1200,#0d0800)",
           border: "1px solid rgba(251,191,36,0.4)",
