@@ -68,6 +68,8 @@ export default function HomePage() {
         challenge_id: challengeId,
         challenge_title: CURRENT_CHALLENGE.title,
         video_url: null,
+        media_url: null,
+        media_type: null,
         puzzle_index: newIndex,
         created_at: new Date().toISOString(),
       },

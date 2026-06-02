@@ -14,8 +14,8 @@ export interface Submission {
   challenge_id: string;
   challenge_title?: string;
   video_url: string | null;
-  media_url: string | null;
-  media_type: MediaType | null;
+  media_url?: string | null;
+  media_type?: MediaType | null;
   thumbnail_url?: string | null;
   puzzle_index: number;
   created_at: string;
