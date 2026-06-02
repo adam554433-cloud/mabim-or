@@ -55,7 +55,7 @@ export default function SiteNav({ theme = "dark" }: Props) {
           href="/"
           className="font-extrabold text-base sm:text-lg flex items-center gap-2 leading-none"
           style={{ color: brandColor }}
-          aria-label="הפאזל — ניצוצות בפעולה"
+          aria-label="הפאזל — ניצוצות אור בפעולה"
         >
           <NitzotzotLogo size="icon" pixelSize={26} />
           <span className="flex flex-col items-start">
@@ -64,7 +64,7 @@ export default function SiteNav({ theme = "dark" }: Props) {
               className="text-[10px] font-medium tracking-wider"
               style={{ color: isLight ? "#CAA928" : "#FDE494", opacity: 0.85 }}
             >
-              ניצוצות בפעולה
+              ניצוצות אור בפעולה
             </span>
           </span>
         </Link>
