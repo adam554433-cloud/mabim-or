@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import Sparkle from "./fx/Sparkle";
 import ParticlesBg from "./fx/ParticlesBg";
+import { ScrollIcon, SunriseIcon, LightbulbIcon } from "./icons";
 
 const STORAGE_KEY = "nitzotzot:welcomed";
 
@@ -60,7 +61,7 @@ export default function WelcomeModal({ name, gender }: Props) {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 20, opacity: 0, scale: 0.96 }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
-            className="relative max-w-md w-full rounded-3xl border border-yellow-400/30 p-8 text-center"
+            className="relative max-w-md w-full max-h-[88vh] overflow-y-auto rounded-3xl border border-yellow-400/30 p-8 text-center"
             style={{
               background:
                 "radial-gradient(ellipse at top, #2a1700 0%, #100900 70%)",
@@ -71,31 +72,60 @@ export default function WelcomeModal({ name, gender }: Props) {
               <Sparkle size={72} />
             </div>
             <h2
-              className="mb-3 text-yellow-400 font-extrabold"
-              style={{ fontSize: 36, fontFamily: "Assistant, sans-serif" }}
+              className="mb-1 text-yellow-400 font-extrabold"
+              style={{ fontSize: 34, fontFamily: "Assistant, sans-serif" }}
             >
               שלום לך{name ? ` ${name}` : ""}
             </h2>
-            <p className="text-yellow-100/85 text-base leading-relaxed mb-6">
-              {welcome} ל<span className="text-yellow-400 font-bold">פאזל ניצוצות</span>.
-              <br />
-              כאן, כל מעשה שלך — מדליק עוד אור, ומשלים נקודה אחת נוספת מתוך ה־600,000 בפאזל של עם ישראל.
+            <p className="text-amber-300/80 text-sm font-medium tracking-[0.18em] mb-5">
+              ניצוץ בפעולה
             </p>
-            <div className="text-right space-y-2.5 mb-7">
-              {[
-                { e: "📜", t: "אתגר שבועי — משימה אחת לכל הקהילה" },
-                { e: "✨", t: "האור שלך נדלק בפאזל המרכזי" },
-                { e: "🌅", t: "הודיה ותובנה יומית — לרוממות הנפש" },
-                { e: "👥", t: "רואים אחד את השני — קהילה אמיתית" },
-              ].map((row) => (
-                <div
-                  key={row.t}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-yellow-400/10 bg-yellow-400/5"
-                >
-                  <span className="text-xl">{row.e}</span>
-                  <span className="text-yellow-100/90 text-sm">{row.t}</span>
-                </div>
-              ))}
+
+            <p className="text-yellow-100/85 text-base leading-relaxed mb-2">
+              {welcome} ל<span className="text-yellow-400 font-bold">פאזל ניצוצות</span>.
+            </p>
+            <p className="text-yellow-100/85 text-base leading-relaxed mb-6">
+              כאן, כל מעשה שלך - מדליק עוד אור, ומשלים נקודה נוספת ליעד{" "}
+              <span className="text-yellow-400 font-bold">600,000</span> ניצוצות בפאזל של עם ישראל.
+            </p>
+
+            {/* למה? */}
+            <div className="text-right mb-6">
+              <h3 className="text-yellow-400 font-bold text-lg mb-2">למה?</h3>
+              <p className="text-yellow-200 font-bold text-sm leading-relaxed mb-2">
+                אני חלק משמעותי משלם גדול אחד.
+              </p>
+              <p className="text-yellow-100/80 text-sm leading-relaxed mb-2">
+                כל מעשה קטן שלי משפיע - מצמיח סגולות אמיתיות בתוכי, משתקף במציאות חיי,
+                מהדהד ויוצר אדווה גדולה בעולם כולו. המעשה מדליק את הניצוץ הפנימי ומוסיף אור
+                לפאזל הכולל.
+              </p>
+              <p className="text-yellow-100/80 text-sm leading-relaxed">
+                כשמסה של אנשים ממוקדת מטרה - יכולת ההשפעה מתעצמת ונפתח שער לאינסוף
+                הפוטנציאלים שממתינים לנו.
+              </p>
+            </div>
+
+            {/* איך זה עובד? */}
+            <div className="text-right mb-7">
+              <h3 className="text-yellow-400 font-bold text-lg mb-3">איך זה עובד?</h3>
+              <div className="space-y-2.5">
+                {[
+                  { Icon: ScrollIcon, t: "האתגר השבועי - איסוף ניצוצות לפאזל" },
+                  { Icon: SunriseIcon, t: "הפצת ניצוצות והודיה - השראה אנושית לעולם" },
+                  { Icon: LightbulbIcon, t: "תובנה יומית - להתבוננות פנימית" },
+                ].map((row) => (
+                  <div
+                    key={row.t}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-yellow-400/10 bg-yellow-400/5"
+                  >
+                    <span className="text-yellow-400 shrink-0">
+                      <row.Icon size={20} />
+                    </span>
+                    <span className="text-yellow-100/90 text-sm">{row.t}</span>
+                  </div>
+                ))}
+              </div>
             </div>
             <button
               onClick={close}

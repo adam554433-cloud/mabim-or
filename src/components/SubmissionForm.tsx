@@ -3,9 +3,12 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Challenge } from "@/types";
+import { Challenge, MediaType } from "@/types";
 import { ALL_CHALLENGES } from "@/lib/mockData";
+import { supabase } from "@/lib/supabase";
 import ShareButtons from "./ShareButtons";
+
+const MAX_UPLOAD_BYTES = 50 * 1024 * 1024; // 50 MB
 
 interface SubmissionFormProps {
   challenge: Challenge;
@@ -13,13 +16,14 @@ interface SubmissionFormProps {
   formRef: React.RefObject<HTMLElement | null>;
 }
 
-type Status = "idle" | "loading" | "success" | "error";
+type Status = "idle" | "uploading" | "loading" | "success" | "error";
 
 export default function SubmissionForm({ challenge, onSubmit, formRef }: SubmissionFormProps) {
   const [name, setName]               = useState("");
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge>(challenge);
   const [performedAt, setPerformedAt] = useState(() => new Date().toISOString().split("T")[0]);
   const [videoFile, setVideoFile]     = useState<File | null>(null);
+  const [fileError, setFileError]     = useState<string | null>(null);
   const [status, setStatus]           = useState<Status>("idle");
   const [submittedName, setSubmittedName] = useState("");
   const [submittedIdx, setSubmittedIdx]   = useState(0);
@@ -27,15 +31,42 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
   const fileRef  = useRef<HTMLInputElement>(null);
   const router   = useRouter();
 
+  async function uploadMedia(file: File): Promise<{ url: string; type: MediaType }> {
+    const isVideo = file.type.startsWith("video/");
+    const type: MediaType = isVideo ? "video" : "image";
+    const ext = file.name.split(".").pop()?.toLowerCase() || (isVideo ? "mp4" : "jpg");
+    const path = `${crypto.randomUUID()}.${ext}`;
+    const { error: upErr } = await supabase.storage
+      .from("submissions-media")
+      .upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+    if (upErr) throw upErr;
+    const { data } = supabase.storage.from("submissions-media").getPublicUrl(path);
+    return { url: data.publicUrl, type };
+  }
+
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!name.trim()) return;
-    setStatus("loading");
     try {
+      let media_url: string | null = null;
+      let media_type: MediaType | null = null;
+      if (videoFile) {
+        setStatus("uploading");
+        const uploaded = await uploadMedia(videoFile);
+        media_url = uploaded.url;
+        media_type = uploaded.type;
+      }
+      setStatus("loading");
       const res  = await fetch("/api/submissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), challenge_id: selectedChallenge.id, performed_at: performedAt }),
+        body: JSON.stringify({
+          name: name.trim(),
+          challenge_id: selectedChallenge.id,
+          performed_at: performedAt,
+          media_url,
+          media_type,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -177,8 +208,20 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
                   type="file"
                   accept="video/*,image/*"
                   className="hidden"
-                  onChange={(e) => setVideoFile(e.target.files?.[0] ?? null)}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0] ?? null;
+                    if (f && f.size > MAX_UPLOAD_BYTES) {
+                      setFileError("הקובץ גדול מ-50MB. נסה קובץ קטן יותר.");
+                      setVideoFile(null);
+                      return;
+                    }
+                    setFileError(null);
+                    setVideoFile(f);
+                  }}
                 />
+                {fileError && (
+                  <p className="text-red-400 text-xs mt-1.5">{fileError}</p>
+                )}
               </div>
 
               {status === "error" && (
@@ -187,13 +230,13 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
 
               <button
                 type="submit"
-                disabled={status === "loading" || !name.trim()}
+                disabled={status === "loading" || status === "uploading" || !name.trim()}
                 className="w-full bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-500 disabled:bg-yellow-400/40 text-black font-bold py-4 rounded-full text-lg transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(251,191,36,.4)] disabled:cursor-not-allowed disabled:scale-100 select-none"
               >
-                {status === "loading" ? (
+                {status === "loading" || status === "uploading" ? (
                   <span className="flex items-center justify-center gap-2">
                     <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                    שולח...
+                    {status === "uploading" ? "מעלה מדיה..." : "שולח..."}
                   </span>
                 ) : (
                   "הדליקו את האור שלכם ✨"

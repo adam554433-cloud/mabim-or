@@ -25,11 +25,16 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, challenge_id, user_id } = await req.json();
+    const { name, challenge_id, user_id, media_url, media_type } = await req.json();
 
     if (!name || typeof name !== "string" || name.trim().length < 2) {
       return NextResponse.json({ error: "שם לא תקין" }, { status: 400 });
     }
+
+    const safeMediaType =
+      media_type === "video" || media_type === "image" ? media_type : null;
+    const safeMediaUrl =
+      typeof media_url === "string" && media_url.length > 0 ? media_url : null;
 
     // Get next puzzle index from sequence
     const { data: seqData } = await supabase
@@ -52,6 +57,9 @@ export async function POST(req: NextRequest) {
         challenge_id: challenge_id || null,
         user_id: user_id || null,
         puzzle_index: puzzleIndex,
+        media_url: safeMediaUrl,
+        media_type: safeMediaType,
+        video_url: safeMediaType === "video" ? safeMediaUrl : null,
       })
       .select()
       .single();

@@ -9,9 +9,11 @@ import SubmissionForm from "@/components/SubmissionForm";
 import CommunityFeed from "@/components/CommunityFeed";
 import SiteNav from "@/components/SiteNav";
 import WelcomeModal from "@/components/WelcomeModal";
+import BgMusic from "@/components/BgMusic";
 import MilestoneBar from "@/components/MilestoneBar";
 import FlySpark from "@/components/fx/FlySpark";
 import CoreOrb from "@/components/fx/CoreOrb";
+import { SparkIcon, SunriseIcon, HeartIcon, LightbulbIcon } from "@/components/icons";
 import { CURRENT_CHALLENGE, MOCK_SUBMISSIONS, INITIAL_LIT_COUNT } from "@/lib/mockData";
 import { Submission } from "@/types";
 import { supabase } from "@/lib/supabase";
@@ -92,6 +94,7 @@ export default function HomePage() {
     return (
       <main className="min-h-screen pb-32">
         <SiteNav />
+        <BgMusic />
         <HeroSection litCount={litCount} ctaHref="/login" />
 
         {/* Challenge — visible to guests (read-only) */}
@@ -120,7 +123,7 @@ export default function HomePage() {
                 boxShadow: "0 0 40px rgba(251,191,36,0.10)",
               }}
             >
-              <div className="text-4xl mb-3 candle-flicker">✨</div>
+              <div className="flex justify-center text-yellow-400 mb-3 candle-flicker"><SparkIcon size={40} /></div>
               <h3 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2">
                 כדי להשתתף — צריך להירשם
               </h3>
@@ -164,7 +167,7 @@ export default function HomePage() {
 
         {/* Inspiration banner */}
         <div className="max-w-xl mx-auto px-5 mt-10 text-center">
-          <div className="text-4xl mb-3 candle-flicker">✨</div>
+          <div className="flex justify-center text-yellow-400 mb-3 candle-flicker"><SparkIcon size={40} /></div>
           <h3 className="text-2xl font-bold text-yellow-400 mb-3">
             רוצה להאיר נקודה משלך?
           </h3>
@@ -179,7 +182,7 @@ export default function HomePage() {
           initial={{ y: 60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="fixed bottom-0 left-0 right-0 z-30 px-4 pb-5 pt-6"
+          className="fixed bottom-16 md:bottom-0 left-0 right-0 z-30 px-4 pb-5 pt-6"
           style={{ background: "linear-gradient(to top, #0a0700 70%, transparent)" }}
         >
           <div
@@ -190,7 +193,7 @@ export default function HomePage() {
               boxShadow: "0 0 40px rgba(251,191,36,0.18)",
             }}
           >
-            <div className="text-3xl">✨</div>
+            <div className="text-yellow-400"><SparkIcon size={28} /></div>
             <div className="flex-1 text-right">
               <p className="text-yellow-100 font-bold text-sm">
                 הצטרפו וקבלו נקודה משלכם
@@ -225,6 +228,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen">
       <SiteNav />
+      <BgMusic />
 
       {/* First-time welcome */}
       {isLoggedIn && (
@@ -285,9 +289,9 @@ export default function HomePage() {
         <StepBadge n={4} label="לשלב הבא" />
         <div className="max-w-2xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
-            { href: "/insight", emoji: "✨", title: "תובנה יומית", desc: "התובנה של היום" },
-            { href: "/gratitude", emoji: "🌅", title: "הודיה", desc: "על מה אתה אסיר תודה?" },
-            { href: "/profile", emoji: "💛", title: "מה עשיתי עד כה", desc: "ההיסטוריה שלי" },
+            { href: "/insight", Icon: LightbulbIcon, title: "תובנה יומית", desc: "התובנה של היום" },
+            { href: "/gratitude", Icon: SunriseIcon, title: "הודיה", desc: "על מה אתה אסיר תודה?" },
+            { href: "/profile", Icon: HeartIcon, title: "מה עשיתי עד כה", desc: "ההיסטוריה שלי" },
           ].map((c) => (
             <Link
               key={c.href}
@@ -298,7 +302,7 @@ export default function HomePage() {
                   "linear-gradient(135deg, rgba(40,25,0,0.6) 0%, rgba(10,7,0,0.4) 100%)",
               }}
             >
-              <div className="text-3xl mb-2">{c.emoji}</div>
+              <div className="text-yellow-400 mb-2"><c.Icon size={30} /></div>
               <h3 className="text-yellow-400 font-bold text-base mb-1">{c.title}</h3>
               <p className="text-amber-400/60 text-xs leading-relaxed">{c.desc}</p>
               <div className="mt-3 text-yellow-400/60 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
@@ -313,7 +317,10 @@ export default function HomePage() {
       <CommunityFeed submissions={subs} />
 
       <footer className="text-center py-10 text-gray-600 text-sm border-t border-yellow-400/10 px-4">
-        <p>מביאים אור — ביחד אנחנו מאירים את העולם ✨</p>
+        <p className="inline-flex items-center justify-center gap-1.5">
+          מביאים אור — ביחד אנחנו מאירים את העולם
+          <span className="text-yellow-400/70"><SparkIcon size={15} /></span>
+        </p>
         <Link href="/about" className="text-yellow-400/40 hover:text-yellow-400 transition-colors mt-2 inline-block">
           אודות הפרויקט
         </Link>

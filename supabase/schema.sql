@@ -39,9 +39,37 @@ CREATE TABLE IF NOT EXISTS submissions (
   name         text NOT NULL,
   challenge_id uuid REFERENCES challenges(id),
   video_url    text,
+  media_url    text,
+  media_type   text CHECK (media_type IN ('video','image')),
+  thumbnail_url text,
   puzzle_index integer UNIQUE NOT NULL,
   created_at   timestamptz DEFAULT now()
 );
+
+-- Add media columns to existing submissions (idempotent)
+ALTER TABLE submissions ADD COLUMN IF NOT EXISTS media_url     text;
+ALTER TABLE submissions ADD COLUMN IF NOT EXISTS media_type    text;
+ALTER TABLE submissions ADD COLUMN IF NOT EXISTS thumbnail_url text;
+DO $$ BEGIN
+  ALTER TABLE submissions ADD CONSTRAINT submissions_media_type_chk
+    CHECK (media_type IN ('video','image'));
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- ── Storage bucket for user-uploaded media ──────────────────────────
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('submissions-media', 'submissions-media', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage policies: public read, public insert (matches submissions_insert policy)
+DO $$ BEGIN
+  CREATE POLICY "submissions_media_public_read" ON storage.objects
+    FOR SELECT USING (bucket_id = 'submissions-media');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  CREATE POLICY "submissions_media_public_insert" ON storage.objects
+    FOR INSERT WITH CHECK (bucket_id = 'submissions-media');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ── Reactions (מילות עידוד) ──────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS reactions (

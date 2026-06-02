@@ -3,6 +3,7 @@ import { Heebo } from "next/font/google";
 import "./globals.css";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
 import SiteFooter from "@/components/SiteFooter";
+import BottomTabBar from "@/components/BottomTabBar";
 
 const a11yInit = `
 (function(){try{
@@ -50,10 +51,11 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: a11yInit }} />
       </head>
-      <body className="font-heebo antialiased text-white" style={{ background: "linear-gradient(180deg, #2A2A2A 0%, #000000 100%)" }}>
+      <body className="font-heebo antialiased text-white pb-16 md:pb-0" style={{ background: "linear-gradient(180deg, #2A2A2A 0%, #000000 100%)" }}>
         {children}
         <SiteFooter />
         <AccessibilityWidget />
+        <BottomTabBar />
       </body>
     </html>
   );

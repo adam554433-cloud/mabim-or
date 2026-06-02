@@ -45,8 +45,10 @@ function SubmissionCard({ s, i }: { s: Submission; i: number }) {
 
         {/* Media area */}
         <div className={`relative bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} aspect-[4/3] flex flex-col items-center justify-center overflow-hidden`}>
-          {s.video_url ? (
-            <video src={s.video_url} className="w-full h-full object-cover" controls />
+          {s.media_url && s.media_type === "image" ? (
+            <Image src={s.media_url} alt={s.name} fill sizes="(min-width: 640px) 33vw, 80vw" className="object-cover" />
+          ) : (s.media_url && s.media_type === "video") || s.video_url ? (
+            <video src={(s.media_url ?? s.video_url) as string} className="w-full h-full object-cover" controls playsInline />
           ) : (
             <>
               {/* AI-generated heart image as placeholder */}

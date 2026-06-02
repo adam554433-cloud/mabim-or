@@ -132,9 +132,9 @@ export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSe
         transition={{ duration: 0.8, delay: 0.45 }}
         className="text-base sm:text-lg md:text-xl text-gray-200 mb-8 max-w-sm sm:max-w-xl mx-auto leading-relaxed"
       >
-        ביחד, אנחנו מאירים את העולם.
+        ביחד מאירים.ות את העולם.
         <br className="hidden sm:block" />
-        {" "}כל מעשה טוב — אור נוסף בפאזל.
+        {" "}כל מעשה טוב - אור נוסף בפאזל.
       </motion.p>
 
       {/* ── Counter card ── */}
@@ -207,16 +207,52 @@ export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSe
       </motion.div>
 
       {/* ── CTA ── */}
-      <motion.a
-        href={ctaHref}
+      <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.6 }}
-        className="relative z-10 inline-block w-full max-w-xs sm:w-auto bg-yellow-400 active:bg-yellow-500 text-black font-bold px-8 py-4 rounded-full text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(251,191,36,.65)] select-none cursor-pointer"
-        style={{ boxShadow: "0 0 24px rgba(251,191,36,0.35)" }}
+        className="relative z-10 inline-flex w-full max-w-xs sm:w-auto justify-center"
       >
-        הצטרפו להאיר ←
-      </motion.a>
+        {/* Pulsing aura behind the button */}
+        <motion.span
+          aria-hidden
+          className="absolute inset-0 rounded-full bg-yellow-400/30 blur-xl pointer-events-none"
+          animate={{ opacity: [0.25, 0.45, 0.25], scale: [0.98, 1.05, 0.98] }}
+          transition={{ duration: 3.2, ease: "easeInOut", repeat: Infinity }}
+        />
+
+        {/* Continuously emanating rings (חישוקים) — fade in & out, no pop */}
+        {[0, 1].map((i) => (
+          <motion.span
+            key={i}
+            aria-hidden
+            className="absolute inset-0 rounded-full border border-yellow-300/70 pointer-events-none"
+            initial={{ opacity: 0, scale: 1 }}
+            animate={{ opacity: [0, 0.35, 0], scale: [1, 1.45] }}
+            transition={{
+              duration: 3.2,
+              ease: "easeInOut",
+              repeat: Infinity,
+              delay: i * 1.6,
+            }}
+          />
+        ))}
+
+        <motion.a
+          href={ctaHref}
+          className="group relative z-10 inline-flex w-full justify-center overflow-hidden bg-yellow-400 active:bg-yellow-500 text-black font-bold px-8 py-4 rounded-full text-lg transition-transform hover:scale-105 select-none cursor-pointer"
+          animate={{
+            boxShadow: [
+              "0 0 20px rgba(251,191,36,0.3)",
+              "0 0 32px rgba(251,191,36,0.5)",
+              "0 0 20px rgba(251,191,36,0.3)",
+            ],
+          }}
+          transition={{ duration: 3.2, ease: "easeInOut", repeat: Infinity }}
+        >
+          <span className="relative">הצטרפו להאיר ←</span>
+        </motion.a>
+      </motion.div>
     </section>
   );
 }

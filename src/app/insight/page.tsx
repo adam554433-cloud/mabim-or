@@ -1,13 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import LightPage from "@/components/LightPage";
+import SiteNav from "@/components/SiteNav";
 
-const INK = "#2A2A2A";
-const INK_SOFT = "#5A5A5A";
-const GOLD = "#FFD345";
+const GOLD = "#fbbf24";
 const GOLD_DK = "#CAA928";
-const GOLD_LT = "#FDE494";
+
+const PAGE_BG =
+  "radial-gradient(ellipse 140% 55% at 50% -5%, #1e1000 0%, #0a0700 55%)";
+const CARD_BG = "linear-gradient(135deg,#1e1200,#0d0800)";
 
 const INSIGHTS = [
   { text: "כל העולם כולו גשר צר מאוד — והעיקר לא לפחד כלל.", source: "רבי נחמן מברסלב, ליקוטי מוהר״ן" },
@@ -58,11 +59,12 @@ export default function InsightPage() {
   });
 
   return (
-    <LightPage>
+    <main className="min-h-screen" style={{ background: PAGE_BG }}>
+      <SiteNav />
       <div className="max-w-2xl mx-auto px-5 py-12 sm:py-20">
         <div className="text-center mb-6">
           <div className="text-5xl mb-3">✨</div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold mb-1" style={{ color: INK }}>
+          <h1 className="text-2xl sm:text-3xl font-extrabold mb-1 text-white">
             תובנה יומית
           </h1>
           <p className="text-sm" style={{ color: GOLD_DK }}>
@@ -76,33 +78,36 @@ export default function InsightPage() {
           transition={{ duration: 0.7 }}
           className="rounded-3xl p-8 sm:p-12 text-center"
           style={{
-            background: "#FFFFFF",
-            border: `1px solid ${GOLD_DK}33`,
+            background: CARD_BG,
+            border: "1px solid rgba(251,191,36,0.25)",
             boxShadow:
-              "0 20px 50px rgba(202,169,40,0.10), 0 8px 16px rgba(0,0,0,0.04)",
+              "0 0 50px rgba(251,191,36,0.10), 0 8px 16px rgba(0,0,0,0.3)",
           }}
         >
-          <div className="text-5xl leading-none mb-3 select-none" style={{ color: GOLD_LT }}>
+          <div
+            className="text-5xl leading-none mb-3 select-none"
+            style={{ color: "rgba(251,191,36,0.45)" }}
+          >
             ״
           </div>
-          <p
-            className="text-xl sm:text-2xl leading-relaxed font-medium"
-            style={{ color: INK }}
-          >
+          <p className="text-xl sm:text-2xl leading-relaxed font-medium text-amber-50">
             {insight.text}
           </p>
-          <div className="text-5xl leading-none mt-1 select-none" style={{ color: GOLD_LT }}>
+          <div
+            className="text-5xl leading-none mt-1 select-none"
+            style={{ color: "rgba(251,191,36,0.45)" }}
+          >
             ״
           </div>
-          <p className="text-sm mt-5" style={{ color: GOLD_DK }}>
+          <p className="text-sm mt-5" style={{ color: GOLD }}>
             — {insight.source}
           </p>
         </motion.div>
 
-        <div className="text-center mt-10 text-xs" style={{ color: INK_SOFT }}>
+        <div className="text-center mt-10 text-xs text-amber-200/50">
           תובנה חדשה כל בוקר. שתף בקהילה רעיון שעלה אצלך.
         </div>
       </div>
-    </LightPage>
+    </main>
   );
 }

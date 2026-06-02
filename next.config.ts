@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
     // .next/dev manifests mid-session, causing 500s. Disable until upstream fix.
     turbopackFileSystemCacheForDev: false,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "zvsosicztraoevdxvmmv.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

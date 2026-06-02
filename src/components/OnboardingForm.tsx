@@ -26,10 +26,35 @@ const COUNTRIES = [
   "אחר",
 ];
 
+const HEBREW_MONTHS = [
+  "ינואר",
+  "פברואר",
+  "מרץ",
+  "אפריל",
+  "מאי",
+  "יוני",
+  "יולי",
+  "אוגוסט",
+  "ספטמבר",
+  "אוקטובר",
+  "נובמבר",
+  "דצמבר",
+];
+
+const CURRENT_YEAR = new Date().getFullYear();
+const DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1));
+const YEARS = Array.from({ length: 100 }, (_, i) => String(CURRENT_YEAR - i));
+
 export default function OnboardingForm({ onComplete, initialFullName = "" }: Props) {
   const [fullName, setFullName] = useState(initialFullName);
   const [gender, setGender] = useState<"male" | "female" | "">("");
-  const [birthDate, setBirthDate] = useState("");
+  const [bDay, setBDay] = useState("");
+  const [bMonth, setBMonth] = useState("");
+  const [bYear, setBYear] = useState("");
+  const birthDate =
+    bDay && bMonth && bYear
+      ? `${bYear}-${bMonth.padStart(2, "0")}-${bDay.padStart(2, "0")}`
+      : "";
   const [country, setCountry] = useState("ישראל");
   const [city, setCity] = useState("");
   const [consent, setConsent] = useState(false);
@@ -87,7 +112,8 @@ export default function OnboardingForm({ onComplete, initialFullName = "" }: Pro
 
     setLoading(false);
     if (pErr) {
-      setError("שגיאה בשמירה. נסה שוב.");
+      console.error("[onboarding] profile upsert failed:", pErr);
+      setError(`שגיאה בשמירה: ${pErr.message}`);
       return;
     }
     onComplete();
@@ -151,15 +177,57 @@ export default function OnboardingForm({ onComplete, initialFullName = "" }: Pro
       {/* Birth date */}
       <div>
         <label className="block text-amber-200/70 text-xs mb-1 mr-1">תאריך לידה</label>
-        <input
-          type="date"
-          value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
-          max={new Date().toISOString().split("T")[0]}
-          dir="ltr"
-          className="w-full rounded-xl px-4 py-3 text-white focus:outline-none text-base"
-          style={inputStyle}
-        />
+        <div className="grid grid-cols-3 gap-2">
+          <select
+            value={bDay}
+            onChange={(e) => setBDay(e.target.value)}
+            className="w-full rounded-xl px-3 py-3 text-white focus:outline-none text-base"
+            style={inputStyle}
+          >
+            <option value="" style={{ background: "#1e1200", color: "#fff" }}>
+              יום
+            </option>
+            {DAYS.map((d) => (
+              <option key={d} value={d} style={{ background: "#1e1200", color: "#fff" }}>
+                {d}
+              </option>
+            ))}
+          </select>
+          <select
+            value={bMonth}
+            onChange={(e) => setBMonth(e.target.value)}
+            className="w-full rounded-xl px-3 py-3 text-white focus:outline-none text-base"
+            style={inputStyle}
+          >
+            <option value="" style={{ background: "#1e1200", color: "#fff" }}>
+              חודש
+            </option>
+            {HEBREW_MONTHS.map((m, i) => (
+              <option
+                key={m}
+                value={String(i + 1)}
+                style={{ background: "#1e1200", color: "#fff" }}
+              >
+                {m}
+              </option>
+            ))}
+          </select>
+          <select
+            value={bYear}
+            onChange={(e) => setBYear(e.target.value)}
+            className="w-full rounded-xl px-3 py-3 text-white focus:outline-none text-base"
+            style={inputStyle}
+          >
+            <option value="" style={{ background: "#1e1200", color: "#fff" }}>
+              שנה
+            </option>
+            {YEARS.map((y) => (
+              <option key={y} value={y} style={{ background: "#1e1200", color: "#fff" }}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Country */}
