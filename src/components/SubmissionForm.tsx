@@ -25,6 +25,7 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
   const [videoFile, setVideoFile]     = useState<File | null>(null);
   const [fileError, setFileError]     = useState<string | null>(null);
   const [status, setStatus]           = useState<Status>("idle");
+  const [errorMsg, setErrorMsg]       = useState("");
   const [submittedName, setSubmittedName] = useState("");
   const [submittedIdx, setSubmittedIdx]   = useState(0);
   const [submittedNum, setSubmittedNum]   = useState(0);
@@ -47,6 +48,7 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!name.trim()) return;
+    setErrorMsg("");
     try {
       let media_url: string | null = null;
       let media_type: MediaType | null = null;
@@ -77,9 +79,11 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
       onSubmit(name.trim(), challenge.id, data.puzzle_index);
       setName("");
       setVideoFile(null);
-    } catch {
+    } catch (err) {
+      console.error("[submission] failed:", err);
+      setErrorMsg(err instanceof Error ? err.message : "שגיאה לא ידועה");
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 3000);
+      setTimeout(() => setStatus("idle"), 6000);
     }
   }
 
@@ -225,7 +229,10 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
               </div>
 
               {status === "error" && (
-                <p className="text-red-400 text-sm text-center">משהו השתבש. נסה שוב.</p>
+                <p className="text-red-400 text-sm text-center">
+                  משהו השתבש. נסה שוב.
+                  {errorMsg && <span className="block text-red-400/70 text-xs mt-1">{errorMsg}</span>}
+                </p>
               )}
 
               <button

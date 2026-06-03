@@ -36,18 +36,19 @@ export async function POST(req: NextRequest) {
     const safeMediaUrl =
       typeof media_url === "string" && media_url.length > 0 ? media_url : null;
 
-    // Get next puzzle index from sequence
-    const { data: seqData } = await supabase
-      .rpc("nextval", { seq: "puzzle_index_seq" })
-      .single();
+    // Get next puzzle index from the sequence (atomic, collision-free)
+    const { data: seqData } = await supabase.rpc("next_puzzle_index").single();
 
-    // Fallback: count existing submissions + 1248
-    let puzzleIndex: number = seqData as number;
-    if (!puzzleIndex) {
-      const { count } = await supabase
+    // Fallback if the RPC isn't installed: highest existing index + 1
+    let puzzleIndex = typeof seqData === "number" ? seqData : null;
+    if (puzzleIndex == null) {
+      const { data: maxRow } = await supabase
         .from("submissions")
-        .select("*", { count: "exact", head: true });
-      puzzleIndex = (count ?? 0) + 1248;
+        .select("puzzle_index")
+        .order("puzzle_index", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      puzzleIndex = ((maxRow?.puzzle_index as number | undefined) ?? 1247) + 1;
     }
 
     const { data, error } = await supabase
@@ -68,7 +69,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ puzzle_index: puzzleIndex, submission: data }, { status: 201 });
   } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: "שגיאה בשרת" }, { status: 500 });
+    console.error("[submissions] insert failed:", e);
+    const msg = e instanceof Error ? e.message : "שגיאה בשרת";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
