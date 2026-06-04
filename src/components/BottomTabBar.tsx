@@ -37,6 +37,7 @@ export default function BottomTabBar() {
       style={{
         background: "rgba(10,7,0,0.92)",
         borderTop: "1px solid rgba(251,191,36,0.12)",
+        boxShadow: "0 -8px 24px rgba(0,0,0,0.45)",
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
       aria-label="ניווט ראשי"
@@ -49,14 +50,14 @@ export default function BottomTabBar() {
               <Link
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className="flex flex-col items-center justify-center gap-0.5 h-14 transition-opacity"
+                className="flex flex-col items-center justify-center gap-1 h-[72px] transition-opacity"
                 style={{
                   color: active ? "#fbbf24" : "rgba(253,228,148,0.55)",
                   opacity: active ? 1 : 0.9,
                 }}
               >
-                <tab.Icon size={22} />
-                <span className="text-[10px] font-medium leading-none">{tab.label}</span>
+                <tab.Icon size={26} />
+                <span className="text-xs font-medium leading-none">{tab.label}</span>
               </Link>
             </li>
           );

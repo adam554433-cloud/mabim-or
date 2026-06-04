@@ -51,7 +51,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: a11yInit }} />
       </head>
-      <body className="font-heebo antialiased text-white pb-16 md:pb-0" style={{ background: "linear-gradient(180deg, #2A2A2A 0%, #000000 100%)" }}>
+      <body className="font-heebo antialiased text-white pb-20 md:pb-0" style={{ background: "linear-gradient(180deg, #2A2A2A 0%, #000000 100%)" }}>
         {children}
         <SiteFooter />
         <AccessibilityWidget />
