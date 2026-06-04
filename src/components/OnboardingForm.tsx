@@ -100,8 +100,16 @@ export default function OnboardingForm({ onComplete, initialFullName = "" }: Pro
     };
 
     const { error: pErr } = await supabase.from("profiles").upsert(profile);
+    if (pErr) {
+      setLoading(false);
+      console.error("[onboarding] profile upsert failed:", pErr);
+      setError(`שגיאה בשמירה: ${pErr.message}`);
+      return;
+    }
 
-    await supabase.auth.updateUser({
+    // Mark onboarded ONLY after the profile saved — otherwise the user would be
+    // flagged as onboarded with no profile row and skip the form forever.
+    const { error: uErr } = await supabase.auth.updateUser({
       data: {
         display_name: fullName.trim(),
         full_name: fullName.trim(),
@@ -111,9 +119,9 @@ export default function OnboardingForm({ onComplete, initialFullName = "" }: Pro
     });
 
     setLoading(false);
-    if (pErr) {
-      console.error("[onboarding] profile upsert failed:", pErr);
-      setError(`שגיאה בשמירה: ${pErr.message}`);
+    if (uErr) {
+      console.error("[onboarding] updateUser failed:", uErr);
+      setError(`שגיאה בשמירה: ${uErr.message}`);
       return;
     }
     onComplete();

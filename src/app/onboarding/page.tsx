@@ -16,7 +16,15 @@ function OnboardingContent() {
   const [initialName, setInitialName] = useState("");
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    // onAuthStateChange fires INITIAL_SESSION only after the client has finished
+    // initializing — which includes exchanging the ?code= from an OAuth (Google)
+    // redirect for a session. Using it instead of a one-shot getUser() avoids the
+    // race where getUser() runs before the code exchange and wrongly bounces the
+    // user to /login.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user;
       if (!user) {
         router.replace(`/login?redirect=${encodeURIComponent(next)}`);
         return;
@@ -34,6 +42,7 @@ function OnboardingContent() {
       );
       setReady(true);
     });
+    return () => subscription.unsubscribe();
   }, [router, next]);
 
   return (
