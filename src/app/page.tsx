@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
 import HeroSection from "@/components/HeroSection";
 import WeeklyChallenge from "@/components/WeeklyChallenge";
 import SubmissionForm from "@/components/SubmissionForm";
@@ -15,7 +14,7 @@ import FlySpark from "@/components/fx/FlySpark";
 import CoreOrb from "@/components/fx/CoreOrb";
 import { SparkIcon, SunriseIcon, HeartIcon, LightbulbIcon } from "@/components/icons";
 import { CURRENT_CHALLENGE, MOCK_SUBMISSIONS, INITIAL_LIT_COUNT } from "@/lib/mockData";
-import { Submission } from "@/types";
+import { Submission, Challenge } from "@/types";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
@@ -44,7 +43,11 @@ export default function HomePage() {
   const [newLitIdx, setNewLitIdx] = useState<number | null>(null);
   const [subs, setSubs]           = useState<Submission[]>([...MOCK_SUBMISSIONS].reverse());
   const [user, setUser]           = useState<User | null | undefined>(undefined);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
   const formRef = useRef<HTMLElement | null>(null);
+
+  // Active challenge comes from the DB (admin-managed); fall back to mock data.
+  const current = challenges[0] ?? CURRENT_CHALLENGE;
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user ?? null));
@@ -52,6 +55,13 @@ export default function HomePage() {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/challenges")
+      .then((r) => r.json())
+      .then((d) => Array.isArray(d.challenges) && setChallenges(d.challenges))
+      .catch(() => {});
   }, []);
 
   function scrollToForm() {
@@ -66,7 +76,7 @@ export default function HomePage() {
         id: crypto.randomUUID(),
         name,
         challenge_id: challengeId,
-        challenge_title: CURRENT_CHALLENGE.title,
+        challenge_title: current.title,
         video_url: null,
         media_url: null,
         media_type: null,
@@ -94,7 +104,7 @@ export default function HomePage() {
   // ─── Guest view: only the central light body + sticky inspiration CTA ───
   if (isGuest) {
     return (
-      <main className="min-h-screen pb-32">
+      <main className="min-h-screen pb-16">
         <SiteNav />
         <BgMusic />
         <HeroSection litCount={litCount} ctaHref="/login" />
@@ -103,7 +113,7 @@ export default function HomePage() {
         <section id="challenge" className="pt-6 scroll-mt-20">
           <StepBadge n={1} label="האתגר השבועי" />
           <WeeklyChallenge
-            challenge={CURRENT_CHALLENGE}
+            challenge={current}
             onScrollToForm={() => {
               document
                 .getElementById("guest-cta")
@@ -178,40 +188,6 @@ export default function HomePage() {
             צריך להירשם תחילה. רישום קצר, חינם.
           </p>
         </div>
-
-        {/* Sticky CTA */}
-        <motion.div
-          initial={{ y: 60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="fixed bottom-16 md:bottom-0 left-0 right-0 z-30 px-4 pb-5 pt-6"
-          style={{ background: "linear-gradient(to top, #0a0700 70%, transparent)" }}
-        >
-          <div
-            className="max-w-md mx-auto rounded-2xl p-4 flex items-center gap-3"
-            style={{
-              background: "linear-gradient(135deg,#1e1200,#0d0800)",
-              border: "1px solid rgba(251,191,36,0.4)",
-              boxShadow: "0 0 40px rgba(251,191,36,0.18)",
-            }}
-          >
-            <div className="text-yellow-400"><SparkIcon size={28} /></div>
-            <div className="flex-1 text-right">
-              <p className="text-yellow-100 font-bold text-sm">
-                הצטרפו וקבלו נקודה משלכם
-              </p>
-              <p className="text-amber-400/60 text-xs">
-                בחינם — שייכות אמיתית לקהילה
-              </p>
-            </div>
-            <Link
-              href="/login"
-              className="bg-yellow-400 text-black font-bold px-4 py-2 rounded-full text-sm whitespace-nowrap"
-            >
-              הצטרפו
-            </Link>
-          </div>
-        </motion.div>
       </main>
     );
   }
@@ -245,13 +221,13 @@ export default function HomePage() {
       {/* Step 1 — Challenge */}
       <section id="challenge" className="pt-6 scroll-mt-20">
         <StepBadge n={1} label="האתגר השבועי" />
-        <WeeklyChallenge challenge={CURRENT_CHALLENGE} onScrollToForm={scrollToForm} />
+        <WeeklyChallenge challenge={current} onScrollToForm={scrollToForm} />
       </section>
 
       {/* Step 2 — Submit */}
       <section className="pt-6">
         <StepBadge n={2} label="מימוש האתגר בפועל" />
-        <SubmissionForm challenge={CURRENT_CHALLENGE} onSubmit={handleSubmit} formRef={formRef} />
+        <SubmissionForm challenge={current} onSubmit={handleSubmit} formRef={formRef} userName={displayName} challenges={challenges} />
       </section>
 
       {/* Step 3 — Light up the puzzle */}

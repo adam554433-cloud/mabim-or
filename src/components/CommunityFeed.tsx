@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Submission } from "@/types";
+import { parseInstagram } from "@/lib/instagram";
 
 interface CommunityFeedProps {
   submissions: Submission[];
@@ -31,6 +32,7 @@ const GRADIENTS = [
 const AVATAR_BG  = ["bg-yellow-400", "bg-orange-400", "bg-amber-500", "bg-yellow-500", "bg-orange-500"];
 
 function SubmissionCard({ s, i }: { s: Submission; i: number }) {
+  const ig = s.instagram_url ? parseInstagram(s.instagram_url) : null;
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -44,8 +46,18 @@ function SubmissionCard({ s, i }: { s: Submission; i: number }) {
         onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = "rgba(251,191,36,0.12)")}>
 
         {/* Media area */}
-        <div className={`relative bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} aspect-[4/3] flex flex-col items-center justify-center overflow-hidden`}>
-          {s.media_url && s.media_type === "image" ? (
+        <div className={`relative bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} ${ig ? "h-[480px]" : "aspect-[4/3]"} flex flex-col items-center justify-center overflow-hidden`}>
+          {ig ? (
+            <iframe
+              src={ig.embedUrl}
+              title={`פוסט אינסטגרם של ${s.name}`}
+              className="w-full h-full bg-white"
+              loading="lazy"
+              scrolling="no"
+              allow="encrypted-media; clipboard-write"
+              allowFullScreen
+            />
+          ) : s.media_url && s.media_type === "image" ? (
             <Image src={s.media_url} alt={s.name} fill sizes="(min-width: 640px) 33vw, 80vw" className="object-cover" />
           ) : (s.media_url && s.media_type === "video") || s.video_url ? (
             <video src={(s.media_url ?? s.video_url) as string} className="w-full h-full object-cover" controls playsInline />

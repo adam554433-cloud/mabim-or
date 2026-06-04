@@ -17,6 +17,7 @@ export interface Submission {
   media_url?: string | null;
   media_type?: MediaType | null;
   thumbnail_url?: string | null;
+  instagram_url?: string | null;
   puzzle_index: number;
   created_at: string;
 }

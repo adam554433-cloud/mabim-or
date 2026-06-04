@@ -50,6 +50,9 @@ CREATE TABLE IF NOT EXISTS submissions (
 ALTER TABLE submissions ADD COLUMN IF NOT EXISTS media_url     text;
 ALTER TABLE submissions ADD COLUMN IF NOT EXISTS media_type    text;
 ALTER TABLE submissions ADD COLUMN IF NOT EXISTS thumbnail_url text;
+ALTER TABLE submissions ADD COLUMN IF NOT EXISTS instagram_url text;
+-- Admin moderation: hide/unhide submissions without deleting them
+ALTER TABLE submissions ADD COLUMN IF NOT EXISTS hidden boolean DEFAULT false;
 DO $$ BEGIN
   ALTER TABLE submissions ADD CONSTRAINT submissions_media_type_chk
     CHECK (media_type IN ('video','image'));

@@ -36,6 +36,18 @@ export interface AmbientPreset {
   voices: AmbientVoice[];
   /** optional pool of frequencies for gentle random shimmer bells */
   shimmer?: number[];
+  /** optional sparse generative piano on a calm scale */
+  piano?: AmbientPiano;
+}
+
+export interface AmbientPiano {
+  /** scale to draw notes from, in Hz */
+  scale: number[];
+  /** peak loudness of a struck note 0..1 */
+  gain: number;
+  /** min / max gap between notes, in ms */
+  gapMin: number;
+  gapMax: number;
 }
 
 // A pleasant pool of overtones used by several presets for the shimmer bells.

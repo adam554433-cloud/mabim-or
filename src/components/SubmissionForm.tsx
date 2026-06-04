@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Challenge, MediaType } from "@/types";
 import { ALL_CHALLENGES } from "@/lib/mockData";
 import { supabase } from "@/lib/supabase";
+import { parseInstagram } from "@/lib/instagram";
 import ShareButtons from "./ShareButtons";
 
 const MAX_UPLOAD_BYTES = 50 * 1024 * 1024; // 50 MB
@@ -14,16 +15,27 @@ interface SubmissionFormProps {
   challenge: Challenge;
   onSubmit: (name: string, challengeId: string, newIndex: number) => void;
   formRef: React.RefObject<HTMLElement | null>;
+  /** Display name of the logged-in user — used instead of asking for a name */
+  userName: string;
+  /** Challenges from the DB; falls back to mock data when empty */
+  challenges?: Challenge[];
 }
 
 type Status = "idle" | "uploading" | "loading" | "success" | "error";
 
-export default function SubmissionForm({ challenge, onSubmit, formRef }: SubmissionFormProps) {
-  const [name, setName]               = useState("");
+export default function SubmissionForm({ challenge, onSubmit, formRef, userName, challenges }: SubmissionFormProps) {
+  const name = userName.trim();
+  const challengeList = challenges && challenges.length ? challenges : ALL_CHALLENGES;
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge>(challenge);
+
+  // Keep the selection in sync when the active challenge arrives/changes from the DB.
+  useEffect(() => {
+    setSelectedChallenge(challenge);
+  }, [challenge]);
   const [performedAt, setPerformedAt] = useState(() => new Date().toISOString().split("T")[0]);
   const [videoFile, setVideoFile]     = useState<File | null>(null);
   const [fileError, setFileError]     = useState<string | null>(null);
+  const [instagramUrl, setInstagramUrl] = useState("");
   const [status, setStatus]           = useState<Status>("idle");
   const [errorMsg, setErrorMsg]       = useState("");
   const [submittedName, setSubmittedName] = useState("");
@@ -31,6 +43,10 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
   const [submittedNum, setSubmittedNum]   = useState(0);
   const fileRef  = useRef<HTMLInputElement>(null);
   const router   = useRouter();
+
+  const igTrimmed  = instagramUrl.trim();
+  const igRef      = igTrimmed ? parseInstagram(igTrimmed) : null;
+  const igInvalid  = igTrimmed.length > 0 && !igRef;
 
   async function uploadMedia(file: File): Promise<{ url: string; type: MediaType }> {
     const isVideo = file.type.startsWith("video/");
@@ -48,6 +64,11 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!name.trim()) return;
+    if (igInvalid) {
+      setErrorMsg("קישור האינסטגרם אינו תקין");
+      setStatus("error");
+      return;
+    }
     setErrorMsg("");
     try {
       let media_url: string | null = null;
@@ -68,6 +89,7 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
           performed_at: performedAt,
           media_url,
           media_type,
+          instagram_url: igRef?.url ?? null,
         }),
       });
       const data = await res.json();
@@ -77,8 +99,8 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
       setSubmittedNum(data.puzzle_index + 1);
       setStatus("success");
       onSubmit(name.trim(), challenge.id, data.puzzle_index);
-      setName("");
       setVideoFile(null);
+      setInstagramUrl("");
     } catch (err) {
       console.error("[submission] failed:", err);
       setErrorMsg(err instanceof Error ? err.message : "שגיאה לא ידועה");
@@ -139,32 +161,26 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
               initial={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <div>
-                <label className="block text-sm text-gray-400 mb-1.5">השם שלך</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="יוסי לוי"
-                  required
-                  className="w-full rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none transition-all text-base"
-                  style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.15)" }}
-                  onFocus={e => (e.target.style.borderColor = "rgba(251,191,36,0.5)")}
-                  onBlur={e => (e.target.style.borderColor = "rgba(251,191,36,0.15)")}
-                />
-              </div>
+              {name && (
+                <div className="flex items-center gap-2 text-sm text-gray-400">
+                  <span className="w-7 h-7 rounded-full bg-yellow-400 flex items-center justify-center text-black font-bold text-xs flex-shrink-0">
+                    {name[0]}
+                  </span>
+                  <span>מוסיף אור בתור <span className="text-yellow-400 font-semibold">{name}</span></span>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm text-gray-400 mb-1.5">האתגר</label>
                 <select
                   value={selectedChallenge.id}
-                  onChange={e => setSelectedChallenge(ALL_CHALLENGES.find(c => c.id === e.target.value) ?? challenge)}
+                  onChange={e => setSelectedChallenge(challengeList.find(c => c.id === e.target.value) ?? challenge)}
                   className="w-full rounded-xl px-4 py-3 text-yellow-400/90 focus:outline-none transition-all text-sm appearance-none"
                   style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.2)", colorScheme: "dark" }}
                   onFocus={e => (e.target.style.borderColor = "rgba(251,191,36,0.5)")}
                   onBlur={e => (e.target.style.borderColor = "rgba(251,191,36,0.2)")}
                 >
-                  {ALL_CHALLENGES.map(c => (
+                  {challengeList.map(c => (
                     <option key={c.id} value={c.id} style={{ background: "#1a0f00", color: "#fbbf24" }}>
                       {c.title}
                     </option>
@@ -228,6 +244,31 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
                 )}
               </div>
 
+              {/* Instagram link — embed instead of upload */}
+              <div>
+                <label className="block text-sm text-gray-400 mb-1.5">
+                  או הדבק קישור מאינסטגרם <span className="text-gray-600">(אופציונלי)</span>
+                </label>
+                <input
+                  type="url"
+                  dir="ltr"
+                  value={instagramUrl}
+                  onChange={(e) => setInstagramUrl(e.target.value)}
+                  placeholder="https://www.instagram.com/reel/..."
+                  className="w-full rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none transition-all text-sm text-left"
+                  style={{ background: "rgba(251,191,36,0.05)", border: `1px solid ${igInvalid ? "rgba(248,113,113,0.5)" : "rgba(251,191,36,0.15)"}` }}
+                  onFocus={e => (e.target.style.borderColor = igInvalid ? "rgba(248,113,113,0.6)" : "rgba(251,191,36,0.5)")}
+                  onBlur={e => (e.target.style.borderColor = igInvalid ? "rgba(248,113,113,0.5)" : "rgba(251,191,36,0.15)")}
+                />
+                {igInvalid ? (
+                  <p className="text-red-400 text-xs mt-1.5">לא זוהה קישור אינסטגרם תקין (פוסט / רילס).</p>
+                ) : igRef ? (
+                  <p className="text-yellow-400/80 text-xs mt-1.5">✓ הסרטון מאינסטגרם יוטמע בכרטיס שלך</p>
+                ) : (
+                  <p className="text-gray-600 text-xs mt-1.5">העלה את הסרטון לאינסטגרם, ואז הדבק כאן את הקישור לפוסט.</p>
+                )}
+              </div>
+
               {status === "error" && (
                 <p className="text-red-400 text-sm text-center">
                   משהו השתבש. נסה שוב.
@@ -237,7 +278,7 @@ export default function SubmissionForm({ challenge, onSubmit, formRef }: Submiss
 
               <button
                 type="submit"
-                disabled={status === "loading" || status === "uploading" || !name.trim()}
+                disabled={status === "loading" || status === "uploading" || !name.trim() || igInvalid}
                 className="w-full bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-500 disabled:bg-yellow-400/40 text-black font-bold py-4 rounded-full text-lg transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(251,191,36,.4)] disabled:cursor-not-allowed disabled:scale-100 select-none"
               >
                 {status === "loading" || status === "uploading" ? (

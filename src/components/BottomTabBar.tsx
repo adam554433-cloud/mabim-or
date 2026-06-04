@@ -22,7 +22,7 @@ const TABS: Tab[] = [
 ];
 
 // Routes where the app shell (tab bar) should be hidden — focused flows.
-const HIDDEN_PREFIXES = ["/login", "/onboarding", "/presentation", "/fx", "/preview"];
+const HIDDEN_PREFIXES = ["/login", "/onboarding", "/presentation", "/fx", "/preview", "/admin"];
 
 export default function BottomTabBar() {
   const pathname = usePathname();
