@@ -107,6 +107,14 @@ export function LightbulbIcon(p: IconProps) {
   );
 }
 
+export function SpiralIcon(p: IconProps) {
+  return (
+    <Base {...p}>
+      <path d="M12 12a1 1 0 1 0 1 1m1.5-2.8a4 4 0 1 0 1.2 2.8m1.4-5a8 8 0 1 0 2.4 5.7" />
+    </Base>
+  );
+}
+
 export function VolumeOnIcon(p: IconProps) {
   return (
     <Base {...p}>

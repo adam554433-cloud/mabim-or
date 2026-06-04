@@ -136,7 +136,9 @@ export default function MenuDrawer({ open, onClose, user }: Props) {
                           : "hover:bg-yellow-400/5"
                       }`}
                     >
-                      <span className="text-2xl flex-shrink-0">{item.emoji}</span>
+                      <span className="flex-shrink-0 text-yellow-400/80">
+                        <item.Icon size={22} />
+                      </span>
                       <div className="flex-1 min-w-0 text-right">
                         <div className="text-yellow-100 font-semibold text-sm flex items-center gap-2">
                           <span>{item.label}</span>
