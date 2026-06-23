@@ -52,6 +52,44 @@ export function FilmIcon(p: IconProps) {
   );
 }
 
+// Dot-grid icon — evokes the lit-dot puzzle (ניצוצות). Uses filled dots, so
+// it sets its own fill rather than inheriting the stroke-based Base.
+export function GridIcon({ size = 24, ...rest }: IconProps) {
+  const pts = [6, 12, 18];
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+      {...rest}
+    >
+      {pts.flatMap((y) =>
+        pts.map((x) => <circle key={`${x}-${y}`} cx={x} cy={y} r={1.7} />)
+      )}
+    </svg>
+  );
+}
+
+export function PlusIcon({ size = 24, ...rest }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.4}
+      strokeLinecap="round"
+      aria-hidden
+      {...rest}
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
 export function SparkIcon(p: IconProps) {
   return (
     <Base {...p}>

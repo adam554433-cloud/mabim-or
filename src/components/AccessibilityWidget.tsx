@@ -125,12 +125,12 @@ export default function AccessibilityWidget() {
         onClick={() => setOpen((o) => !o)}
         aria-label="הגדרות נגישות (Alt+A)"
         aria-expanded={open}
-        className="fixed bottom-36 md:bottom-5 right-5 z-50 w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+        className="fixed bottom-[88px] md:bottom-5 right-4 z-50 w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95"
         style={{
-          background: "#FFD345",
-          color: "#000",
+          background: "#FFFFFF",
+          color: "#3A3A3A",
           boxShadow:
-            "0 4px 16px rgba(0,0,0,0.45), 0 0 24px rgba(255,211,69,0.35)",
+            "0 4px 16px rgba(0,0,0,0.30), 0 0 0 1px rgba(0,0,0,0.05)",
         }}
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -151,7 +151,7 @@ export default function AccessibilityWidget() {
             ref={panelRef}
             role="dialog"
             aria-label="הגדרות נגישות"
-            className="fixed bottom-52 md:bottom-20 right-5 z-50 w-[320px] max-w-[calc(100vw-2.5rem)] rounded-2xl p-5"
+            className="fixed bottom-[150px] md:bottom-20 right-4 z-50 w-[320px] max-w-[calc(100vw-2.5rem)] rounded-2xl p-5"
             style={{
               background: "linear-gradient(135deg,#1e1200,#0d0800)",
               border: "1px solid rgba(255,211,69,0.35)",

@@ -10,6 +10,8 @@ import ParticlesBg from "./fx/ParticlesBg";
 interface HeroSectionProps {
   litCount: number;
   ctaHref?: string;
+  /** Optional short line rendered directly beneath the CTA button. */
+  ctaNote?: string;
 }
 
 function makeStars(n: number) {
@@ -25,7 +27,7 @@ function makeStars(n: number) {
   }));
 }
 
-export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSectionProps) {
+export default function HeroSection({ litCount, ctaHref = "#challenge", ctaNote }: HeroSectionProps) {
   const percentage = ((litCount / 50000) * 100).toFixed(1);
   const stars = useMemo(() => makeStars(90), []);
   const [isMobile, setIsMobile] = useState(false);
@@ -253,6 +255,19 @@ export default function HeroSection({ litCount, ctaHref = "#challenge" }: HeroSe
           <span className="relative">הצטרפו להאיר ←</span>
         </motion.a>
       </motion.div>
+
+      {/* ── Note directly beneath the CTA ── */}
+      {ctaNote && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.8 }}
+          className="relative z-10 mt-4 mx-auto max-w-xs text-sm leading-relaxed"
+          style={{ color: "#FDE494", opacity: 0.8 }}
+        >
+          {ctaNote}
+        </motion.p>
+      )}
     </section>
   );
 }

@@ -107,7 +107,11 @@ export default function HomePage() {
       <main className="min-h-screen pb-16">
         <SiteNav />
         <BgMusic />
-        <HeroSection litCount={litCount} ctaHref="/login" />
+        <HeroSection
+          litCount={litCount}
+          ctaHref="/login"
+          ctaNote="רישום קצר וחינם — ונותן לכם נקודה משלכם בפאזל המרכזי."
+        />
 
         {/* Challenge — visible to guests (read-only) */}
         <section id="challenge" className="pt-6 scroll-mt-20">
@@ -116,78 +120,64 @@ export default function HomePage() {
             challenge={current}
             onScrollToForm={() => {
               document
-                .getElementById("guest-cta")
+                .getElementById("join-end")
                 ?.scrollIntoView({ behavior: "smooth", block: "center" });
             }}
           />
         </section>
 
-        {/* Guest CTA — stands in for the form */}
-        <section id="guest-cta" className="pt-8 px-5">
-          <StepBadge n={2} label="הצטרפו לאתגר השבוע" />
-          <div className="max-w-xl mx-auto">
-            <div
-              className="rounded-2xl p-6 sm:p-8 text-center"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(40,25,0,0.9), rgba(15,10,0,0.85))",
-                border: "1px solid rgba(251,191,36,0.35)",
-                boxShadow: "0 0 40px rgba(251,191,36,0.10)",
-              }}
-            >
-              <div className="flex justify-center text-yellow-400 mb-3 candle-flicker"><SparkIcon size={40} /></div>
-              <h3 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-2">
-                כדי להשתתף — צריך להירשם
-              </h3>
-              <p className="text-yellow-100/70 text-sm sm:text-base mb-5 leading-relaxed">
-                רישום קצר וחינם. עוזר לנו לדעת מי הדליק את האור — ונותן לכם
-                נקודה משלכם בפאזל המרכזי.
-              </p>
-              <Link
-                href="/login"
-                className="inline-block bg-yellow-400 active:bg-yellow-500 text-black font-bold px-6 py-3 rounded-full hover:scale-105 transition-all"
-                style={{ boxShadow: "0 0 24px rgba(251,191,36,0.35)" }}
-              >
-                הצטרפו לאתגר השבוע ←
-              </Link>
-            </div>
-          </div>
-        </section>
-
         <section id="puzzle" className="pt-10 pb-6">
+          {/* Animation above the title */}
+          <div className="flex items-center justify-center mb-2 relative z-10 pointer-events-none">
+            <CoreOrb intensity={litCount / 50000} size={110} />
+          </div>
           <div className="text-center mb-3 px-4">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-300">
+            <h2 className="text-lg sm:text-xl font-semibold text-amber-100/90">
               גוף האור המרכזי
             </h2>
-            <p className="text-gray-600 text-xs sm:text-sm mt-1">
+            <p className="text-amber-200/50 text-xs sm:text-sm mt-1">
               {litCount.toLocaleString("he-IL")} אורות כבר דולקים
             </p>
           </div>
-          <div className="flex items-center justify-center -mb-6 sm:-mb-10 relative z-10 pointer-events-none">
-            <CoreOrb intensity={litCount / 50000} size={110} />
-          </div>
-          <div className="border-y border-yellow-400/10 py-3 relative" style={{ background: "linear-gradient(180deg,#080500,#050300)" }}>
-            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%,rgba(251,191,36,0.04) 0%,transparent 70%)" }} />
+          <div className="border-y border-yellow-400/20 py-3 relative" style={{ background: "linear-gradient(180deg,#0d0900,#070400)" }}>
+            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%,rgba(251,191,36,0.10) 0%,transparent 70%)" }} />
             <div className="sm:max-h-[420px] sm:overflow-hidden">
               <PuzzleGrid newLitIndex={null} litCount={litCount} />
             </div>
+          </div>
+          {/* The dots aren't individually linkable here — open the full puzzle */}
+          <div className="flex justify-center mt-4">
+            <Link
+              href="/puzzle"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-yellow-400 hover:text-yellow-300 transition-colors px-4 py-2 rounded-full border border-yellow-400/25"
+              style={{ background: "rgba(251,191,36,0.06)" }}
+            >
+              פתחו את הפאזל המלא ←
+            </Link>
           </div>
           <div className="mt-6 px-4">
             <MilestoneBar litCount={litCount} />
           </div>
         </section>
 
-        {/* Inspiration banner */}
-        <div className="max-w-xl mx-auto px-5 mt-10 text-center">
+        {/* Inspiration banner + join CTA at the end of the page */}
+        <section id="join-end" className="max-w-xl mx-auto px-5 mt-10 mb-4 text-center scroll-mt-20">
           <div className="flex justify-center text-yellow-400 mb-3 candle-flicker"><SparkIcon size={40} /></div>
           <h3 className="text-2xl font-bold text-yellow-400 mb-3">
             רוצה להאיר נקודה משלך?
           </h3>
-          <p className="text-yellow-100/70 leading-relaxed">
+          <p className="text-yellow-100/70 leading-relaxed mb-6">
             כדי להשתתף באתגר השבועי, לראות אחרים, ולהדליק נקודה משלך בפאזל —
             צריך להירשם תחילה. רישום קצר, חינם.
           </p>
-        </div>
+          <Link
+            href="/login"
+            className="inline-block bg-yellow-400 active:bg-yellow-500 text-black font-bold px-8 py-4 rounded-full text-lg hover:scale-105 transition-all"
+            style={{ boxShadow: "0 0 24px rgba(251,191,36,0.4)" }}
+          >
+            הצטרפו להאיר ←
+          </Link>
+        </section>
       </main>
     );
   }
@@ -225,29 +215,30 @@ export default function HomePage() {
       </section>
 
       {/* Step 2 — Submit */}
-      <section className="pt-6">
+      <section id="submit" className="pt-6 scroll-mt-24">
         <StepBadge n={2} label="מימוש האתגר בפועל" />
         <SubmissionForm challenge={current} onSubmit={handleSubmit} formRef={formRef} userName={displayName} challenges={challenges} />
       </section>
 
       {/* Step 3 — Light up the puzzle */}
       <section id="puzzle" className="pt-8">
+        {/* Animation above the title */}
+        <div className="flex items-center justify-center mb-2 relative z-10 pointer-events-none">
+          <CoreOrb intensity={litCount / 50000} size={120} pulseTrigger={newLitIdx} />
+        </div>
         <StepBadge n={3} label="גוף האור המרכזי" />
         <div className="text-center mb-3 px-4">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-300">
+          <h2 className="text-lg sm:text-xl font-semibold text-amber-100/90">
             הפאזל של עם ישראל
           </h2>
-          <p className="text-gray-600 text-xs sm:text-sm mt-1">
+          <p className="text-amber-200/50 text-xs sm:text-sm mt-1">
             {litCount.toLocaleString("he-IL")} אורות דולקים
             <span className="hidden sm:inline"> — העבר עם העכבר לראות מי הדליק</span>
             <span className="sm:hidden"> — לחץ על אור לפרטים</span>
           </p>
         </div>
-        <div className="flex items-center justify-center -mb-6 sm:-mb-10 relative z-10 pointer-events-none">
-          <CoreOrb intensity={litCount / 50000} size={120} pulseTrigger={newLitIdx} />
-        </div>
-        <div className="border-y border-yellow-400/10 py-3 relative" style={{ background: "linear-gradient(180deg,#080500,#050300)" }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%,rgba(251,191,36,0.04) 0%,transparent 70%)" }} />
+        <div className="border-y border-yellow-400/20 py-3 relative" style={{ background: "linear-gradient(180deg,#0d0900,#070400)" }}>
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%,rgba(251,191,36,0.10) 0%,transparent 70%)" }} />
           <div className="sm:max-h-[420px] sm:overflow-hidden relative">
             <PuzzleGrid newLitIndex={newLitIdx} litCount={litCount} />
             <FlySpark
@@ -256,6 +247,15 @@ export default function HomePage() {
               targetYPct={newLitIdx !== null ? (Math.floor(newLitIdx / 250) / 200) * 100 : 50}
             />
           </div>
+        </div>
+        <div className="flex justify-center mt-4">
+          <Link
+            href="/puzzle"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-yellow-400 hover:text-yellow-300 transition-colors px-4 py-2 rounded-full border border-yellow-400/25"
+            style={{ background: "rgba(251,191,36,0.06)" }}
+          >
+            פתחו את הפאזל המלא ←
+          </Link>
         </div>
         <div className="mt-6 px-4">
           <MilestoneBar litCount={litCount} />

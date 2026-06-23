@@ -315,7 +315,7 @@ function MyLightContent() {
             style={{ background: "linear-gradient(135deg,#1e1200,#0d0800)", border: "1px solid rgba(251,191,36,0.35)", boxShadow: "0 0 40px rgba(251,191,36,0.18)" }}
           >
             <p className="text-white font-bold text-base mb-1">רוצה לראות את האור <span className="text-yellow-400">האמיתי</span> שלך?</p>
-            <p className="text-amber-200/50 text-xs mb-4">הצטרף לקהילה, השלם אתגר — וקבל נקודה משלך בפאזל</p>
+            <p className="text-amber-200/50 text-xs mb-4">הצטרפו לקהילה, השלימו אתגר — וקבלו נקודה משלכם בפאזל</p>
             <div className="flex gap-3">
               <Link
                 href="/login"
