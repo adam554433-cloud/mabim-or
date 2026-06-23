@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Serve the standalone app-map page (public/diagram/index.html) at a clean /diagram URL.
+  async rewrites() {
+    return [
+      { source: "/diagram", destination: "/diagram/index.html" },
+    ];
+  },
 };
 
 export default nextConfig;
