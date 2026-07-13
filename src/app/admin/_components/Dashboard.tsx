@@ -4,15 +4,17 @@ import { useState } from "react";
 import StatsTab from "./StatsTab";
 import SubmissionsTab from "./SubmissionsTab";
 import ChallengesTab from "./ChallengesTab";
+import InsightsTab from "./InsightsTab";
 import UsersTab from "./UsersTab";
 import AgreementsTab from "./AgreementsTab";
 
-type TabKey = "stats" | "submissions" | "challenges" | "users" | "agreements";
+type TabKey = "stats" | "submissions" | "challenges" | "insights" | "users" | "agreements";
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "stats", label: "סטטיסטיקה" },
   { key: "submissions", label: "הגשות" },
   { key: "challenges", label: "אתגרים" },
+  { key: "insights", label: "תובנות יומיות" },
   { key: "users", label: "משתמשים" },
   { key: "agreements", label: "הסכמי משפיענים" },
 ];
@@ -60,6 +62,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
       {tab === "stats" && <StatsTab />}
       {tab === "submissions" && <SubmissionsTab />}
       {tab === "challenges" && <ChallengesTab />}
+      {tab === "insights" && <InsightsTab />}
       {tab === "users" && <UsersTab />}
       {tab === "agreements" && <AgreementsTab />}
     </div>

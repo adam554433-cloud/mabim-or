@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await supabaseAdmin
     .from("challenges")
     .select("*")
-    .order("week_start", { ascending: false });
+    .order("start_date", { ascending: false });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ challenges: data ?? [] });
@@ -21,14 +21,20 @@ export async function POST(req: NextRequest) {
   const denied = requireAdmin(req);
   if (denied) return denied;
 
-  const { title, description, week_start } = await req.json();
-  if (!title || typeof title !== "string" || !week_start) {
-    return NextResponse.json({ error: "כותרת ותאריך הם שדות חובה" }, { status: 400 });
+  const { title, description, start_date, end_date } = await req.json();
+  if (!title || typeof title !== "string" || !start_date) {
+    return NextResponse.json({ error: "כותרת ותאריך התחלה הם שדות חובה" }, { status: 400 });
   }
 
   const { data, error } = await supabaseAdmin
     .from("challenges")
-    .insert({ title: title.trim(), description: description ?? null, week_start })
+    .insert({
+      title: title.trim(),
+      description: description ?? null,
+      start_date,
+      end_date: end_date || null,
+      week_start: start_date, // keep legacy NOT NULL column in sync
+    })
     .select()
     .single();
 
@@ -40,13 +46,17 @@ export async function PATCH(req: NextRequest) {
   const denied = requireAdmin(req);
   if (denied) return denied;
 
-  const { id, title, description, week_start } = await req.json();
+  const { id, title, description, start_date, end_date } = await req.json();
   if (!id) return NextResponse.json({ error: "חסר מזהה" }, { status: 400 });
 
   const patch: Record<string, unknown> = {};
   if (typeof title === "string") patch.title = title.trim();
   if (description !== undefined) patch.description = description;
-  if (week_start) patch.week_start = week_start;
+  if (start_date) {
+    patch.start_date = start_date;
+    patch.week_start = start_date;
+  }
+  if (end_date !== undefined) patch.end_date = end_date || null;
 
   const { data, error } = await supabaseAdmin
     .from("challenges")

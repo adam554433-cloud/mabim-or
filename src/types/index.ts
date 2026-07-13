@@ -3,6 +3,19 @@ export interface Challenge {
   title: string;
   description: string;
   week_start: string;
+  /** Date the challenge goes live on the site (inclusive) */
+  start_date?: string | null;
+  /** Last date the challenge is shown (inclusive); null = no end */
+  end_date?: string | null;
+  created_at: string;
+}
+
+export interface Insight {
+  id: string;
+  /** The date this insight is shown (YYYY-MM-DD) */
+  insight_date: string;
+  text: string;
+  source?: string | null;
   created_at: string;
 }
 

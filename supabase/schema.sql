@@ -74,6 +74,24 @@ DO $$ BEGIN
     FOR INSERT WITH CHECK (bucket_id = 'submissions-media');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
+-- ── Challenge scheduling (when it goes live / comes down) ───────────
+ALTER TABLE challenges ADD COLUMN IF NOT EXISTS start_date date;
+ALTER TABLE challenges ADD COLUMN IF NOT EXISTS end_date   date;
+UPDATE challenges SET start_date = week_start WHERE start_date IS NULL;
+
+-- ── Daily insights (תובנה יומית, scheduled by date) ──────────────────
+CREATE TABLE IF NOT EXISTS insights (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  insight_date date UNIQUE NOT NULL,
+  text         text NOT NULL,
+  source       text,
+  created_at   timestamptz DEFAULT now()
+);
+ALTER TABLE insights ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  CREATE POLICY "insights_public_read" ON insights FOR SELECT USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
 -- ── Reactions (מילות עידוד) ──────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS reactions (
   id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -4,7 +4,18 @@ import { useEffect, useState } from "react";
 import { Challenge } from "@/types";
 import { Btn, Card, fmtDate, inputStyle } from "./ui";
 
-const EMPTY = { id: "", title: "", description: "", week_start: "" };
+const EMPTY = { id: "", title: "", description: "", start_date: "", end_date: "" };
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function isActive(c: Challenge): boolean {
+  const t = todayISO();
+  const start = (c.start_date ?? c.week_start ?? "").slice(0, 10);
+  const end = (c.end_date ?? "").slice(0, 10);
+  return (!start || start <= t) && (!end || end >= t);
+}
 
 export default function ChallengesTab() {
   const [rows, setRows] = useState<Challenge[]>([]);
@@ -35,8 +46,12 @@ export default function ChallengesTab() {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.title.trim() || !form.week_start) {
-      setError("כותרת ותאריך הם חובה");
+    if (!form.title.trim() || !form.start_date) {
+      setError("כותרת ותאריך התחלה הם חובה");
+      return;
+    }
+    if (form.end_date && form.end_date < form.start_date) {
+      setError("תאריך הסיום חייב להיות אחרי תאריך ההתחלה");
       return;
     }
     setSaving(true);
@@ -93,13 +108,28 @@ export default function ChallengesTab() {
             className="w-full rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none text-sm"
             style={inputStyle}
           />
-          <input
-            type="date"
-            value={form.week_start}
-            onChange={(e) => setForm({ ...form, week_start: e.target.value })}
-            className="w-full rounded-xl px-4 py-2.5 text-white focus:outline-none text-sm"
-            style={{ ...inputStyle, colorScheme: "dark" }}
-          />
+          <div className="grid grid-cols-2 gap-3">
+            <label className="text-xs text-amber-200/60">
+              עולה לאתר
+              <input
+                type="date"
+                value={form.start_date}
+                onChange={(e) => setForm({ ...form, start_date: e.target.value })}
+                className="mt-1 w-full rounded-xl px-3 py-2.5 text-white focus:outline-none text-sm"
+                style={{ ...inputStyle, colorScheme: "dark" }}
+              />
+            </label>
+            <label className="text-xs text-amber-200/60">
+              יורד מהאתר (אופציונלי)
+              <input
+                type="date"
+                value={form.end_date}
+                onChange={(e) => setForm({ ...form, end_date: e.target.value })}
+                className="mt-1 w-full rounded-xl px-3 py-2.5 text-white focus:outline-none text-sm"
+                style={{ ...inputStyle, colorScheme: "dark" }}
+              />
+            </label>
+          </div>
           {error && <p className="text-red-400 text-sm">{error}</p>}
           <div className="flex gap-2">
             <Btn type="submit" disabled={saving}>
@@ -121,10 +151,18 @@ export default function ChallengesTab() {
           {rows.map((c) => (
             <Card key={c.id} className="flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <div className="font-bold">{c.title}</div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold">{c.title}</span>
+                  {isActive(c) && (
+                    <span className="text-[10px] bg-green-500/20 text-green-300 px-1.5 py-0.5 rounded">
+                      פעיל עכשיו
+                    </span>
+                  )}
+                </div>
                 <div className="text-amber-200/50 text-xs truncate">{c.description}</div>
                 <div className="text-amber-300/40 text-xs mt-0.5">
-                  שבוע: {fmtDate(c.week_start)}
+                  {fmtDate(c.start_date ?? c.week_start)} ←{" "}
+                  {c.end_date ? fmtDate(c.end_date) : "ללא תאריך סיום"}
                 </div>
               </div>
               <div className="flex gap-2 shrink-0">
@@ -135,7 +173,8 @@ export default function ChallengesTab() {
                       id: c.id,
                       title: c.title,
                       description: c.description ?? "",
-                      week_start: (c.week_start ?? "").slice(0, 10),
+                      start_date: (c.start_date ?? c.week_start ?? "").slice(0, 10),
+                      end_date: (c.end_date ?? "").slice(0, 10),
                     })
                   }
                 >

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import SiteNav from "@/components/SiteNav";
 
@@ -51,7 +52,20 @@ function todaysInsight() {
 }
 
 export default function InsightPage() {
-  const insight = todaysInsight();
+  // Prefer the admin-scheduled insight for today; fall back to the rotation.
+  const [insight, setInsight] = useState<{ text: string; source: string }>(todaysInsight);
+
+  useEffect(() => {
+    fetch("/api/insights/today")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.insight?.text) {
+          setInsight({ text: d.insight.text, source: d.insight.source ?? "" });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const today = new Date().toLocaleDateString("he-IL", {
     weekday: "long",
     day: "numeric",
