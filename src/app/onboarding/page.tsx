@@ -10,7 +10,7 @@ import OnboardingForm from "@/components/OnboardingForm";
 function OnboardingContent() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("next") ?? "/my-light";
+  const next = params.get("next") ?? "/puzzle/my-light";
 
   const [ready, setReady] = useState(false);
   const [initialName, setInitialName] = useState("");

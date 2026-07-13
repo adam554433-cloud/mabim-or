@@ -140,7 +140,7 @@ export default function SubmissionForm({ challenge, onSubmit, formRef, userName,
               <ShareButtons puzzleNumber={submittedNum} />
 
               <button
-                onClick={() => router.push(`/my-light?name=${encodeURIComponent(submittedName)}&idx=${submittedIdx}&num=${submittedNum}`)}
+                onClick={() => router.push(`/puzzle/my-light?name=${encodeURIComponent(submittedName)}&idx=${submittedIdx}&num=${submittedNum}`)}
                 className="mt-5 w-full font-bold py-3.5 rounded-full text-base transition-all hover:scale-105"
                 style={{ background: "rgba(251,191,36,1)", color: "#000", boxShadow: "0 0 24px rgba(251,191,36,0.4)" }}
               >

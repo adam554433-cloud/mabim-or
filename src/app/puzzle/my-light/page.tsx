@@ -157,7 +157,7 @@ function MyLightContent() {
     >
       {/* Nav */}
       <nav className="flex items-center justify-between px-5 py-4 border-b border-yellow-400/10" style={{ background: "rgba(10,7,0,0.85)" }}>
-        <Link href="/" className="text-gray-500 hover:text-yellow-400 transition-colors text-sm">
+        <Link href="/puzzle" className="text-gray-500 hover:text-yellow-400 transition-colors text-sm">
           → חזרה לדף הבית
         </Link>
         <span className="text-yellow-400 font-bold text-sm">✨ מביאים אור</span>
@@ -291,7 +291,7 @@ function MyLightContent() {
               {copied ? "הלינק הועתק ✓" : "שתף את האור שלי ✨"}
             </button>
             <Link
-              href="/"
+              href="/puzzle"
               className="w-full text-center text-amber-400/50 hover:text-yellow-400 transition-colors text-sm py-2"
             >
               → חזרה לדף הבית
@@ -325,7 +325,7 @@ function MyLightContent() {
                 הדלק את האור שלי ✨
               </Link>
               <Link
-                href="/"
+                href="/puzzle"
                 className="px-4 py-3 rounded-full text-amber-400/60 hover:text-yellow-400 transition-colors text-sm font-medium border border-yellow-400/15"
               >
                 חזרה

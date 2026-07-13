@@ -9,10 +9,33 @@ import OnboardingForm from "@/components/OnboardingForm";
 
 type Step = "email" | "otp" | "onboarding";
 
+type AuthErr = { code?: string; message?: string; status?: number } | null;
+
+/** Map a Supabase auth error to a clear Hebrew message (and log the real one). */
+function authErrorMessage(err: AuthErr, fallback: string): string {
+  if (!err) return fallback;
+  console.error("[login] auth error:", err.status, err.code, err.message);
+  switch (err.code) {
+    case "over_email_send_rate_limit":
+    case "over_request_rate_limit":
+      return "נשלחו יותר מדי מיילים כרגע. נסה שוב בעוד כמה דקות, או היכנס עם Google.";
+    case "email_address_invalid":
+      return "כתובת המייל לא תקינה. בדוק שאין שגיאת כתיב.";
+    case "otp_expired":
+      return "הקוד פג תוקף. בקש קוד חדש.";
+    case "validation_failed":
+      return "פרטים לא תקינים. בדוק את כתובת המייל.";
+    case "signup_disabled":
+      return "ההרשמה סגורה כרגע.";
+    default:
+      return err.message || fallback;
+  }
+}
+
 function LoginContent() {
   const router = useRouter();
   const params = useSearchParams();
-  const redirect = params.get("redirect") ?? "/my-light";
+  const redirect = params.get("redirect") ?? "/puzzle/my-light";
 
   const [step,    setStep]    = useState<Step>("email");
   const [email,   setEmail]   = useState("");
@@ -22,13 +45,15 @@ function LoginContent() {
   const [error,   setError]   = useState("");
 
   async function signInWithGoogle() {
-    setGLoading(true);
-    await supabase.auth.signInWithOAuth({
+    setGLoading(true); setError("");
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/onboarding?next=${encodeURIComponent(redirect)}`,
       },
     });
+    // On success the browser redirects away; only reach here on failure.
+    if (error) { setGLoading(false); setError(authErrorMessage(error, "שגיאה בהתחברות עם Google.")); }
   }
 
   async function sendOtp() {
@@ -39,7 +64,7 @@ function LoginContent() {
       options: { shouldCreateUser: true },
     });
     setLoading(false);
-    if (error) { setError("שגיאה בשליחת קוד. נסה שוב."); return; }
+    if (error) { setError(authErrorMessage(error, "שגיאה בשליחת קוד. נסה שוב.")); return; }
     setStep("otp");
   }
 
@@ -52,7 +77,7 @@ function LoginContent() {
       type: "email",
     });
     setLoading(false);
-    if (error) { setError("קוד לא נכון. נסה שוב."); return; }
+    if (error) { setError(authErrorMessage(error, "קוד לא נכון. נסה שוב.")); return; }
     if (!data.user?.user_metadata?.onboarded) {
       setStep("onboarding");
     } else {
@@ -192,7 +217,7 @@ function LoginContent() {
       </motion.div>
 
       <p className="text-gray-700 text-xs mt-6">
-        בלחיצה על "שלח קוד" אתה מסכים לתנאי השימוש
+        בלחיצה על &quot;שלח קוד&quot; אתה מסכים לתנאי השימוש
       </p>
     </main>
   );

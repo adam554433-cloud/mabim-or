@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ניצוצות — מפת האפליקציה ומסכי מובייל</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background:#f4f7fa; font-family:"Heebo","Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif; color:#1a2230; }
+  .topbar { height:14px; background:#2b3340; }
+  .wrap { max-width:1180px; margin:0 auto; padding:28px 32px 64px; }
+  h1 { font-size:30px; font-weight:800; margin:14px 0 6px; letter-spacing:-0.5px; }
+  .subtitle { font-size:16px; color:#5a6573; margin:0 0 20px; max-width:820px; line-height:1.5; }
+  .legend { display:flex; gap:26px; align-items:center; flex-wrap:wrap; margin-bottom:24px; }
+  .legend .item { display:flex; gap:9px; align-items:center; font-size:14px; color:#2a3340; }
+  .legend svg { display:block; }
+  .card { background:#fff; border:1px solid #e4e8ee; border-radius:14px; box-shadow:0 1px 3px rgba(20,30,50,.05),0 8px 28px rgba(20,30,50,.05); padding:24px 20px 30px; margin-bottom:26px; }
+  .section-label { font-size:13px; font-weight:700; letter-spacing:2px; color:#8a93a1; text-transform:uppercase; margin:2px 0 6px 8px; }
+  .card-title { font-size:19px; font-weight:800; margin:0 0 2px; color:#1a2230; }
+  .card-note { font-size:13.5px; color:#6b7585; margin:0 0 18px; }
+  .diagram { direction:ltr; width:100%; display:flex; justify-content:center; overflow-x:auto; }
+  .diagram .mermaid { max-width:100%; }
+  .diagram svg { max-width:100%; height:auto; }
+  .twin { display:flex; flex-direction:column; gap:34px; align-items:stretch; }
+  .twin > div { width:100%; }
+  .footnote { font-size:12.5px; color:#8a93a1; margin-top:14px; text-align:center; line-height:1.7; }
+
+  /* ===== Mobile screen mockups ===== */
+  .phones { display:flex; flex-wrap:wrap; gap:34px 26px; justify-content:center; zoom:1.22; }
+  .phone-wrap { display:flex; flex-direction:column; align-items:center; gap:10px; width:208px; }
+  .phone {
+    width:208px; height:430px; border-radius:30px; padding:9px;
+    background:linear-gradient(160deg,#3a3a3a,#101010);
+    box-shadow:0 10px 30px rgba(15,20,35,.28), inset 0 0 0 1px rgba(255,255,255,.06);
+    position:relative;
+  }
+  .phone::before { /* notch */
+    content:""; position:absolute; top:9px; left:50%; transform:translateX(-50%);
+    width:74px; height:17px; background:#101010; border-radius:0 0 12px 12px; z-index:5;
+  }
+  .screen {
+    width:100%; height:100%; border-radius:22px; overflow:hidden; position:relative;
+    background:linear-gradient(180deg,#2A2A2A 0%, #000 100%);
+    color:#fff; direction:rtl;
+    display:flex; flex-direction:column;
+  }
+  .scl { /* scroll content */ flex:1; overflow:hidden; padding:26px 13px 13px; }
+  .statusbar { position:absolute; top:0; inset-inline:0; height:24px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; font-size:9px; color:rgba(253,228,148,.7); z-index:4; }
+  figcaption { font-size:13px; font-weight:600; color:#3a4555; text-align:center; }
+  figcaption b { color:#1a2230; }
+
+  /* shared screen pieces (dark/gold app theme) */
+  .gold { color:#fbbf24; }
+  .spark { color:#fbbf24; text-shadow:0 0 10px rgba(251,191,36,.6); }
+  .s-h1 { font-size:21px; font-weight:800; color:#fbbf24; text-shadow:0 0 14px rgba(251,191,36,.45); text-align:center; line-height:1.1; margin:2px 0; }
+  .s-tag { font-size:10px; color:#FDE494; text-align:center; margin-bottom:6px; }
+  .s-sub { font-size:9px; color:rgba(255,255,255,.6); text-align:center; line-height:1.4; }
+  .d-card { background:linear-gradient(135deg,#1e1200,#0d0800); border:1px solid rgba(251,191,36,.22); border-radius:12px; padding:9px 10px; margin:7px 0; }
+  .btn-gold { background:linear-gradient(135deg,#fbbf24,#CAA928); color:#1a1200; font-weight:800; font-size:10px; text-align:center; border-radius:10px; padding:8px; box-shadow:0 0 16px rgba(251,191,36,.35); }
+  .btn-ghost { border:1px solid rgba(251,191,36,.35); color:#FDE494; font-weight:600; font-size:9.5px; text-align:center; border-radius:10px; padding:7px; }
+  .input { background:rgba(255,255,255,.04); border:1px solid rgba(251,191,36,.25); border-radius:8px; padding:6px 8px; font-size:9px; color:#fff; }
+  .counter { font-size:30px; font-weight:800; color:#fbbf24; text-align:center; text-shadow:0 0 16px rgba(251,191,36,.5); line-height:1; }
+  .bar { height:7px; border-radius:6px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:5px; }
+  .bar > span { display:block; height:100%; width:38%; background:linear-gradient(90deg,#CAA928,#fbbf24); box-shadow:0 0 10px rgba(251,191,36,.6); }
+  .avatar { width:44px; height:44px; border-radius:50%; margin:0 auto; background:radial-gradient(circle at 40% 35%,#FDE494,#CAA928); box-shadow:0 0 0 3px rgba(251,191,36,.18),0 0 16px rgba(251,191,36,.4); display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .row { display:flex; gap:6px; }
+  .row > * { flex:1; }
+  .chip { font-size:8px; color:#FDE494; border:1px solid rgba(251,191,36,.3); border-radius:999px; padding:3px 7px; display:inline-block; }
+  .mini-label { font-size:8px; color:rgba(255,255,255,.45); margin:6px 2px 3px; }
+
+  /* dot grids */
+  .dots { display:grid; gap:2px; }
+  .dots i { width:100%; aspect-ratio:1; border-radius:50%; background:rgba(251,191,36,.09); display:block; }
+  .dots i.on { background:#fbbf24; box-shadow:0 0 4px rgba(251,191,36,.9); }
+  .dots i.me { background:#fff; box-shadow:0 0 6px #fff, 0 0 12px #fbbf24; }
+
+  /* bottom tab bar inside phone — floating cream pill, purple active */
+  .tabbar { position:relative; display:flex; margin:0 9px 9px; border-radius:16px; background:rgba(251,248,236,0.97); border:1px solid rgba(0,0,0,.06); box-shadow:0 6px 18px rgba(0,0,0,.28); }
+  .tabbar div { flex:1; text-align:center; padding:6px 0 7px; font-size:7.5px; color:#3F3F46; position:relative; }
+  .tabbar div.act { color:#7C3AED; font-weight:700; }
+  .tabbar div.act::before { content:""; position:absolute; top:0; left:50%; transform:translateX(-50%); width:16px; height:2px; border-radius:2px; background:#7C3AED; }
+  .tabbar div b { display:block; font-size:12px; line-height:1; margin-bottom:2px; font-weight:400; }
+  /* purple quick-add (+) FAB floating above the strip (leading/left, RTL) */
+  .fab { position:absolute; bottom:48px; left:11px; z-index:6; width:30px; height:30px; border-radius:50%; background:#7C3AED; color:#fff; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:300; box-shadow:0 6px 16px rgba(124,58,237,.5); }
+  .fab i { position:absolute; top:-4px; left:-4px; min-width:14px; height:14px; padding:0 3px; border-radius:50%; background:#FFD345; color:#000; font-size:8px; font-weight:800; font-style:normal; display:flex; align-items:center; justify-content:center; }
+
+  /* shorts full bleed */
+  .shorts { position:absolute; inset:0; background:linear-gradient(160deg,#2b1c40,#0a0612); }
+  .shorts .ov { position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.45) 0%,transparent 30%,transparent 55%,rgba(0,0,0,.7) 100%); }
+  .shorts .play { position:absolute; top:46%; left:50%; transform:translate(-50%,-50%); font-size:30px; opacity:.8; }
+  .shorts .live { position:absolute; top:30px; inset-inline-start:12px; font-size:8px; color:#fff; background:rgba(0,0,0,.35); border-radius:999px; padding:3px 7px; }
+  .shorts .side { position:absolute; bottom:60px; inset-inline-end:10px; display:flex; flex-direction:column; gap:12px; align-items:center; font-size:17px; }
+  .shorts .meta { position:absolute; bottom:22px; inset-inline-start:12px; inset-inline-end:46px; }
+
+  @media (max-width:560px){ .wrap{ padding:22px 16px 48px; } }
+</style>
+</head>
+<body>
+  <div class="topbar"></div>
+  <div class="wrap">
+    <h1>ניצוצות — מפת האפליקציה ומסכי מובייל</h1>
+    <p class="subtitle">איך כל האפליקציה עובדת מקצה לקצה: גילוי → הצטרפות → הרשמה → הוספת אור → הדלקת נקודה בפאזל. ולצד התרשימים — שחזור של כל מסך בתצוגת מובייל, בצבעי האפליקציה (שחור-זהב).</p>
+
+    <div class="legend">
+      <div class="item"><svg width="46" height="26"><rect x="1" y="3" width="44" height="20" rx="10" ry="10" fill="#fff4d6" stroke="#d9a400" stroke-width="2"/></svg> התחלה / סיום</div>
+      <div class="item"><svg width="46" height="26"><rect x="2" y="3" width="42" height="20" fill="#e9eef6" stroke="#1e3a5f" stroke-width="2"/></svg> שלב / מסך</div>
+      <div class="item"><svg width="30" height="30"><polygon points="15,2 28,15 15,28 2,15" fill="#fff4d6" stroke="#d9a400" stroke-width="2"/></svg> החלטה</div>
+      <div class="item"><svg width="46" height="26"><rect x="2" y="3" width="42" height="20" rx="4" fill="#f1f5fb" stroke="#7d93b5" stroke-width="1.5" stroke-dasharray="4 3"/></svg> מסך / נתיב</div>
+    </div>
+
+    <!-- ============ CARD A: USER JOURNEY ============ -->
+    <div class="card">
+      <div class="section-label">END TO END</div>
+      <h2 class="card-title">מסע המשתמש — מהכניסה ועד הדלקת האור</h2>
+      <p class="card-note">הלולאה המרכזית של האפליקציה: גילוי, התחברות (גוגל או קוד למייל), הרשמה, ואז הוספת מעשה אור שמדליק נקודה בפאזל של 50,000.</p>
+      <div class="diagram">
+<pre class="mermaid">
+flowchart TD
+  A0(["כניסה לאתר &nbsp;/"]):::se
+  A1["דף הבית — גיבור · מונה אורות · פאזל · אתגר שבועי"]:::step
+  Q1{"מחובר?"}:::dec
+  A2["לחיצה על 'הצטרפו'"]:::step
+  A3["/login — התחברות / הרשמה"]:::step
+  Q2{"גוגל או מייל?"}:::dec
+  A4["Google OAuth"]:::step
+  A5["מייל → קוד חד־פעמי (OTP)"]:::step
+  A6["אימות קוד"]:::step
+  Q3{"השלים הרשמה?"}:::dec
+  A7["/onboarding — שם · מגדר · ת. לידה · מדינה · עיר · הסכמות"]:::step
+  A8["דף הבית (מחובר)"]:::step
+  A9["האתגר השבועי"]:::step
+  A10["טופס 'הוסף את האור שלך' — מדיה או קישור אינסטגרם"]:::step
+  A11["POST /api/submissions"]:::step
+  A12["הקצאת puzzle_index ייחודי"]:::step
+  A13["הנקודה נדלקת בפאזל ✨"]:::step
+  A14(["'האור שלך נדלק!' + שיתוף"]):::se
+  A15["המשך לתוכן: תובנה · הודיה · קהילה · סיפורי אור · קוד 26 · האור שלי"]:::leaf
+
+  A0 --> A1 --> Q1
+  Q1 -->|"לא"| A2 --> A3 --> Q2
+  Q2 -->|"Google"| A4 --> A6
+  Q2 -->|"מייל"| A5 --> A6
+  A6 --> Q3
+  Q3 -->|"לא"| A7 --> A8
+  Q3 -->|"כן"| A8
+  Q1 -->|"כן"| A8
+  A8 --> A9 --> A10 --> A11 --> A12 --> A13 --> A14 --> A15
+
+  classDef se fill:#fff4d6,stroke:#d9a400,stroke-width:2px,color:#5a4500,font-weight:700;
+  classDef step fill:#e9eef6,stroke:#1e3a5f,stroke-width:1.5px,color:#16263b;
+  classDef dec fill:#fff4d6,stroke:#d9a400,stroke-width:2px,color:#5a4500;
+  classDef leaf fill:#f1f5fb,stroke:#7d93b5,stroke-width:1.4px,color:#3a4761,stroke-dasharray:4 3;
+</pre>
+      </div>
+    </div>
+
+    <!-- ============ CARD B: SITEMAP ============ -->
+    <div class="card">
+      <div class="section-label">SITEMAP</div>
+      <h2 class="card-title">מפת מסכים וניווט</h2>
+      <p class="card-note">כל המסכים, מקובצים לפי הניווט: סרגל תחתון (מובייל), תפריט צד, ומסכים ממוקדים שבהם המעטפת מוסתרת.</p>
+      <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  APP(["ניצוצות — מביאים אור"]):::se
+  APP --> TABS["סרגל ניווט תחתון (מובייל)"]:::step
+  APP --> DRAW["תפריט צד (המבורגר)"]:::step
+  APP --> FOCUS["מסכים ממוקדים (ללא מעטפת)"]:::step
+
+  TABS --> T1["בית &nbsp;/"]:::leaf
+  TABS --> T2["פאזל &nbsp;/puzzle"]:::leaf
+  TABS --> T3["ניצוצות &nbsp;/shorts"]:::leaf
+  TABS --> T4["תובנה &nbsp;/insight"]:::leaf
+  TABS --> T5["הודיה &nbsp;/gratitude"]:::leaf
+
+  DRAW --> D1["קהילה &nbsp;/community"]:::leaf
+  DRAW --> D2["פרופיל &nbsp;/profile"]:::leaf
+  DRAW --> D3["האור שלי &nbsp;/my-light"]:::leaf
+  DRAW --> D4["קוד 26 &nbsp;/portal"]:::leaf
+  DRAW --> D5["אודות &nbsp;/about"]:::leaf
+  DRAW --> D6["תקנון &nbsp;/terms"]:::leaf
+  DRAW --> D7["נגישות &nbsp;/accessibility"]:::leaf
+
+  FOCUS --> F1["התחברות &nbsp;/login"]:::leaf
+  FOCUS --> F2["הרשמה &nbsp;/onboarding"]:::leaf
+  FOCUS --> F3["מצגת &nbsp;/presentation"]:::leaf
+  FOCUS --> F4["מנהל &nbsp;/admin"]:::leaf
+
+  classDef se fill:#fff4d6,stroke:#d9a400,stroke-width:2px,color:#5a4500,font-weight:700;
+  classDef step fill:#e9eef6,stroke:#1e3a5f,stroke-width:1.5px,color:#16263b,font-weight:600;
+  classDef leaf fill:#f1f5fb,stroke:#7d93b5,stroke-width:1.4px,color:#3a4761,stroke-dasharray:4 3;
+</pre>
+      </div>
+    </div>
+
+    <!-- ============ CARD C: ADMIN + DATA ============ -->
+    <div class="card">
+      <div class="section-label">ADMIN &amp; DATA</div>
+      <h2 class="card-title">מנהל ומודל הנתונים</h2>
+      <p class="card-note">פאנל ניהול נסתר (מוגן בסיסמה) לניהול אתגרים, הגשות, תובנות ומשתמשים — לצד מבנה הטבלאות ב־Supabase.</p>
+      <div class="twin">
+        <div>
+          <p class="mini-label" style="color:#8a93a1;margin-bottom:8px">זרימת מנהל — /admin</p>
+          <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  G0(["/admin"]):::se
+  G1{"סיסמה תקינה?"}:::dec
+  G2["מסך התחברות מנהל"]:::step
+  G3["לוח בקרה"]:::step
+  G0 --> G1
+  G1 -->|"לא"| G2 --> G1
+  G1 -->|"כן (cookie 12ש')"| G3
+  G3 --> S1["סטטיסטיקה"]:::leaf
+  G3 --> S2["הגשות — הסתר / מחק"]:::leaf
+  G3 --> S3["אתגרים — צור / ערוך"]:::leaf
+  G3 --> S4["תובנות יומיות — תזמון לפי תאריך"]:::leaf
+  G3 --> S5["משתמשים"]:::leaf
+  G3 --> S6["הסכמי משפיענים"]:::leaf
+
+  classDef se fill:#fff4d6,stroke:#d9a400,stroke-width:2px,color:#5a4500,font-weight:700;
+  classDef step fill:#e9eef6,stroke:#1e3a5f,stroke-width:1.5px,color:#16263b,font-weight:600;
+  classDef dec fill:#fff4d6,stroke:#d9a400,stroke-width:2px,color:#5a4500;
+  classDef leaf fill:#f1f5fb,stroke:#7d93b5,stroke-width:1.4px,color:#3a4761,stroke-dasharray:4 3;
+</pre>
+          </div>
+        </div>
+        <div>
+          <p class="mini-label" style="color:#8a93a1;margin-bottom:8px">מודל נתונים — Supabase</p>
+          <div class="diagram">
+<pre class="mermaid">
+flowchart TD
+  U[("auth.users")]:::tbl
+  P[("profiles")]:::tbl
+  S[("submissions")]:::tbl
+  C[("challenges<br/>תזמון: start/end")]:::tbl
+  I[("insights<br/>תובנה יומית לפי תאריך")]:::tbl
+  R[("reactions")]:::tbl
+  ST[("storage:&nbsp;submissions-media")]:::store
+
+  U -->|"1 : 1"| P
+  U -->|"1 : N"| S
+  C -->|"1 : N"| S
+  S -->|"1 : N"| R
+  U -->|"1 : N"| R
+  S -.->|"קבצי מדיה"| ST
+
+  classDef tbl fill:#e9eef6,stroke:#1e3a5f,stroke-width:1.5px,color:#16263b,font-weight:700;
+  classDef store fill:#fff4d6,stroke:#d9a400,stroke-width:1.5px,color:#5a4500;
+</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ MOBILE SCREENS ============ -->
+    <div class="card">
+      <div class="section-label">MOBILE SCREENS</div>
+      <h2 class="card-title">מסכים בתצוגת מובייל</h2>
+      <p class="card-note">שחזור של כל מסך באפליקציה — צבעים, טקסט ומבנה אמיתיים מהקוד (שחור-זהב, RTL).</p>
+
+      <div class="phones">
+
+        <!-- 1 HOME -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl">
+              <div style="text-align:center" class="spark">✦</div>
+              <div class="s-h1">הפאזל</div>
+              <div class="s-tag">ניצוצות · אור בפעולה</div>
+              <div class="s-sub">ביחד מאירים את העולם. כל מעשה טוב — אור נוסף.</div>
+              <div class="d-card" style="text-align:center">
+                <div class="counter">1,247</div>
+                <div class="s-sub" style="margin-top:3px">אורות דולקים · היעד: 50,000</div>
+                <div class="bar"><span></span></div>
+              </div>
+              <div class="btn-gold">הצטרפו להאיר ←</div>
+              <div class="mini-label">גוף האור המרכזי</div>
+              <div class="dots" data-dots="60" style="--c:12;grid-template-columns:repeat(12,1fr)"></div>
+            </div>
+            <div class="fab">+<i>1</i></div>
+            <div class="tabbar"><div class="act"><b>⌂</b>בית</div><div><b>▦</b>פאזל</div><div><b>⊞</b>ניצוצות</div><div><b>✦</b>תובנה</div><div><b>☀</b>הודיה</div></div>
+          </div></div>
+          <figcaption><b>1 · בית</b> /</figcaption>
+        </figure>
+
+        <!-- 2 LOGIN -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl" style="display:flex;flex-direction:column;justify-content:center">
+              <div style="text-align:center;font-size:26px" class="spark">✦</div>
+              <div class="s-h1" style="font-size:18px">כניסה / הרשמה</div>
+              <div class="s-sub" style="margin-bottom:10px">הצטרף לקהילה שמאירה את העולם</div>
+              <div class="d-card" style="background:#fff;color:#222;text-align:center;font-size:10px;font-weight:700;border:none">G &nbsp;המשך עם Google</div>
+              <div class="s-sub" style="margin:6px 0">— או עם מייל —</div>
+              <div class="input" style="text-align:left;direction:ltr">your@email.com</div>
+              <div class="btn-gold" style="margin-top:8px">שלח קוד ←</div>
+            </div>
+          </div></div>
+          <figcaption><b>2 · כניסה</b> /login</figcaption>
+        </figure>
+
+        <!-- 3 ONBOARDING -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl">
+              <div style="text-align:center;font-size:22px">👋</div>
+              <div class="s-h1" style="font-size:16px">ספר/י לנו עליך</div>
+              <div class="s-sub" style="margin-bottom:8px">שאלון קצר לפני שמתחילים</div>
+              <div class="input" style="display:block;margin-bottom:6px">שם מלא</div>
+              <div class="row" style="margin-bottom:6px"><div class="btn-ghost">זכר</div><div class="btn-gold" style="font-size:9.5px">נקבה</div></div>
+              <div class="row" style="margin-bottom:6px"><div class="input">יום</div><div class="input">חודש</div><div class="input">שנה</div></div>
+              <div class="input" style="display:block;margin-bottom:6px">מדינה · ישראל</div>
+              <div class="input" style="display:block;margin-bottom:8px">עיר</div>
+              <div class="s-sub" style="text-align:right">☑︎ אני מעל גיל 13</div>
+              <div class="s-sub" style="text-align:right;margin-bottom:8px">☑︎ מאשר/ת שיתוף תוכן</div>
+              <div class="btn-gold">אישור והמשך ✦</div>
+            </div>
+          </div></div>
+          <figcaption><b>3 · הרשמה</b> /onboarding</figcaption>
+        </figure>
+
+        <!-- 4 SUBMISSION FORM -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl">
+              <div class="s-h1" style="font-size:16px">הוסף את האור שלך</div>
+              <div class="s-sub" style="margin-bottom:6px">האתגר השבועי · עשה טוב לזר</div>
+              <div class="d-card" style="display:flex;align-items:center;gap:6px;padding:6px 8px"><span class="avatar" style="width:24px;height:24px;font-size:11px">✦</span><span class="s-sub" style="text-align:right">מוסיף אור בתור דוד</span></div>
+              <div class="mini-label">בחר אתגר</div>
+              <div class="input" style="display:block">עשה טוב לזר ▾</div>
+              <div class="mini-label">תאריך ביצוע</div>
+              <div class="input" style="display:block;direction:ltr;text-align:left">23 / 06 / 2026</div>
+              <div class="d-card" style="text-align:center;border-style:dashed">📎 העלאת וידאו / תמונה</div>
+              <div class="input" style="display:block;direction:ltr;text-align:left">instagram.com/p/… ✓</div>
+              <div class="btn-gold" style="margin-top:8px">הדליקו את האור שלכם ✦</div>
+            </div>
+          </div></div>
+          <figcaption><b>4 · הוספת אור</b> form</figcaption>
+        </figure>
+
+        <!-- 5 INSIGHT -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl" style="display:flex;flex-direction:column">
+              <div style="text-align:center" class="spark">✦</div>
+              <div class="s-h1" style="font-size:17px">תובנה יומית</div>
+              <div class="s-sub" style="margin-bottom:10px">יום שני · כ״ז סיון</div>
+              <div class="d-card" style="flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:16px 12px">
+                <div class="gold" style="font-size:30px;line-height:.4">״</div>
+                <div style="font-size:12px;line-height:1.6">איזהו עשיר? השמח בחלקו. כל יום הוא הזדמנות חדשה להאיר.</div>
+                <div class="gold" style="font-size:13px;font-weight:700;margin-top:10px">— פרקי אבות</div>
+              </div>
+              <div class="s-sub" style="margin-top:8px">תובנה חדשה כל בוקר. שתף רעיון בקהילה.</div>
+            </div>
+            <div class="fab">+<i>1</i></div>
+            <div class="tabbar"><div><b>⌂</b>בית</div><div><b>▦</b>פאזל</div><div><b>⊞</b>ניצוצות</div><div class="act"><b>✦</b>תובנה</div><div><b>☀</b>הודיה</div></div>
+          </div></div>
+          <figcaption><b>5 · תובנה יומית</b> /insight</figcaption>
+        </figure>
+
+        <!-- 6 GRATITUDE -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl">
+              <div style="text-align:center;font-size:20px">🌅</div>
+              <div class="s-h1" style="font-size:17px">הודיה</div>
+              <div class="s-sub" style="margin-bottom:8px">רגע אחד של תודה משנה את היום</div>
+              <div class="d-card" style="padding:8px"><div class="s-sub" style="text-align:right">היום אני אסיר/ה תודה על…</div><div style="text-align:left;font-size:7px;color:rgba(255,255,255,.4)">0/280</div></div>
+              <div class="btn-gold">פרסם הודיה</div>
+              <div class="mini-label">הודיות הקהילה</div>
+              <div class="d-card" style="display:flex;gap:6px;align-items:flex-start;padding:7px"><span class="avatar" style="width:20px;height:20px;font-size:9px">✦</span><div><div class="gold" style="font-size:8.5px;font-weight:700">מרים · אתמול</div><div class="s-sub" style="text-align:right">על הבריאות והמשפחה שלי</div></div></div>
+              <div class="d-card" style="display:flex;gap:6px;align-items:flex-start;padding:7px"><span class="avatar" style="width:20px;height:20px;font-size:9px">✦</span><div><div class="gold" style="font-size:8.5px;font-weight:700">יוסי</div><div class="s-sub" style="text-align:right">על חבר שעזר לי היום</div></div></div>
+            </div>
+            <div class="fab">+<i>1</i></div>
+            <div class="tabbar"><div><b>⌂</b>בית</div><div><b>▦</b>פאזל</div><div><b>⊞</b>ניצוצות</div><div><b>✦</b>תובנה</div><div class="act"><b>☀</b>הודיה</div></div>
+          </div></div>
+          <figcaption><b>6 · הודיה</b> /gratitude</figcaption>
+        </figure>
+
+        <!-- 7 COMMUNITY -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl">
+              <div style="text-align:center;font-size:18px">👥</div>
+              <div class="s-h1" style="font-size:16px">רואים אחד את השני</div>
+              <div class="s-sub" style="margin-bottom:8px">הזרם של אחים שמדליקים אור</div>
+              <div class="row" style="margin-bottom:6px">
+                <div class="d-card" style="text-align:center;padding:10px 4px"><div style="font-size:18px">✦</div><div class="s-sub">דוד</div><div class="chip">💬 3</div></div>
+                <div class="d-card" style="text-align:center;padding:10px 4px"><div style="font-size:18px">✦</div><div class="s-sub">שרה</div><div class="chip">💬 5</div></div>
+              </div>
+              <div class="row">
+                <div class="d-card" style="text-align:center;padding:10px 4px"><div style="font-size:18px">✦</div><div class="s-sub">משה</div><div class="chip">💬 1</div></div>
+                <div class="d-card" style="text-align:center;padding:10px 4px"><div style="font-size:18px">✦</div><div class="s-sub">רות</div><div class="chip">💬 8</div></div>
+              </div>
+            </div>
+            <div class="fab">+<i>1</i></div>
+            <div class="tabbar"><div><b>⌂</b>בית</div><div><b>▦</b>פאזל</div><div><b>⊞</b>ניצוצות</div><div><b>✦</b>תובנה</div><div><b>☀</b>הודיה</div></div>
+          </div></div>
+          <figcaption><b>7 · קהילה</b> /community</figcaption>
+        </figure>
+
+        <!-- 8 SHORTS -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="shorts">
+              <div class="ov"></div>
+              <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+              <div class="live">🟣 אור #1248</div>
+              <div class="play">►</div>
+              <div class="side"><span>🔇</span><span class="spark">✦</span></div>
+              <div class="meta">
+                <div style="display:flex;align-items:center;gap:6px"><span class="avatar" style="width:26px;height:26px;font-size:12px">✦</span><span style="font-weight:800;font-size:12px">דוד כהן</span></div>
+                <div class="gold" style="font-size:9px;margin-top:3px">עשה טוב לזר</div>
+                <div class="s-sub" style="text-align:right">לפני שעתיים · החלק לראות עוד</div>
+              </div>
+            </div>
+          </div></div>
+          <figcaption><b>8 · סיפורי אור</b> /shorts</figcaption>
+        </figure>
+
+        <!-- 9 PUZZLE -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl">
+              <div class="s-h1" style="font-size:16px">גוף האור המרכזי</div>
+              <div class="s-sub" style="margin-bottom:8px">1,247 אורות כבר דולקים</div>
+              <div style="text-align:center;font-size:24px;margin:2px 0" class="spark">◉</div>
+              <div class="dots" data-dots="176" style="--c:16;grid-template-columns:repeat(16,1fr);margin-top:4px"></div>
+              <div class="s-sub" style="margin-top:8px">צבט להגדלה · לחץ על אור לפרטים</div>
+              <div class="d-card" style="display:flex;justify-content:space-between;font-size:7.5px;color:#FDE494;padding:6px 8px"><span>5K</span><span>10K</span><span>20K</span><span>30K</span><span>50K</span></div>
+            </div>
+            <div class="fab">+<i>1</i></div>
+            <div class="tabbar"><div><b>⌂</b>בית</div><div class="act"><b>▦</b>פאזל</div><div><b>⊞</b>ניצוצות</div><div><b>✦</b>תובנה</div><div><b>☀</b>הודיה</div></div>
+          </div></div>
+          <figcaption><b>9 · פאזל</b> /puzzle</figcaption>
+        </figure>
+
+        <!-- 10 PROFILE -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl">
+              <div class="avatar" style="width:56px;height:56px;font-size:24px;margin-top:4px">✦</div>
+              <div class="s-h1" style="font-size:15px;margin-top:6px">דוד כהן</div>
+              <div class="s-sub" style="margin-bottom:8px">david@email.com</div>
+              <div class="row" style="margin-bottom:8px">
+                <div class="d-card" style="text-align:center;padding:8px 2px"><div class="counter" style="font-size:18px">3</div><div class="s-sub">אורות</div></div>
+                <div class="d-card" style="text-align:center;padding:8px 2px"><div class="counter" style="font-size:18px">7</div><div class="s-sub">ימים ברצף</div></div>
+                <div class="d-card" style="text-align:center;padding:8px 2px"><div class="counter" style="font-size:18px">1</div><div class="s-sub">תגים</div></div>
+              </div>
+              <div class="mini-label">המסע שלך</div>
+              <div class="d-card" style="padding:8px"><div class="s-sub" style="text-align:right">✓ הצטרפת לקהילה</div><div class="s-sub" style="text-align:right">✓ האור הראשון שלך</div><div class="s-sub" style="text-align:right;opacity:.5">⏳ שבוע ברצף</div></div>
+            </div>
+            <div class="fab">+<i>1</i></div>
+            <div class="tabbar"><div><b>⌂</b>בית</div><div><b>▦</b>פאזל</div><div><b>⊞</b>ניצוצות</div><div><b>✦</b>תובנה</div><div><b>☀</b>הודיה</div></div>
+          </div></div>
+          <figcaption><b>10 · פרופיל</b> /profile</figcaption>
+        </figure>
+
+        <!-- 11 MY LIGHT -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl" style="text-align:center">
+              <div style="font-size:24px" class="spark">✦</div>
+              <div class="s-h1" style="font-size:16px">האור של דוד</div>
+              <div class="s-sub" style="margin-bottom:8px">אור מספר #1248 מתוך 50,000</div>
+              <div class="dots" data-dots="60" data-me="32" style="--c:12;grid-template-columns:repeat(12,1fr)"></div>
+              <div class="s-sub" style="margin:6px 0">הנקודה המסומנת היא שלך ✦</div>
+              <div class="row" style="margin-bottom:8px"><div class="d-card" style="font-size:16px;padding:8px">🔥</div><div class="d-card" style="font-size:16px;padding:8px;opacity:.4">⭐</div><div class="d-card" style="font-size:16px;padding:8px;opacity:.4">💎</div></div>
+              <div class="btn-gold">שתף את האור שלי ✦</div>
+            </div>
+          </div></div>
+          <figcaption><b>11 · האור שלי</b> /my-light</figcaption>
+        </figure>
+
+        <!-- 12 PORTAL -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl" style="text-align:center">
+              <div class="chip" style="margin-bottom:4px">שער ה־אש</div>
+              <div class="s-h1" style="font-size:15px">קוד 26</div>
+              <div class="s-sub" style="margin-bottom:6px">ספירת ה־13 עקרונות</div>
+              <div style="position:relative;height:150px;margin:4px auto">
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;border:1px dashed rgba(251,191,36,.3)"></div>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:74px;height:74px;border-radius:50%;border:1px dashed rgba(251,191,36,.25)"></div>
+                <div class="num" style="top:4px;left:50%">1</div>
+                <div class="num" style="top:24px;left:84%">2</div>
+                <div class="num" style="top:62%;left:90%">3</div>
+                <div class="num" style="bottom:4px;left:64%">4</div>
+                <div class="num" style="bottom:8px;left:30%">5</div>
+                <div class="num" style="top:62%;left:8%">6</div>
+                <div class="num" style="top:24%;left:12%">7</div>
+                <div class="num on" style="top:50%;left:50%;transform:translate(-50%,-50%)">✦</div>
+              </div>
+              <div class="s-sub">לחץ על עיקרון לפתיחת שיעור ותרגול</div>
+            </div>
+          </div></div>
+          <figcaption><b>12 · קוד 26</b> /portal</figcaption>
+        </figure>
+
+        <!-- 13 ABOUT -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl">
+              <div style="text-align:center" class="spark">✦</div>
+              <div class="s-h1" style="font-size:16px">אודות</div>
+              <div class="s-sub" style="margin-bottom:8px">אור לעם ישראל — צופן של מעשה ואהבה</div>
+              <div class="d-card" style="padding:7px"><span class="gold" style="font-size:10px;font-weight:700">✦ המהות</span><div class="s-sub" style="text-align:right">מסע משותף של עם ישראל</div></div>
+              <div class="d-card" style="padding:7px"><span class="gold" style="font-size:10px;font-weight:700">📜 האתגר השבועי</span><div class="s-sub" style="text-align:right">משימה אחת לכל הקהילה</div></div>
+              <div class="d-card" style="padding:7px"><span class="gold" style="font-size:10px;font-weight:700">🌌 גוף האור</span><div class="s-sub" style="text-align:right">פאזל של 50,000 נקודות</div></div>
+              <div class="d-card" style="padding:7px"><span class="gold" style="font-size:10px;font-weight:700">🌀 קוד 26</span><div class="s-sub" style="text-align:right">13 העקרונות לצופן חיים</div></div>
+            </div>
+          </div></div>
+          <figcaption><b>13 · אודות</b> /about</figcaption>
+        </figure>
+
+        <!-- 14 PRESENTATION -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen">
+            <div class="scl" style="display:flex;flex-direction:column;text-align:center;justify-content:center;padding-top:30px">
+              <div style="display:flex;justify-content:space-between;font-size:8px;color:rgba(255,255,255,.5);margin-bottom:20px"><span>→ דלג</span><span>● ● ● ● ● ○</span><span>6/6</span></div>
+              <div class="counter" style="font-size:34px">1,247</div>
+              <div class="s-h1" style="font-size:17px;margin-top:8px">הצטרף עכשיו</div>
+              <div class="s-sub" style="margin:8px 4px 16px">הצטרף לאלפי אנשים שכבר מאירים את העולם</div>
+              <div class="btn-gold">הצטרף עכשיו ✦</div>
+              <div class="s-sub" style="margin-top:8px">← קודם</div>
+            </div>
+          </div></div>
+          <figcaption><b>14 · מצגת</b> /presentation</figcaption>
+        </figure>
+
+        <!-- 15 ADMIN -->
+        <figure class="phone-wrap">
+          <div class="phone"><div class="screen" style="background:linear-gradient(180deg,#10141c,#05070b)">
+            <div class="statusbar"><span>9:41</span><span>●●● ▮</span></div>
+            <div class="scl">
+              <div style="font-weight:800;font-size:13px;color:#cfe0ff">לוח בקרה · מנהל</div>
+              <div class="s-sub" style="text-align:right;color:#7e8da8;margin-bottom:8px">ניצוצות admin</div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">
+                <span class="chip" style="color:#cfe0ff;border-color:rgba(150,180,255,.4)">סטטיסטיקה</span>
+                <span class="chip" style="color:#cfe0ff;border-color:rgba(150,180,255,.4)">הגשות</span>
+                <span class="chip" style="color:#cfe0ff;border-color:rgba(150,180,255,.4)">אתגרים</span>
+                <span class="chip" style="color:#cfe0ff;border-color:rgba(150,180,255,.4)">תובנות יומיות</span>
+                <span class="chip" style="color:#cfe0ff;border-color:rgba(150,180,255,.4)">משתמשים</span>
+                <span class="chip" style="color:#cfe0ff;border-color:rgba(150,180,255,.4)">הסכמי משפיענים</span>
+              </div>
+              <div class="row" style="margin-bottom:8px">
+                <div class="d-card" style="background:#161c28;border-color:rgba(150,180,255,.2);text-align:center;padding:8px 2px"><div style="font-size:18px;font-weight:800;color:#9fc0ff">1,247</div><div class="s-sub" style="color:#7e8da8">הגשות</div></div>
+                <div class="d-card" style="background:#161c28;border-color:rgba(150,180,255,.2);text-align:center;padding:8px 2px"><div style="font-size:18px;font-weight:800;color:#9fc0ff">312</div><div class="s-sub" style="color:#7e8da8">משתמשים</div></div>
+              </div>
+              <div class="d-card" style="background:#161c28;border-color:rgba(150,180,255,.2);padding:7px">
+                <div style="display:flex;justify-content:space-between;font-size:8px;color:#aebfe0;border-bottom:1px solid rgba(150,180,255,.15);padding-bottom:4px;margin-bottom:4px"><span>שם</span><span>אתגר</span><span>פעולה</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:8px;color:#cfe0ff"><span>דוד</span><span>עשה טוב</span><span>הסתר</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:8px;color:#cfe0ff;margin-top:3px"><span>שרה</span><span>חיוך לזר</span><span>הסתר</span></div>
+              </div>
+            </div>
+          </div></div>
+          <figcaption><b>15 · מנהל</b> /admin</figcaption>
+        </figure>
+
+      </div>
+    </div>
+
+    <p class="footnote">ניצוצות · אור לעם ישראל &nbsp;·&nbsp; Next.js + Supabase &nbsp;·&nbsp; פאזל 50,000 · אתגר שבועי · הגשות (מדיה / אינסטגרם) · תובנה יומית · הודיה · קהילה · סיפורי אור · קוד 26 · פאנל מנהל</p>
+  </div>
+
+  <style>
+    .num { position:absolute; width:18px; height:18px; border-radius:50%; font-size:9px; display:flex; align-items:center; justify-content:center; transform:translate(-50%,0); background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.4); color:#FDE494; }
+    .num.on { background:#fbbf24; color:#1a1200; box-shadow:0 0 12px rgba(251,191,36,.7); font-weight:800; }
+  </style>
+
+  <!-- populate dot grids -->
+  <script>
+    document.querySelectorAll('[data-dots]').forEach(function(el){
+      var n = +el.dataset.dots;
+      var me = el.dataset.me ? +el.dataset.me : -1;
+      var html = '';
+      for (var i=0;i<n;i++){
+        var on = (i*7%11===0) || (i*13%17===0) || (i*5%9===0);
+        var cls = i===me ? 'me' : (on ? 'on' : '');
+        html += '<i class="'+cls+'"></i>';
+      }
+      el.innerHTML = html;
+    });
+  </script>
+
+  <!-- Mermaid (CDN) -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'Heebo, Arial, sans-serif',
+        fontSize: '17px',
+        lineColor: '#6b7c98',
+        primaryColor: '#e9eef6',
+        primaryBorderColor: '#1e3a5f',
+        primaryTextColor: '#16263b',
+        clusterBkg: '#f7f9fc',
+      },
+      flowchart: { curve: 'basis', htmlLabels: true, useMaxWidth: true, nodeSpacing: 48, rankSpacing: 62, padding: 14 },
+    });
+    try {
+      await mermaid.run({ querySelector: '.mermaid' });
+    } catch (e) {
+      document.querySelectorAll('.mermaid').forEach(function(el){
+        el.insertAdjacentHTML('beforebegin','<p style="color:#b00;font-size:13px">לא ניתן לטעון את התרשים (אין חיבור ל־CDN של Mermaid).</p>');
+      });
+    }
+  </script>
+</body>
+</html>

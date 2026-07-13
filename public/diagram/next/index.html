@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>קוד26 — מרכז הפורטלים (השלב הבא)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background:#f4f7fa; font-family:"Heebo","Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif; color:#1a2230; }
+  .topbar { height:14px; background:#2b3340; }
+  .wrap { max-width:1180px; margin:0 auto; padding:28px 32px 64px; }
+  h1 { font-size:30px; font-weight:800; margin:14px 0 6px; letter-spacing:-0.5px; }
+  .subtitle { font-size:16px; color:#5a6573; margin:0 0 20px; max-width:860px; line-height:1.55; }
+  .legend { display:flex; gap:24px; align-items:center; flex-wrap:wrap; margin-bottom:24px; }
+  .legend .item { display:flex; gap:9px; align-items:center; font-size:14px; color:#2a3340; }
+  .legend svg { display:block; }
+  .card { background:#fff; border:1px solid #e4e8ee; border-radius:14px; box-shadow:0 1px 3px rgba(20,30,50,.05),0 8px 28px rgba(20,30,50,.05); padding:24px 20px 30px; margin-bottom:26px; }
+  .section-label { font-size:13px; font-weight:700; letter-spacing:2px; color:#8a93a1; text-transform:uppercase; margin:2px 0 6px 8px; }
+  .card-title { font-size:19px; font-weight:800; margin:0 0 2px; color:#1a2230; }
+  .card-note { font-size:13.5px; color:#6b7585; margin:0 0 18px; line-height:1.5; }
+  .diagram { direction:ltr; width:100%; display:flex; justify-content:center; overflow-x:auto; }
+  .diagram .mermaid { max-width:100%; }
+  .diagram svg { max-width:100%; height:auto; }
+  .footnote { font-size:12.5px; color:#8a93a1; margin-top:14px; text-align:center; line-height:1.7; }
+  .mini-label { font-size:12px; color:#8a93a1; margin:0 0 10px; font-weight:600; }
+
+  /* ===== Hub home mockup (white / minimal — matches the attached design) ===== */
+  .hub-grid { display:flex; gap:30px; flex-wrap:wrap; align-items:stretch; }
+  .hub-desktop { flex:2 1 560px; }
+  .hub-mobile  { flex:1 1 240px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+
+  .hub {
+    position:relative;
+    background:#ffffff; border:1px solid #ececec; border-radius:16px;
+    box-shadow:0 1px 2px rgba(0,0,0,.04), 0 12px 36px rgba(0,0,0,.06);
+    padding:40px 26px 34px; text-align:center; height:100%;
+  }
+  /* account area at the top of the hub: login (signed out) or profile (signed in) */
+  .hub-auth { position:absolute; top:16px; inset-inline-start:18px; }
+  .auth-btn { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#111; background:#fff; border:1px solid #d9dde3; border-radius:999px; padding:6px 14px; }
+  .prof-pill { display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:#111; background:#fff; border:1px solid #ececec; border-radius:999px; padding:4px 12px 4px 5px; }
+  .pavatar { width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 40% 35%,#FDE494,#CAA928); display:inline-flex; align-items:center; justify-content:center; font-size:11px; color:#7a5a00; }
+  .hub-logo { margin-bottom:14px; }
+  .hub-title { font-size:46px; font-weight:900; letter-spacing:-1px; color:#111; line-height:1; }
+  .hub-title span { font-weight:700; color:#9aa0a6; font-size:30px; margin-inline-start:8px; letter-spacing:0; }
+  .hub-sub { font-size:18px; color:#5b6168; margin:10px 0 36px; font-weight:400; }
+  .hub-portals { display:flex; justify-content:center; gap:34px; flex-wrap:wrap; }
+  .hp { min-width:120px; max-width:160px; text-align:center; }
+  .hp-name { font-size:23px; font-weight:800; color:#111; line-height:1.1; }
+  .hp-tag  { font-size:12.5px; color:#6b7280; margin-top:5px; line-height:1.35; min-height:32px; }
+  .hp-badge { display:inline-block; margin-top:8px; font-size:10px; font-weight:700; padding:2px 9px; border-radius:999px; }
+  .hp-badge.built { background:#fef3c7; color:#92700a; border:1px solid #f0cf57; }
+  .hp-badge.soon  { background:#f3f4f6; color:#8a93a1; border:1px dashed #c4cbd4; }
+  .hub-cap { font-size:11.5px; color:#aab2bd; margin-top:24px; }
+
+  /* phone frame (reused, white screen variant) */
+  .phone { width:212px; height:436px; border-radius:30px; padding:9px; position:relative;
+    background:linear-gradient(160deg,#3a3a3a,#101010);
+    box-shadow:0 10px 30px rgba(15,20,35,.28), inset 0 0 0 1px rgba(255,255,255,.06); }
+  .phone::before { content:""; position:absolute; top:9px; left:50%; transform:translateX(-50%);
+    width:74px; height:17px; background:#101010; border-radius:0 0 12px 12px; z-index:5; }
+  .screen-light { position:relative; width:100%; height:100%; border-radius:22px; overflow:hidden; background:#fff; color:#111;
+    direction:rtl; display:flex; flex-direction:column; padding:30px 14px 16px; text-align:center; }
+  .screen-light .hub-auth { top:9px; inset-inline-start:10px; }
+  .screen-light .prof-pill { font-size:10px; padding:3px 9px 3px 4px; }
+  .screen-light .pavatar { width:17px; height:17px; font-size:9px; }
+  .screen-light .m-title { font-size:30px; font-weight:900; letter-spacing:-.5px; color:#111; line-height:1; margin-top:4px; }
+  .screen-light .m-title span { font-size:17px; color:#9aa0a6; font-weight:700; margin-inline-start:5px; }
+  .screen-light .m-sub { font-size:11px; color:#5b6168; margin:8px 4px 16px; line-height:1.4; }
+  .m-portal { border:1px solid #ececec; border-radius:12px; padding:9px 11px; margin:7px 2px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 1px 2px rgba(0,0,0,.03); }
+  .m-portal .mp-name { font-size:14px; font-weight:800; color:#111; }
+  .m-portal .mp-tag { font-size:9px; color:#6b7280; margin-top:2px; }
+  .m-portal .mp-dot { font-size:14px; color:#c4cbd4; }
+  .m-badge { font-size:8px; font-weight:700; padding:1px 6px; border-radius:999px; }
+  .m-badge.built { background:#fef3c7; color:#92700a; }
+  .m-badge.soon { background:#f3f4f6; color:#8a93a1; border:1px dashed #c4cbd4; }
+  figcaption { font-size:13px; font-weight:600; color:#3a4555; text-align:center; }
+
+  @media (max-width:560px){ .wrap{ padding:22px 16px 48px; } .hub-title{ font-size:36px; } }
+</style>
+</head>
+<body>
+  <div class="topbar"></div>
+  <div class="wrap">
+    <h1>קוד26 — מרכז הפורטלים <span style="color:#8a93a1;font-weight:700;font-size:20px">(השלב הבא)</span></h1>
+    <p class="subtitle">הדומיין הראשי (cod26.com) הופך ל<strong>דף בית — מרכז פורטלים</strong>: לוגו, משפט, ואז בחירת פורטל. כל פורטל יושב על תת-דומיין משלו. כל מה שבנינו עד עכשיו הופך לפורטל <strong>״הפאזל״</strong>. שרטוט בלבד — לא בונה את האתר האמיתי בשלב זה.</p>
+
+    <div class="legend">
+      <div class="item"><svg width="46" height="26"><rect x="1" y="3" width="44" height="20" rx="10" fill="#fff4d6" stroke="#d9a400" stroke-width="2.5"/></svg> דף הבית (Hub)</div>
+      <div class="item"><svg width="46" height="26"><rect x="2" y="3" width="42" height="20" rx="3" fill="#fef3c7" stroke="#d9a400" stroke-width="2"/></svg> פורטל קיים (חי)</div>
+      <div class="item"><svg width="46" height="26"><rect x="2" y="3" width="42" height="20" rx="3" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.6" stroke-dasharray="5 4"/></svg> פורטל עתידי</div>
+      <div class="item"><svg width="46" height="26"><rect x="2" y="3" width="42" height="20" rx="3" fill="#f1f5fb" stroke="#7d93b5" stroke-width="1.5" stroke-dasharray="4 3"/></svg> תת-דומיין (placeholder)</div>
+    </div>
+
+    <!-- ============ CARD A: ARCHITECTURE ============ -->
+    <div class="card">
+      <div class="section-label">ARCHITECTURE</div>
+      <h2 class="card-title">ארכיטקטורת הפורטלים</h2>
+      <p class="card-note">cod26.com מנתב לבחירת פורטל; כל פורטל ייפתח בתת-דומיין ייעודי. הערה: ניתוב לפי תת-דומיין (middleware / זיהוי host) הוא <strong>תשתית עתידית</strong> — כיום האפליקציה היא אתר יחיד ללא ניתוב כזה. שמות תתי-הדומיין מוצגים כ-placeholder עד שייבחרו.</p>
+      <div class="diagram">
+<pre class="mermaid">
+flowchart TD
+  HOME(["cod26.com — דף הבית · מרכז פורטלים"]):::hub
+  HOME --> P1["הפאזל · ניצוצות בפעולה"]:::built
+  HOME --> P2["הצופן · מדריך לחיים משמעותיים"]:::built
+  HOME --> P3["אורוקומו · בואו, שווה פה"]:::planned
+  HOME --> P4["ת'כלס · 0 סובלנות לפשע"]:::planned
+
+  P1 --> S1["תת-דומיין ייעודי<br/>(placeholder)"]:::sub
+  P2 --> S2["תת-דומיין ייעודי<br/>(placeholder)"]:::sub
+  P3 --> S3["תת-דומיין ייעודי<br/>(placeholder)"]:::sub
+  P4 --> S4["תת-דומיין ייעודי<br/>(placeholder)"]:::sub
+
+  S1 --> A1["האפליקציה הנוכחית — פאזל · אתגרים · הגשות · קהילה · סיפורי אור · תובנה · הודיה<br/>מפת מסכים מלאה: cod26.com/diagram"]:::leaf
+  S2 --> A2["13 עקרונות · 3 מסלולים (נער / הורה / מורה) · ספירלת מנדלה<br/>קיים היום בנתיב /portal"]:::leaf
+  S3 --> A3["להגדרה — תוכן עתידי"]:::leafmuted
+  S4 --> A4["להגדרה — תוכן עתידי"]:::leafmuted
+
+  classDef hub fill:#fff4d6,stroke:#d9a400,stroke-width:3px,color:#5a4500,font-weight:800;
+  classDef built fill:#fef3c7,stroke:#d9a400,stroke-width:2px,color:#5a4500,font-weight:700;
+  classDef planned fill:#f3f4f6,stroke:#9ca3af,stroke-width:1.6px,color:#6b7280,stroke-dasharray:5 4;
+  classDef sub fill:#f1f5fb,stroke:#7d93b5,stroke-width:1.4px,color:#3a4761,stroke-dasharray:4 3;
+  classDef leaf fill:#e9eef6,stroke:#1e3a5f,stroke-width:1.4px,color:#16263b;
+  classDef leafmuted fill:#f6f7f9,stroke:#cbd5e1,stroke-width:1.2px,color:#94a3b8,stroke-dasharray:3 3;
+</pre>
+      </div>
+    </div>
+
+    <!-- ============ CARD B: HUB HOME MOCKUP ============ -->
+    <div class="card">
+      <div class="section-label">HOME / HUB</div>
+      <h2 class="card-title">דף הבית — בחירת פורטל</h2>
+      <p class="card-note">שחזור של עיצוב דף הבית מהתמונה: בראש הדף — <strong>אזור חשבון (התחברות / פרופיל)</strong>, מתחת לוגו, משפט, ואז ארבע אפשרויות בחירת פורטל. מראה לבן ומינימלי (שונה מהאפליקציה השחורה-זהב). דסקטופ מציג מצב <strong>לא-מחובר</strong> (כפתור ״התחברות / הרשמה״); מובייל מציג מצב <strong>מחובר</strong> (אווטר + שם). מומלץ חשבון אחד משותף לכל הפורטלים.</p>
+
+      <div class="hub-grid">
+        <!-- desktop -->
+        <div class="hub-desktop">
+          <p class="mini-label">דסקטופ</p>
+          <div class="hub">
+            <div class="hub-auth">
+              <span class="auth-btn">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>
+                התחברות / הרשמה
+              </span>
+            </div>
+            <div class="hub-logo">
+              <svg width="60" height="60" viewBox="-50 -50 100 100" aria-hidden="true">
+                <defs><linearGradient id="gA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD345"/><stop offset="1" stop-color="#CAA928"/></linearGradient></defs>
+                <path d="M0,-44 C6,-14 14,-6 44,0 C14,6 6,14 0,44 C-6,14 -14,6 -44,0 C-14,-6 -6,-14 0,-44 Z" fill="url(#gA)"/>
+                <path d="M0,-44 C6,-14 14,-6 44,0 C14,6 6,14 0,44 C-6,14 -14,6 -44,0 C-14,-6 -6,-14 0,-44 Z" fill="#fbbf24" opacity="0.45" transform="rotate(45) scale(0.55)"/>
+              </svg>
+            </div>
+            <div class="hub-title">קוד26 <span>Cod26</span></div>
+            <div class="hub-sub">דיבור חדש / עדכון גרסא לדור הבא</div>
+            <div class="hub-portals">
+              <div class="hp"><div class="hp-name">הפאזל</div><div class="hp-tag">ניצוצות בפעולה</div><span class="hp-badge built">חי</span></div>
+              <div class="hp"><div class="hp-name">הצופן</div><div class="hp-tag">מדריך לחיים משמעותיים</div><span class="hp-badge built">חי</span></div>
+              <div class="hp"><div class="hp-name">אורוקומו</div><div class="hp-tag">בואו, שווה פה</div><span class="hp-badge soon">עתידי</span></div>
+              <div class="hp"><div class="hp-name">ת'כלס</div><div class="hp-tag">0 סובלנות לפשע</div><span class="hp-badge soon">עתידי</span></div>
+            </div>
+            <div class="hub-cap">למעלה: אזור התחברות (מחובר → אווטר + שם) · טקסט הפורטלים מהתמונה — ניתן לעדכן</div>
+          </div>
+        </div>
+
+        <!-- mobile -->
+        <div class="hub-mobile">
+          <p class="mini-label">מובייל</p>
+          <div class="phone"><div class="screen-light">
+            <div class="hub-auth"><span class="prof-pill"><i class="pavatar">✦</i>שלום, דוד</span></div>
+            <svg width="40" height="40" viewBox="-50 -50 100 100" style="margin:0 auto" aria-hidden="true">
+              <defs><linearGradient id="gB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD345"/><stop offset="1" stop-color="#CAA928"/></linearGradient></defs>
+              <path d="M0,-44 C6,-14 14,-6 44,0 C14,6 6,14 0,44 C-6,14 -14,6 -44,0 C-14,-6 -6,-14 0,-44 Z" fill="url(#gB)"/>
+              <path d="M0,-44 C6,-14 14,-6 44,0 C14,6 6,14 0,44 C-6,14 -14,6 -44,0 C-14,-6 -6,-14 0,-44 Z" fill="#fbbf24" opacity="0.45" transform="rotate(45) scale(0.55)"/>
+            </svg>
+            <div class="m-title">קוד26 <span>Cod26</span></div>
+            <div class="m-sub">דיבור חדש / עדכון גרסא לדור הבא</div>
+            <div class="m-portal"><div><div class="mp-name">הפאזל</div><div class="mp-tag">ניצוצות בפעולה</div></div><span class="m-badge built">חי</span></div>
+            <div class="m-portal"><div><div class="mp-name">הצופן</div><div class="mp-tag">מדריך לחיים משמעותיים</div></div><span class="m-badge built">חי</span></div>
+            <div class="m-portal"><div><div class="mp-name">אורוקומו</div><div class="mp-tag">בואו, שווה פה</div></div><span class="m-badge soon">עתידי</span></div>
+            <div class="m-portal"><div><div class="mp-name">ת'כלס</div><div class="mp-tag">0 סובלנות לפשע</div></div><span class="m-badge soon">עתידי</span></div>
+          </div></div>
+          <figcaption>דף הבית במובייל</figcaption>
+        </div>
+      </div>
+    </div>
+
+    <p class="footnote">קוד26 · מרכז פורטלים &nbsp;·&nbsp; הפאזל (חי) · הצופן (חי) · אורוקומו (עתידי) · ת'כלס (עתידי) &nbsp;·&nbsp; השלב הבא — שרטוט בלבד &nbsp;·&nbsp; מפת האפליקציה הנוכחית: cod26.com/diagram</p>
+  </div>
+
+  <!-- Mermaid (CDN) -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'Heebo, Arial, sans-serif',
+        fontSize: '17px',
+        lineColor: '#6b7c98',
+        primaryColor: '#e9eef6',
+        primaryBorderColor: '#1e3a5f',
+        primaryTextColor: '#16263b',
+      },
+      flowchart: { curve: 'basis', htmlLabels: true, useMaxWidth: true, nodeSpacing: 48, rankSpacing: 62, padding: 14 },
+    });
+    try {
+      await mermaid.run({ querySelector: '.mermaid' });
+    } catch (e) {
+      document.querySelectorAll('.mermaid').forEach(function(el){
+        el.insertAdjacentHTML('beforebegin','<p style="color:#b00;font-size:13px">לא ניתן לטעון את התרשים (אין חיבור ל־CDN של Mermaid).</p>');
+      });
+    }
+  </script>
+</body>
+</html>

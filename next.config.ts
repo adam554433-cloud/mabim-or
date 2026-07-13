@@ -15,10 +15,21 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Serve the standalone app-map page (public/diagram/index.html) at a clean /diagram URL.
+  // Old flat puzzle-app URLs now live under /puzzle — keep bookmarks working.
+  async redirects() {
+    return ["shorts", "insight", "gratitude", "my-light", "community", "music"].map(
+      (p) => ({
+        source: `/${p}`,
+        destination: `/puzzle/${p}`,
+        permanent: false,
+      }),
+    );
+  },
+  // Serve the standalone blueprint pages (public/diagram/**) at clean URLs.
   async rewrites() {
     return [
       { source: "/diagram", destination: "/diagram/index.html" },
+      { source: "/diagram/next", destination: "/diagram/next/index.html" },
     ];
   },
 };

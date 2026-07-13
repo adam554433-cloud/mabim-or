@@ -165,7 +165,7 @@ export default function ShortsFeed({ submissions }: ShortsFeedProps) {
     return (
       <main className="fixed inset-0 bg-black flex flex-col items-center justify-center px-6 text-center">
         <Link
-          href="/"
+          href="/puzzle"
           className="absolute top-4 end-4 w-10 h-10 rounded-full bg-white/10 backdrop-blur text-white text-xl flex items-center justify-center"
           aria-label="סגור"
         >
@@ -177,7 +177,7 @@ export default function ShortsFeed({ submissions }: ShortsFeedProps) {
           היה הראשון לשתף סרטון או תמונה — האור שלך יפתח את הזרם.
         </p>
         <Link
-          href="/#submission-form"
+          href="/puzzle#submit"
           className="bg-yellow-400 text-black font-bold px-6 py-3 rounded-full"
         >
           שלח את האור שלי
@@ -189,7 +189,7 @@ export default function ShortsFeed({ submissions }: ShortsFeedProps) {
   return (
     <main className="fixed inset-0 bg-black">
       <Link
-        href="/"
+        href="/puzzle"
         className="absolute top-4 end-4 z-30 w-10 h-10 rounded-full bg-black/55 backdrop-blur border border-white/15 text-white text-xl flex items-center justify-center"
         aria-label="סגור"
       >

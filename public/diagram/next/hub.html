@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>קוד26 · Cod26 — מרכז הפורטלים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  :root{ --gold:#fbbf24; --gold-lt:#FDE494; --gold-br:#FFD345; }
+  html,body{ height:100%; }
+  body{
+    font-family:"Heebo","Inter",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+    color:#fff; min-height:100%;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #3a2a07 0%, #1c1403 34%, #0a0700 64%, #000 100%);
+    display:flex; flex-direction:column; position:relative; overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ambient glows behind everything */
+  body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(40% 30% at 22% 70%, rgba(124,58,237,.16), transparent 70%),
+      radial-gradient(42% 32% at 80% 64%, rgba(45,212,191,.12), transparent 70%),
+      radial-gradient(50% 40% at 50% 4%, rgba(251,191,36,.20), transparent 70%);
+    filter:blur(8px); }
+  .stars,.sparkles{ position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .stars i{ position:absolute; border-radius:50%; background:#fff; opacity:.5; animation:twinkle linear infinite; }
+  .sparkles b{ position:absolute; bottom:-24px; color:var(--gold-br); opacity:0; text-shadow:0 0 12px rgba(255,211,69,.8); animation:floatUp linear infinite; }
+  .wrap{ position:relative; z-index:2; display:flex; flex-direction:column; min-height:100vh; }
+
+  /* ---------- top bar ---------- */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:18px clamp(18px,4vw,42px); }
+  .brand-mini{ display:flex; align-items:center; gap:8px; font-weight:800; font-size:17px; color:var(--gold-lt); }
+  .brand-mini small{ color:rgba(253,228,148,.5); font-weight:700; font-size:13px; }
+  .auth-btn{ display:inline-flex; align-items:center; gap:7px; font-size:14px; font-weight:700; color:var(--gold-lt);
+    background:rgba(255,255,255,.04); border:1px solid rgba(251,191,36,.35); border-radius:999px; padding:8px 16px;
+    cursor:pointer; text-decoration:none; transition:.18s ease; backdrop-filter:blur(6px); }
+  .auth-btn:hover{ border-color:var(--gold); color:#fff; box-shadow:0 0 22px -4px rgba(251,191,36,.6); transform:translateY(-1px); }
+
+  /* ---------- hero ---------- */
+  .hero{ text-align:center; padding:26px 20px 8px; }
+  .logo{ animation:rise .8s ease both; }
+  .logo svg{ filter:drop-shadow(0 0 22px rgba(255,211,69,.55)); animation:glowPulse 3.4s ease-in-out infinite; }
+  .logo .inner{ transform-origin:center; animation:spinSlow 26s linear infinite; }
+  .title{ font-size:clamp(46px,8.5vw,82px); font-weight:900; letter-spacing:-1.5px; line-height:1; margin-top:10px;
+    background:linear-gradient(180deg,#FFEFC0 0%,#fbbf24 55%,#CAA928 100%); -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 3px 26px rgba(251,191,36,.4)); animation:rise .8s .05s ease both; }
+  .title span{ -webkit-text-fill-color:rgba(253,228,148,.45); color:rgba(253,228,148,.45); font-weight:700; font-size:.5em; margin-inline-start:.28em; letter-spacing:0; }
+  .subtitle{ font-size:clamp(16px,2.4vw,21px); color:rgba(253,228,148,.78); margin-top:14px; font-weight:400; animation:rise .8s .1s ease both; }
+
+  /* ---------- portals ---------- */
+  .portals{ max-width:1080px; width:100%; margin:0 auto; padding:42px clamp(18px,4vw,42px) 24px;
+    display:grid; gap:20px; grid-template-columns:repeat(4,1fr); }
+  .portal{ position:relative; display:flex; flex-direction:column; align-items:center; text-align:center;
+    background:rgba(255,255,255,.035); border:1px solid rgba(251,191,36,.16); border-radius:20px;
+    padding:30px 18px 26px; text-decoration:none; color:inherit; backdrop-filter:blur(8px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05); transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    animation:rise .7s ease both; overflow:hidden; }
+  .portal::after{ content:""; position:absolute; inset:0; border-radius:20px; pointer-events:none;
+    background:radial-gradient(80% 60% at 50% 0%, color-mix(in srgb,var(--accent) 22%, transparent), transparent 70%); opacity:0; transition:opacity .22s ease; }
+  .portal.live:hover{ transform:translateY(-8px); border-color:var(--accent);
+    box-shadow:0 22px 52px rgba(0,0,0,.55), 0 0 34px -8px var(--accent); }
+  .portal.live:hover::after{ opacity:1; }
+  .orb{ width:56px; height:56px; border-radius:50%; margin-bottom:16px; position:relative;
+    background:radial-gradient(circle at 38% 33%, #fff, var(--accent) 55%, color-mix(in srgb,var(--accent) 30%, #000) 100%);
+    box-shadow:0 0 26px -3px var(--accent), inset 0 0 10px -3px rgba(255,255,255,.7); transition:transform .2s ease, box-shadow .2s ease; }
+  .portal.live:hover .orb{ transform:scale(1.08); box-shadow:0 0 38px -2px var(--accent), inset 0 0 12px -3px rgba(255,255,255,.8); }
+  .pname{ font-size:26px; font-weight:800; letter-spacing:-.3px; color:#fff; }
+  .ptag{ font-size:13.5px; color:rgba(253,228,148,.6); margin-top:8px; line-height:1.45; min-height:38px; }
+  .pcta{ margin-top:16px; font-size:13px; font-weight:800; color:var(--accent); opacity:0; transform:translateY(5px); transition:.2s ease; }
+  .portal.live:hover .pcta{ opacity:1; transform:translateY(0); }
+  .pbadge{ position:absolute; top:13px; inset-inline-start:13px; font-size:10.5px; font-weight:800; padding:3px 10px; border-radius:999px; letter-spacing:.3px; }
+  .portal.live .pbadge{ background:rgba(34,197,94,.16); color:#86efac; border:1px solid rgba(134,239,172,.3); }
+  .portal.soon{ opacity:.62; }
+  .portal.soon .pbadge{ background:rgba(255,255,255,.06); color:rgba(255,255,255,.55); border:1px dashed rgba(255,255,255,.25); }
+  .portal.soon .pname{ color:rgba(255,255,255,.72); }
+  .portal.soon .orb{ filter:saturate(.6) brightness(.8); }
+
+  footer{ margin-top:auto; text-align:center; padding:28px 20px 32px; color:rgba(253,228,148,.4); font-size:12.5px; }
+
+  @keyframes rise{ from{ opacity:0; transform:translateY(16px);} to{ opacity:1; transform:translateY(0);} }
+  @keyframes twinkle{ 0%,100%{ opacity:.2; transform:scale(.7);} 50%{ opacity:1; transform:scale(1.25);} }
+  @keyframes floatUp{ 0%{ transform:translateY(0) rotate(0); opacity:0; } 12%{ opacity:.9; } 88%{ opacity:.7; } 100%{ transform:translateY(-104vh) rotate(40deg); opacity:0; } }
+  @keyframes glowPulse{ 0%,100%{ filter:drop-shadow(0 0 18px rgba(255,211,69,.4)); } 50%{ filter:drop-shadow(0 0 30px rgba(255,211,69,.75)); } }
+  @keyframes spinSlow{ to{ transform:rotate(360deg); } }
+
+  @media (max-width:880px){ .portals{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:520px){
+    .portals{ grid-template-columns:1fr; gap:14px; padding-top:28px; }
+    .portal{ flex-direction:row; align-items:center; text-align:right; gap:15px; padding:18px 16px; }
+    .orb{ margin-bottom:0; flex:0 0 auto; width:46px; height:46px; }
+    .ptag{ min-height:0; margin-top:3px; }
+    .pcta{ display:none; }
+  }
+  @media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="sparkles" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand-mini">
+        <svg width="24" height="24" viewBox="-50 -50 100 100" aria-hidden="true">
+          <defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD345"/><stop offset="1" stop-color="#CAA928"/></linearGradient></defs>
+          <path d="M0,-44 C6,-14 14,-6 44,0 C14,6 6,14 0,44 C-6,14 -14,6 -44,0 C-14,-6 -6,-14 0,-44 Z" fill="url(#bm)"/>
+        </svg>
+        קוד26 <small>Cod26</small>
+      </div>
+      <a class="auth-btn" href="#">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>
+        התחברות / הרשמה
+      </a>
+    </header>
+
+    <main class="hero">
+      <div class="logo">
+        <svg width="84" height="84" viewBox="-50 -50 100 100" aria-hidden="true">
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#CAA928"/></linearGradient></defs>
+          <path d="M0,-44 C6,-14 14,-6 44,0 C14,6 6,14 0,44 C-6,14 -14,6 -44,0 C-14,-6 -6,-14 0,-44 Z" fill="url(#lg)"/>
+          <path class="inner" d="M0,-44 C6,-14 14,-6 44,0 C14,6 6,14 0,44 C-6,14 -14,6 -44,0 C-14,-6 -6,-14 0,-44 Z" fill="#FFD345" opacity=".5" transform="rotate(45) scale(.55)"/>
+        </svg>
+      </div>
+      <h1 class="title">קוד26 <span>Cod26</span></h1>
+      <p class="subtitle">דיבור חדש / עדכון גרסא לדור הבא</p>
+    </main>
+
+    <section class="portals" aria-label="בחירת פורטל">
+      <a class="portal live" href="https://cod26.com" style="--accent:#fbbf24; animation-delay:.14s">
+        <span class="pbadge">חי</span><span class="orb"></span>
+        <span class="pname">הפאזל</span><span class="ptag">ניצוצות בפעולה</span><span class="pcta">להיכנס ←</span>
+      </a>
+      <a class="portal live" href="https://cod26.com/portal" style="--accent:#a78bfa; animation-delay:.2s">
+        <span class="pbadge">חי</span><span class="orb"></span>
+        <span class="pname">הצופן</span><span class="ptag">מדריך לחיים משמעותיים</span><span class="pcta">להיכנס ←</span>
+      </a>
+      <div class="portal soon" style="--accent:#2dd4bf; animation-delay:.26s" aria-disabled="true">
+        <span class="pbadge">בקרוב</span><span class="orb"></span>
+        <span class="pname">אורוקומו</span><span class="ptag">בואו, שווה פה</span>
+      </div>
+      <div class="portal soon" style="--accent:#fb7185; animation-delay:.32s" aria-disabled="true">
+        <span class="pbadge">בקרוב</span><span class="orb"></span>
+        <span class="pname">ת'כלס</span><span class="ptag">0 סובלנות לפשע</span>
+      </div>
+    </section>
+
+    <footer>קוד26 · כל הפורטלים תחת קורת גג אחת — חשבון אחד, גישה לכולם ✦</footer>
+  </div>
+
+  <script>
+    (function(){
+      var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+      // twinkling stars
+      var sky = document.querySelector('.stars');
+      var N = window.matchMedia('(max-width:520px)').matches ? 70 : 130;
+      var h = '';
+      for (var i=0;i<N;i++){
+        var x=(Math.random()*100).toFixed(2), y=(Math.random()*100).toFixed(2);
+        var s=(Math.random()*2+1).toFixed(1);
+        var d=(Math.random()*4).toFixed(2), dur=(2+Math.random()*3).toFixed(2);
+        var gold = Math.random()<0.34;
+        h += '<i style="left:'+x+'%;top:'+y+'%;width:'+s+'px;height:'+s+'px;animation-delay:'+d+'s;animation-duration:'+dur+'s;'
+           + (gold ? 'background:#FFD345;box-shadow:0 0 6px #FFD345;' : '') + '"></i>';
+      }
+      sky.innerHTML = h;
+      // drifting sparkles
+      if (!reduce){
+        var field = document.querySelector('.sparkles'), m='';
+        for (var j=0;j<14;j++){
+          var sx=(Math.random()*100).toFixed(2), sd=(Math.random()*9).toFixed(2);
+          var sdur=(8+Math.random()*8).toFixed(2), sz=(8+Math.random()*11).toFixed(1);
+          m += '<b style="left:'+sx+'%;font-size:'+sz+'px;animation-delay:'+sd+'s;animation-duration:'+sdur+'s">✦</b>';
+        }
+        field.innerHTML = m;
+      }
+    })();
+  </script>
+</body>
+</html>

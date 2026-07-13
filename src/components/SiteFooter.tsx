@@ -1,6 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function SiteFooter() {
+  const pathname = usePathname();
+
+  // The root is the Cod26 portal hub — it carries its own footer.
+  if (pathname === "/") return null;
+
   return (
     <footer
       className="mt-16 py-6 px-5 text-center text-xs"

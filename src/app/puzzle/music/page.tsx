@@ -49,7 +49,7 @@ export default function MusicPage() {
         {/* Header */}
         <header className="text-center mb-10">
           <Link
-            href="/"
+            href="/puzzle"
             className="inline-block text-amber-400/60 text-sm mb-6 hover:text-amber-300 transition-colors"
           >
             → חזרה לאתר

@@ -52,7 +52,7 @@ export default function SiteNav({ theme = "dark" }: Props) {
         style={{ background: navBg, borderBottom: navBorder }}
       >
         <Link
-          href="/"
+          href="/puzzle"
           className="font-extrabold text-base sm:text-lg flex items-center gap-2 leading-none"
           style={{ color: brandColor }}
           aria-label="הפאזל — ניצוצות אור בפעולה"

@@ -18,11 +18,11 @@ import {
 type Tab = { href: string; Icon: (p: SVGProps<SVGSVGElement> & { size?: number }) => React.ReactElement; label: string };
 
 const TABS: Tab[] = [
-  { href: "/", Icon: HomeIcon, label: "בית" },
-  { href: "/puzzle", Icon: PuzzleIcon, label: "פאזל" },
-  { href: "/shorts", Icon: GridIcon, label: "ניצוצות" },
-  { href: "/insight", Icon: LightbulbIcon, label: "תובנה" },
-  { href: "/gratitude", Icon: SunriseIcon, label: "הודיה" },
+  { href: "/puzzle", Icon: HomeIcon, label: "בית" },
+  { href: "/puzzle/board", Icon: PuzzleIcon, label: "פאזל" },
+  { href: "/puzzle/shorts", Icon: GridIcon, label: "ניצוצות" },
+  { href: "/puzzle/insight", Icon: LightbulbIcon, label: "תובנה" },
+  { href: "/puzzle/gratitude", Icon: SunriseIcon, label: "הודיה" },
 ];
 
 // Theme — cream strip, purple active, dark-gray idle.
@@ -53,13 +53,14 @@ export default function BottomTabBar() {
       .catch(() => {});
   }, []);
 
-  if (HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+  // The root is the Cod26 portal hub — it stands outside the puzzle app shell.
+  if (pathname === "/" || HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
     return null;
   }
 
   // The "+" routes to the submission form for members, or sign-up for guests.
   // There is always at least the active weekly challenge to act on.
-  const plusHref = user ? "/#submit" : "/login";
+  const plusHref = user ? "/puzzle#submit" : "/login";
   const openChallenges = challengeCount || 1;
 
   return (

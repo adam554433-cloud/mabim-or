@@ -258,7 +258,7 @@ export default function ProfilePage() {
               </span>
             </p>
             <Link
-              href="/"
+              href="/puzzle"
               className="inline-block font-bold px-5 py-2 rounded-full text-sm"
               style={{ background: GOLD, color: "#000" }}
             >

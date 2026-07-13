@@ -272,7 +272,7 @@ export default function HowItWorksPage() {
     >
       {/* Nav */}
       <div className="flex items-center justify-between px-5 py-4">
-        <Link href="/" className="text-gray-500 hover:text-white text-sm transition-colors">
+        <Link href="/puzzle" className="text-gray-500 hover:text-white text-sm transition-colors">
           → חזרה
         </Link>
         <div className="flex gap-1.5">
@@ -328,7 +328,7 @@ export default function HowItWorksPage() {
 
         {"isCta" in slide && slide.isCta ? (
           <Link
-            href="/"
+            href="/puzzle"
             className="bg-yellow-400 active:bg-yellow-500 text-black font-bold px-8 py-3.5 rounded-full text-lg transition-all hover:scale-105 hover:shadow-[0_0_28px_rgba(251,191,36,.5)]"
           >
             הצטרף עכשיו ✨
